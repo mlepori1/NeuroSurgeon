@@ -45,10 +45,16 @@ class MaskLayer(nn.Module):
         self.training = train_bool
 
     def calculate_l0(self):
-        l0 = torch.sum(self.compute_mask("weight_mask_params"))
+        l0 = torch.sum(self._compute_mask("weight_mask_params"))
         if self.mask_bias():
-            l0 += torch.sum(self.compute_mask("bias_mask_params"))
+            l0 += torch.sum(self._compute_mask("bias_mask_params"))
         return l0
+
+    def calculate_max_l0(self):
+        max_l0 = len(self._compute_mask("weight_mask_params").reshape(-1))
+        if self.mask_bias():
+            max_l0 += len(self._compute_mask("bias_mask_params").reshape(-1))
+        return max_l0
 
     @abstractmethod
     def _compute_mask(self, param_type):

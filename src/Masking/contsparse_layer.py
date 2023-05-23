@@ -3,8 +3,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
-from torch.nn.modules.utils import _pair
 import math
+from abc import abstractmethod
 
 
 class ContSparseLayer(MaskLayer):
@@ -43,45 +43,45 @@ class ContSparseLayer(MaskLayer):
         """
         if hasattr(self, "sampled_" + param_type) and not force_resample:
             return getattr(self, "sampled_" + param_type)
+
+        if param_type == "weight_mask_params":
+            mask_param = self.weight_mask_params
+        elif param_type == "bias_mask_params":
+            mask_param = self.bias_mask_params
         else:
-            if param_type == "weight_mask_params":
-                mask_param = self.weight_mask_params
-            elif param_type == "bias_mask_params":
-                mask_param = self.bias_mask_params
-            else:
-                raise ValueError(
-                    "Only weight_mask_params and bias_mask_params are supported param_types"
-                )
-
-            # Get hard mask
-            sampled_size = torch.sum((mask_param > 0).int())
-            if sampled_size > torch.sum((mask_param < 0).int()):
-                raise ValueError(
-                    "Trying to sample random masks, but original mask contains > 50 percent of weights"
-                )
-
-            # Sample sample_size number of weights from the complement of the mask given by mask_weight
-            complement_mask_weights = mask_param < 0
-            sample_complement_indices = complement_mask_weights.nonzero(
-                as_tuple=False
-            )  # get indices of complement weights
-            # shuffle the indices of possible sampled weights, take the first sample_size indices as your sampled mask
-            sample_complement_indices = sample_complement_indices[
-                torch.randperm(sample_complement_indices.size(0))
-            ][:sampled_size]
-            # Reformat indices into tuple form for indexing into tensor
-            sample_complement_indices = (
-                sample_complement_indices[:, 0],
-                sample_complement_indices[:, 1],
+            raise ValueError(
+                "Only weight_mask_params and bias_mask_params are supported param_types"
             )
-            # Create a mask with just the sampled indices removed to run random ablation experiments
-            sampled_mask = torch.ones(mask_param.shape)
-            sampled_mask[sample_complement_indices] = 0.0
-            sampled_mask = nn.Parameter(sampled_mask, requires_grad=False).cuda()
 
-            setattr(self, "sampled_" + param_type, sampled_mask)
+        # Get hard mask
+        sampled_size = torch.sum((mask_param > 0).int())
+        if sampled_size > torch.sum((mask_param < 0).int()):
+            raise ValueError(
+                "Trying to sample random masks, but original mask contains > 50 percent of weights"
+            )
 
-            return sampled_mask
+        # Sample sample_size number of weights from the complement of the mask given by mask_weight
+        complement_mask_weights = mask_param < 0
+        sample_complement_indices = complement_mask_weights.nonzero(
+            as_tuple=False
+        )  # get indices of complement weights
+        # shuffle the indices of possible sampled weights, take the first sample_size indices as your sampled mask
+        sample_complement_indices = sample_complement_indices[
+            torch.randperm(sample_complement_indices.size(0))
+        ][:sampled_size]
+        # Reformat indices into tuple form for indexing into tensor
+        sample_complement_indices = (
+            sample_complement_indices[:, 0],
+            sample_complement_indices[:, 1],
+        )
+        # Create a mask with just the sampled indices removed to run random ablation experiments
+        sampled_mask = torch.ones(mask_param.shape)
+        sampled_mask[sample_complement_indices] = 0.0
+        sampled_mask = nn.Parameter(sampled_mask, requires_grad=False).cuda()
+
+        setattr(self, "sampled_" + param_type, sampled_mask)
+
+        return sampled_mask
 
     def _compute_mask(self, param_type):
         if param_type == "weight_mask_params":
@@ -111,15 +111,21 @@ class ContSparseLayer(MaskLayer):
 
         return mask
 
+        
+    @abstractmethod
+    def _generate_random_mask(self, param_type):
+        # Used to create a mask of random values for random_ablate condition
+        pass
+        
     def _compute_random_ablation(self, param_type):
         if param_type == "weight":
             params = self.weight
             params_mask = self.weight_mask
-            random_params = self.random_weight
+            random_params = self._generate_random_mask("weight")
         elif param_type == "bias":
             params = self.bias
             params_mask = self.bias_mask
-            random_params = self.random_bias
+            random_params = self._generate_random_mask("bias")
         else:
             raise ValueError("Only accepts weight and bias")
 
@@ -155,19 +161,6 @@ class ContSparseLinear(ContSparseLayer):
             self.register_parameter("bias", None)  # type: ignore
 
         self.reset_parameters()
-
-        # Create a random tensor to reinit ablated parameters
-        if self.ablation == "random_ablate":
-            self.random_weight = nn.Parameter(torch.zeros(self.weight.shape))
-            init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
-            self.random_weight.requires_grad = False
-
-            if self.mask_bias:
-                self.random_bias = nn.Parameter(torch.zeros(self.bias.shape))
-                fan_in, _ = init._calculate_fan_in_and_fan_out(self.random_weight)
-                bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-                init.uniform_(self.random_bias, -bound, bound)
-                self.random_bias.requires_grad = False
 
     @classmethod
     def from_layer(layer: nn.Linear, ablation, mask_bias, mask_init_value):
@@ -210,6 +203,28 @@ class ContSparseLinear(ContSparseLayer):
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
+    def _generate_random_mask(self, param_type):
+        if hasattr(self, "random_" + param_type):
+            return getattr(self, "random_" + param_type)
+        
+        if param_type == "weight":
+            self.random_weight = nn.Parameter(torch.zeros(self.weight.shape))
+            init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
+            self.random_weight.requires_grad = False
+            return self.random_weight
+
+        elif param_type == "bias":
+            self.random_bias = nn.Parameter(torch.zeros(self.bias.shape))
+            fan_in, _ = init._calculate_fan_in_and_fan_out(self.random_weight)
+            bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+            init.uniform_(self.random_bias, -bound, bound)
+            self.random_bias.requires_grad = False
+            return self.random_bias
+
+        else:
+            raise ValueError("generate_random_mask only supports weights and biases")
+
+    
     def forward(self, data: torch.Tensor, **kwargs) -> torch.Tensor:  # type: ignore
         """Perform the forward pass.
         Parameters
@@ -277,19 +292,6 @@ class _ContSparseConv(ContSparseLayer):
             self.register_parameter("bias", None)
         self.reset_parameters()
 
-        # Create a random tensor to reinit ablated parameters
-        if self.ablate_mask == "random_ablate":
-            self.random_weight = nn.Parameter(torch.empty(self._base_layer.weight.size))
-            init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
-            self.random_weight.requires_grad = False
-
-            if self.mask_bias:
-                self.random_bias = nn.Parameter(torch.empty(self._base_layer.bias.size))
-                fan_in, _ = init._calculate_fan_in_and_fan_out(self.random_weight)
-                bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
-                init.uniform_(self.random_bias, -bound, bound)
-                self.random_bias.requires_grad = False
-
     def reset_parameters(self) -> None:
         self._init_mask()
         self._base_layer.reset_parameters()
@@ -304,6 +306,28 @@ class _ContSparseConv(ContSparseLayer):
             self.bias_mask_params = nn.Parameter(torch.empty(self.bias.shape))
             nn.init.constant_(self.bias_mask_params, self.mask_init_value)
 
+    def _generate_random_mask(self, param_type):
+        # Create a random tensor to reinit ablated parameters
+        if hasattr(self, "random_" + param_type):
+            return getattr(self, "random_" + param_type)
+        
+        if param_type == "weight":
+            self.random_weight = nn.Parameter(torch.empty(self._base_layer.weight.size))
+            init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
+            self.random_weight.requires_grad = False
+            return self.random_weight
+
+        elif param_type == "bias":
+            self.random_bias = nn.Parameter(torch.empty(self._base_layer.bias.size))
+            fan_in, _ = init._calculate_fan_in_and_fan_out(self.random_weight)
+            bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
+            init.uniform_(self.random_bias, -bound, bound)
+            self.random_bias.requires_grad = False
+            return self.random_bias
+
+        else:
+            raise ValueError("generate_random_mask only supports weights and biases")
+    
     def forward(self, x):
         self.weight_mask = self._compute_mask("weight_mask_params")
         if self.ablation == "random_ablate":
