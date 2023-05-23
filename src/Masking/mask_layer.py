@@ -1,13 +1,23 @@
 from abc import abstractmethod
-import torch.nn
+import torch.nn as nn
+import torch
 
 
 class MaskLayer(nn.Module):
     """Base Class for masking layers. Inherits from nn.Module"""
 
-    def __init__(self, ablation: str, include_bias: bool):
+    def __init__(self, bias: bool, ablation: str, mask_bias: bool):
+        self.bias = bias
         self.ablation = ablation
-        self.include_bias = include_bias
+        self.mask_bias = mask_bias
+
+    @property
+    def bias(self):
+        return self._bias
+
+    @bias.setter
+    def bias(self, value):
+        self._bias = value
 
     @property
     def ablation(self):
@@ -15,35 +25,37 @@ class MaskLayer(nn.Module):
 
     @ablation.setter
     def ablation(self, value):
-        if value not in ["none, randomly_sampled", "zero_mask", "random_mask"]:
+        if value not in ["none, randomly_sampled", "zero_ablate", "random_ablate"]:
             raise ValueError(
-                "Only none, randomly_sampled, zero_mask, random_mask are supported"
+                "Only none, randomly_sampled, zero_ablate, random_ablate are supported"
             )
         self._ablation = value
 
     @property
-    def include_bias(self):
-        return self._include_bias
+    def mask_bias(self):
+        return self._mask_bias
 
-    @include_bias.setter
-    def include_bias(self, value):
-        self._include_bias = value
+    @mask_bias.setter
+    def mask_bias(self, value):
+        if value == True and self.bias == False:
+            raise ValueError("Cannot mask bias if bias is set to false")
+        self._mask_bias = value
 
     def train(self, train_bool):
         self.training = train_bool
 
     def calculate_l0(self):
-        l0 = torch.sum(self.compute_mask("mask_weight"))
-        if self.include_bias():
-            l0 += torch.sum(self.compute_mask("mask_bias"))
+        l0 = torch.sum(self.compute_mask("weight_mask_params"))
+        if self.mask_bias():
+            l0 += torch.sum(self.compute_mask("bias_mask_params"))
         return l0
 
     @abstractmethod
-    def compute_mask(self, param_type):
+    def _compute_mask(self, param_type):
         pass
 
     @abstractmethod
-    def init_mask(self):
+    def _init_mask(self):
         pass
 
     @abstractmethod
