@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 from transformers import PretrainedModel
-from circuit_config import CircuitConfig
+from Models.model_configs import CircuitConfig
 from contsparse_layer import ContSparseLayer, ContSparseLinear, ContSparseConv1d, ContSparseConv2d
 from mask_layer import MaskLayer
 import warnings

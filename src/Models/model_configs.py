@@ -19,3 +19,20 @@ class CircuitConfig(PretrainedConfig):
         self.freeze_base = freeze_base
         self.add_l0 = add_l0
         self.l0_lambda = l0_lambda
+
+class ResidualUpdateModelConfig(PretrainedConfig):
+
+    def __init__(
+            self,
+            model_type: str,
+            base: bool,
+            target_layers: List[int],
+            mlp: bool,
+            attn: bool,
+    ):
+        super().__init__()
+        self.model_type = model_type
+        self.base = base
+        self.target_layers = target_layers
+        self.mlp = mlp
+        self.attn = attn
