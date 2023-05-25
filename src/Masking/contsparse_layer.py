@@ -35,8 +35,9 @@ class ContSparseLayer(MaskLayer):
 
     def _sample_random_mask(self, param_type, force_resample=False):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
-        but drawn from the complement of the trained binary mask. This is done to assess whether ablating a trained
-        subnetwork yields greater performance degredation than ablating a random subnetwork.
+        but where the ablated parameters are drawn from the complement of the trained binary mask. 
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than 
+        ablating a random subnetwork.
 
         Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
         get a distribution over random mask samples
@@ -69,11 +70,13 @@ class ContSparseLayer(MaskLayer):
         sample_complement_indices = sample_complement_indices[
             torch.randperm(sample_complement_indices.size(0))
         ][:sampled_size]
+
         # Reformat indices into tuple form for indexing into tensor
-        sample_complement_indices = (
-            sample_complement_indices[:, 0],
-            sample_complement_indices[:, 1],
-        )
+        idxs = sample_complement_indices.shape[1]
+
+        sample_complement_indices = [sample_complement_indices[:, idx] for idx in range(idxs)]
+        sample_complement_indices = tuple(sample_complement_indices)
+
         # Create a mask with just the sampled indices removed to run random ablation experiments
         sampled_mask = torch.ones(mask_param.shape)
         sampled_mask[sample_complement_indices] = 0.0
@@ -304,7 +307,7 @@ class _ContSparseConv(ContSparseLayer):
 
     def _init_mask(self):
         self.weight_mask_params = nn.Parameter(torch.empty(self.weight.size()))
-        nn.init.constant_(self.mask_weight, self.mask_init_value)
+        nn.init.constant_(self.weight_mask_params, self.mask_init_value)
 
         if self.mask_bias:
             self.bias_mask_params = nn.Parameter(torch.empty(self.bias.shape))
@@ -316,13 +319,13 @@ class _ContSparseConv(ContSparseLayer):
             return getattr(self, "random_" + param_type)
         
         if param_type == "weight":
-            self.random_weight = nn.Parameter(torch.empty(self._base_layer.weight.size))
+            self.random_weight = nn.Parameter(torch.empty(self._base_layer.weight.size()))
             init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
             self.random_weight.requires_grad = False
             return self.random_weight
 
         elif param_type == "bias":
-            self.random_bias = nn.Parameter(torch.empty(self._base_layer.bias.size))
+            self.random_bias = nn.Parameter(torch.empty(self._base_layer.bias.size()))
             fan_in, _ = init._calculate_fan_in_and_fan_out(self.random_weight)
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.random_bias, -bound, bound)
@@ -352,7 +355,7 @@ class _ContSparseConv(ContSparseLayer):
         return out
 
 
-class ContSparseConv2D(_ContSparseConv):
+class ContSparseConv2d(_ContSparseConv):
     def __init__(
         self,
         in_channels,
@@ -386,13 +389,13 @@ class ContSparseConv2D(_ContSparseConv):
         )
 
     @classmethod
-    def from_layer(layer: nn.Conv2d, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
             bias = False
 
-        cont_sparse = ContSparseConv2D(
+        cont_sparse = ContSparseConv2d(
             layer.in_channels,
             layer.out_channels,
             layer.kernel_size,
@@ -400,7 +403,7 @@ class ContSparseConv2D(_ContSparseConv):
             stride=layer.stride,
             dilation=layer.dilation,
             groups=layer.groups,
-            bias=layer.bias,
+            bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
@@ -413,7 +416,7 @@ class ContSparseConv2D(_ContSparseConv):
         return cont_sparse
 
 
-class ContSparseConv1D(_ContSparseConv):
+class ContSparseConv1d(_ContSparseConv):
     def __init__(
         self,
         in_channels,
@@ -447,13 +450,13 @@ class ContSparseConv1D(_ContSparseConv):
         )
 
     @classmethod
-    def from_layer(layer: nn.Conv1d, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
             bias = False
 
-        cont_sparse = ContSparseConv1D(
+        cont_sparse = ContSparseConv1d(
             layer.in_channels,
             layer.out_channels,
             layer.kernel_size,
@@ -461,7 +464,7 @@ class ContSparseConv1D(_ContSparseConv):
             stride=layer.stride,
             dilation=layer.dilation,
             groups=layer.groups,
-            bias=layer.bias,
+            bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
