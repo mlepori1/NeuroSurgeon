@@ -1,0 +1,263 @@
+from ..contsparse_layer import ContSparseLinear, ContSparseConv1D, ContSparseConv2D
+import torch
+import pytest
+import torch.nn as nn
+
+### Test ContSparseLinear Layer
+
+def test_linear_init():
+    mask_fill_val = 19.0
+    layer = ContSparseLinear(10, 10, bias=True, ablation="none", mask_bias=True, mask_init_value=mask_fill_val)
+
+    # Test that mask parameters have been initialized correctly
+    assert hasattr(layer, "weight")
+    assert hasattr(layer, "weight_mask_params")
+    assert hasattr(layer, "bias")
+    assert hasattr(layer, "bias_mask_params")
+    assert torch.all(layer.weight_mask_params == torch.full(layer.weight_mask_params.shape, mask_fill_val))
+    assert torch.all(layer.bias_mask_params == torch.full(layer.bias_mask_params.shape, mask_fill_val))
+
+    layer = ContSparseLinear(10, 10, bias=True, ablation="none", mask_bias=False, mask_init_value=mask_fill_val)
+
+    # Test that mask parameters have been initialized correctly
+    assert hasattr(layer, "weight")
+    assert hasattr(layer, "weight_mask_params")
+    assert hasattr(layer, "bias")
+    assert not hasattr(layer, "bias_mask_params")
+    assert torch.all(layer.weight_mask_params == torch.full(layer.weight_mask_params.shape, mask_fill_val))
+
+    layer = ContSparseLinear(10, 10, bias=False, ablation="none", mask_bias=False, mask_init_value=mask_fill_val)
+
+    # Test that mask parameters have been initialized correctly
+    assert hasattr(layer, "weight")
+    assert hasattr(layer, "weight_mask_params")
+    assert layer.bias is None
+    assert not hasattr(layer, "bias_mask_params")
+    assert torch.all(layer.weight_mask_params == torch.full(layer.weight_mask_params.shape, mask_fill_val))
+
+    # Assert that you cannot mask a bias that isn't there
+    with pytest.raises(Exception):
+        layer = ContSparseLinear(10, 10, bias=False, ablation="none", mask_bias=True, mask_init_value=mask_fill_val)
+
+def test_linear_from_layer():
+
+    base_layer = nn.Linear(10, 20)
+    masked_layer = ContSparseLinear.from_layer(base_layer, ablation="none", mask_bias=True, mask_init_value=1.0)
+
+    # Ensure that masked layer is initialized correctly
+    assert hasattr(masked_layer, "weight_mask_params")
+    assert hasattr(masked_layer, "bias_mask_params")
+
+    ipt_tensor = torch.Tensor([0., 1., 2., 3., 4., 0., 1., 2., 3., 4.])
+    base_out = base_layer(ipt_tensor)
+
+    # Assert that test mode masked_layer produces same output as base layer (because init_value is > 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out == base_out)
+
+    # Assert that train mode masked_layer produces diff output as base layer
+    masked_layer.train(True)
+    masked_out = masked_layer(ipt_tensor)
+    assert not torch.all(masked_out == base_out)
+
+    masked_layer = ContSparseLinear.from_layer(base_layer,ablation="none", mask_bias=True, mask_init_value=-1.0)
+
+    # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert not torch.all(masked_out == base_out)
+
+    # Assert that train mode masked_layer produces diff output as base layer
+    masked_layer.train(True)
+    masked_out = masked_layer(ipt_tensor)
+    assert not torch.all(masked_out == base_out)
+
+
+def test_linear_zero_ablate():
+    layer = ContSparseLinear(10, 10, bias=True, ablation="zero_ablate", mask_bias=False, mask_init_value=0.0)
+    ipt = torch.ones(10)
+    layer.weight_mask_params = nn.Parameter(torch.rand(layer.weight_mask_params.size()) - .5)
+    layer.train(False)
+    _ = layer(ipt) # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+    # Assert that positive params are masked and negative ones are not
+    to_ablate = layer.weight_mask_params > 0
+    assert torch.all(layer.weight_mask == ~to_ablate)
+
+def test_linear_random_ablate():
+    layer = ContSparseLinear(10, 10, bias=True, ablation="random_ablate", mask_bias=False, mask_init_value=0.0)
+    ipt = torch.ones(10)
+    layer.weight_mask_params = nn.Parameter(torch.rand(layer.weight_mask_params.size()) - .5)
+    layer.train(False)
+    rand_out = layer(ipt) # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+    # Assert that positive params are masked and negative ones are not
+    to_ablate = layer.weight_mask_params > 0
+    assert torch.all(layer.weight_mask == ~to_ablate)
+
+    # Assert that random ablation is different than zero ablation
+    layer = ContSparseLinear(10, 10, bias=True, ablation="zero_ablate", mask_bias=False, mask_init_value=0.0)
+    layer.train(False)
+    zero_out = layer(ipt) # Weight mask computed during forward pass
+    assert torch.all(rand_out != zero_out)
+
+def test_linear_sampled_ablate():
+    layer = ContSparseLinear(10, 10, bias=True, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0)
+    ipt = torch.ones(10)
+    layer.weight_mask_params = nn.Parameter(torch.rand(layer.weight_mask_params.size()) - .6)
+    layer.train(False)
+    _ = layer(ipt) # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+    
+    # Assert that all subnetwork parameters are unmasked
+    subnetwork_params = layer.weight_mask_params > 0
+    assert torch.all(layer.weight_mask.bool()[subnetwork_params])
+
+    # Assert that the layer is masking out the same number of parameters as are in the subnetwork
+    assert torch.sum(~layer.weight_mask.bool()) == torch.sum(subnetwork_params)
+
+    # Assert that an error is thrown if the subnetwork params contain >50% of parameters
+    layer = ContSparseLinear(10, 10, bias=True, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0)
+    layer.weight_mask_params = nn.Parameter(torch.rand(layer.weight_mask_params.size()) - .3)
+    layer.train(False)
+    with pytest.raises(Exception):
+        _ = layer(ipt) # Weight mask computed during forward pass
+
+
+def test_linear_masking():
+    # Test that masking every param gives the zero vector
+    layer = ContSparseLinear(10, 10, bias=True, ablation="none", mask_bias=True, mask_init_value=-0.1)
+    ipt = torch.ones(10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out == torch.zeros(out.shape))
+
+    # Test that masking every weight param gives the bias vector
+    layer = ContSparseLinear(10, 10, bias=True, ablation="none", mask_bias=False, mask_init_value=-0.1)
+    ipt = torch.ones(10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out == layer.bias)
+
+    # Test that masking one neuron gives a particular zero entry
+    layer = ContSparseLinear(10, 15, bias=True, ablation="none", mask_bias=True, mask_init_value=1.0)
+    
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[5, :] = torch.zeros(10)
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+
+    b_params = layer.bias_mask_params
+    b_params.requires_grad = False
+    b_params[5] = 0
+    b_params.requires_grad = True
+    layer.bias_mask_params = b_params
+
+    ipt = torch.ones(10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out[5] == 0.0)   
+
+
+def test_linear_l0_calc():
+    layer = ContSparseLinear(10, 15, bias=True, ablation="none", mask_bias=True, mask_init_value=1.0)
+    l_train_l0 = layer.calculate_l0()
+    l_train_l0_max = layer.calculate_max_l0()
+
+    # Assert that training L0 calculation is working
+    assert l_train_l0.item().is_integer() == False # Mask entries should not be binary
+    assert l_train_l0 != l_train_l0_max
+
+    # Assert that test L0 calculation is working
+    layer.train(False)
+    l_test_l0 = layer.calculate_l0()
+    l_test_l0_max = layer.calculate_max_l0()
+    assert l_test_l0.item().is_integer() # Mask entries should be binary
+    assert l_test_l0 == l_test_l0_max
+    assert l_test_l0 != l_train_l0
+
+
+def test_linear_temperature():
+    layer = ContSparseLinear(10, 10, bias=True, ablation="none", mask_bias=True, mask_init_value=1.0)
+    
+    # Assert that changing the temperature changes JUST the train mask
+    train_l0_1 = layer.calculate_l0()
+    layer.train(False)
+    test_l0_1 = layer.calculate_l0()
+
+    layer.train(True)
+    layer.temperature = 2.0
+    train_l0_2 = layer.calculate_l0()
+    layer.train(False)
+    test_l0_2 = layer.calculate_l0()
+
+    assert train_l0_1 != train_l0_2
+    assert test_l0_1 == test_l0_2
+
+    # Assert that driving up the temperature past floating point precision makes train and test masks the same
+    layer.temperature = 1000
+    train_l0 = layer.calculate_l0()
+    layer.train(False)
+    test_l0 = layer.calculate_l0()
+
+    assert train_l0 == test_l0
+
+### Test ContSparseConv1d Layer
+
+def test_conv1d_init():
+    pass
+
+def test_conv1d_from_layer():
+    pass
+
+def test_conv1d_zero_ablate():
+    pass
+
+def test_conv1d_random_ablate():
+    pass
+
+def test_conv1d_sampled_ablate():
+    pass
+
+def test_conv1d_masking():
+    pass
+
+def test_conv1d_l0_calc():
+    pass
+
+def test_conv1d_temperature():
+    pass
+
+### Test ContSparseConv2d Layer
+
+def test_conv2d_init():
+    pass
+
+def test_conv2d_from_layer():
+    pass
+
+def test_conv2d_zero_ablate():
+    pass
+
+def test_conv2d_random_ablate():
+    pass
+
+def test_conv2d_sampled_ablate():
+    pass
+
+def test_conv2d_masking():
+    pass
+
+def test_conv2d_l0_calc():
+    pass
+
+def test_conv2d_temperature():
+    pass

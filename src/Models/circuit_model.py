@@ -127,9 +127,9 @@ class CircuitModel(PretrainedModel):
     def __call__(self, input):
         return self.forward(input)
 
-    def forward(self, input):
+    def forward(self, input_ids=None, **kwargs):
         # Call forward of model, add l0 regularization if appropriate
-        output = self.model(**input, return_dict=True)
+        output = self.model(input_ids, kwargs, return_dict=True)
         if self.config.add_l0:
             if hasattr(output, "loss"):
                 output.loss = output.loss + (self.config.l0_lambda * self._compute_l0_loss())

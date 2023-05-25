@@ -1,4 +1,4 @@
-from mask_layer import MaskLayer
+from .mask_layer import MaskLayer
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -9,9 +9,9 @@ from abc import abstractmethod
 
 class ContSparseLayer(MaskLayer):
     def __init__(
-        self, bias: bool, ablation: str, mask_bias: bool, mask_init_value: float
+        self, ablation: str, mask_bias: bool, mask_init_value: float
     ):
-        super().__init__(bias, ablation, mask_bias)
+        super().__init__(ablation, mask_bias)
         self.mask_init_value = mask_init_value
         self.temperature = 1.0
 
@@ -77,7 +77,7 @@ class ContSparseLayer(MaskLayer):
         # Create a mask with just the sampled indices removed to run random ablation experiments
         sampled_mask = torch.ones(mask_param.shape)
         sampled_mask[sample_complement_indices] = 0.0
-        sampled_mask = nn.Parameter(sampled_mask, requires_grad=False).cuda()
+        sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
 
         setattr(self, "sampled_" + param_type, sampled_mask)
 
@@ -148,7 +148,7 @@ class ContSparseLinear(ContSparseLayer):
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
-        super().__init__(bias, ablation, mask_bias, mask_init_value)
+        super().__init__(ablation, mask_bias, mask_init_value)
 
         self.in_features = in_features
         self.out_features = out_features
@@ -158,19 +158,21 @@ class ContSparseLinear(ContSparseLayer):
         if bias:
             self.bias = nn.Parameter(torch.empty(out_features))  # type: ignore
         else:
+            if self.mask_bias:
+                raise ValueError("Cannot mask bias if there is no bias")
             self.register_parameter("bias", None)  # type: ignore
 
         self.reset_parameters()
 
     @classmethod
-    def from_layer(layer: nn.Linear, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Linear, ablation, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
             bias = False
 
         cont_sparse = ContSparseLinear(
-            layer.in_feature,
+            layer.in_features,
             layer.out_features,
             bias,
             ablation,
@@ -272,7 +274,7 @@ class _ContSparseConv(ContSparseLayer):
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
-        super().__init__(bias, ablation, mask_bias, mask_init_value)
+        super().__init__(ablation, mask_bias, mask_init_value)
 
         self._base_layer = layer_fn(
             in_channels,
@@ -289,6 +291,8 @@ class _ContSparseConv(ContSparseLayer):
         if bias:
             self.bias = self._base_layer.bias
         else:
+            if self.mask_bias:
+                raise ValueError("Cannot mask bias if there is no bias")
             self.register_parameter("bias", None)
         self.reset_parameters()
 
