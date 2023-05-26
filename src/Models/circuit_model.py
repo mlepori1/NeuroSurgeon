@@ -1,25 +1,30 @@
 import torch
 import torch.nn as nn
-from transformers import PretrainedModel
-from Models.model_configs import CircuitConfig
-from contsparse_layer import ContSparseLayer, ContSparseLinear, ContSparseConv1d, ContSparseConv2d
-from mask_layer import MaskLayer
+from transformers import PreTrainedModel
+from .model_configs import CircuitConfig
+from ..Masking.contsparse_layer import ContSparseLayer, ContSparseLinear, ContSparseConv1d, ContSparseConv2d
+from ..Masking.mask_layer import MaskLayer
 import warnings
 
-class CircuitModel(PretrainedModel):
+class CircuitModel(nn.Module):
 
-    def __init__(self, config: CircuitConfig, model: PretrainedModel):
+    def __init__(self, config: CircuitConfig, root_model: nn.Module):
         super().__init__()
         self.config = config
-        self.model = model
+        self.root_model = root_model
         
         self._replace_target_layers()
         self._handle_model_freezing()
 
     def _handle_model_freezing(self):
+        # Put all mask parameters in train mode, put all others in eval mode
+        self.train(True)
+
         # Remove gradients from all parameters except mask params
         if self.config.freeze_base:
-            for layer in self.model.modules():
+            for layer in self.root_model.modules():
+                if not issubclass(type(layer), MaskLayer):
+                    layer.train(False)
                 if hasattr(layer, "weight") and layer.weight != None:
                     layer.weight.requires_grad = False
                 if hasattr(layer, "bias") and layer.bias != None: 
@@ -36,43 +41,47 @@ class CircuitModel(PretrainedModel):
                 layer_path = target_layer.split(".")
             else:
                 layer_path = [target_layer]
-            
+
             earlier_component = None
-            current_component = self.model
-            for component_path in layer_path:
-                earlier_component = current_component
-                current_component = getattr(earlier_component, component_path)
-            
-            layer_type = type(current_component)
-            masked_layer = torch2masked[layer_type](current_component, *masked_args)
-            setattr(earlier_component, component_path, masked_layer)
+            current_component = self.root_model    
+            try:
+                for component_path in layer_path:
+                    earlier_component = current_component
+                    current_component = getattr(earlier_component, component_path)
+            except:
+                raise ValueError(f'{target_layer} not found in network')
+
+            try:
+                layer_type = type(current_component)
+                print(layer_type)
+                masked_layer = torch2masked[layer_type].from_layer(current_component, *masked_args)
+                setattr(earlier_component, component_path, masked_layer)
+            except:
+               raise ValueError(f'{target_layer} is not a supported layer type')
 
     def _create_torch2masked(self, config):
-        if config.mask_method == "Continuous_Sparsification":
-            try:
-                return {
-                    nn.Linear : ContSparseLinear,
-                    nn.Conv2d: ContSparseConv2d,
-                    nn.Conv1d: ContSparseConv1d,
-                }
-            except:
-                raise ValueError("Only support masking Linear, Conv1d, and Conv2d layers at this time")
+        if config.mask_method == "continuous_sparsification":
+            return {
+                nn.Linear : ContSparseLinear,
+                nn.Conv2d: ContSparseConv2d,
+                nn.Conv1d: ContSparseConv1d,
+            }
         else:
             raise ValueError("Only Continuous_Sparsification is supported at this time")
 
     def _create_masked_args(self, config):
-        if config.mask_method == "Continuous_Sparsification":
+        if config.mask_method == "continuous_sparsification":
             return [config.mask_hparams["ablation"], config.mask_hparams["mask_bias"], config.mask_hparams["mask_init_value"]]
         else:
             raise ValueError("Only Continuous_Sparsification is supported at this time")
         
     def train(self, train_bool):
         if self.config.freeze_base:
-            for layer in self.model.modules():
-                if not issubclass(MaskLayer):
+            for layer in self.root_model.modules():
+                if not issubclass(type(layer), MaskLayer):
                     layer.train(False) # Keep all non-masklayers train=False, to handle dropout, batchnorm, etc
-            for layer in self.model.modules():
-                if issubclass(MaskLayer):
+            for layer in self.root_model.modules():
+                if issubclass(type(layer), MaskLayer):
                     layer.train(train_bool) # Set masklayers to train or eval, all weights and biases are frozen anyway        
 
     def compute_l0_statistics(self):
@@ -82,7 +91,7 @@ class CircuitModel(PretrainedModel):
         max_l0 = 0
         layer2l0 = {}
         layer2maxl0 = {}
-        for name, layer in self.model.named_modules():
+        for name, layer in self.root_model.named_modules():
             if issubclass(layer, MaskLayer):
                 layer_l0 = layer.calculate_l0()
                 layer_max_l0 = layer.calculate_max_l0()
@@ -101,7 +110,7 @@ class CircuitModel(PretrainedModel):
         # add L0 loss when training
         if self.training:
             total_l0 = 0.0
-            for _, layer in self.model.named_modules():
+            for _, layer in self.root_model.named_modules():
                 if issubclass(layer, MaskLayer):
                     layer_l0 = layer.calculate_l0()
                     total_l0 += layer_l0
@@ -129,7 +138,7 @@ class CircuitModel(PretrainedModel):
 
     def forward(self, input_ids=None, **kwargs):
         # Call forward of model, add l0 regularization if appropriate
-        output = self.model(input_ids, kwargs, return_dict=True)
+        output = self.root_model(input_ids, kwargs, return_dict=True)
         if self.config.add_l0:
             if hasattr(output, "loss"):
                 output.loss = output.loss + (self.config.l0_lambda * self._compute_l0_loss())
@@ -137,9 +146,6 @@ class CircuitModel(PretrainedModel):
                 raise ValueError("Cannot add L0 Regularization when underlying model doesn't return loss")
         return output
 
-    def __getattr__(self, name):
-        # Override this to call functions from the underlying model if not found in this class
-        return getattr(self.model, name)
 
     def set_ablate_mode(self, ablation):
         # change ablate mode for model

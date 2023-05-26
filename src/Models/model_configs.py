@@ -5,9 +5,9 @@ class CircuitConfig(PretrainedConfig):
 
     def __init__(
             self,
-            mask_method: str,
-            mask_hparams: dict,
-            target_layers: List[str],
+            mask_method: str = "continuous_sparsification",
+            mask_hparams: dict = {},
+            target_layers: List[str] = [],
             freeze_base: bool = True,
             add_l0: bool = True, # Will throw error if no loss in output
             l0_lambda: float = 1E-8 
