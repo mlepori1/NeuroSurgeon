@@ -9,7 +9,7 @@ class CircuitConfig(PretrainedConfig):
             mask_hparams: dict = {},
             target_layers: List[str] = [],
             freeze_base: bool = True,
-            add_l0: bool = True, # Will throw error if no loss in output
+            add_l0: bool = True,
             l0_lambda: float = 1E-8 
     ):
         

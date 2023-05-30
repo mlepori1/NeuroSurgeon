@@ -1,16 +1,16 @@
 from .mask_layer import MaskLayer
 import torch
 import torch.nn as nn
+from transformers.pytorch_utils import Conv1D
 import torch.nn.functional as F
 import torch.nn.init as init
 import math
 from abc import abstractmethod
+import warnings
 
 
 class ContSparseLayer(MaskLayer):
-    def __init__(
-        self, ablation: str, mask_bias: bool, mask_init_value: float
-    ):
+    def __init__(self, ablation: str, mask_bias: bool, mask_init_value: float):
         super().__init__(ablation, mask_bias)
         self.mask_init_value = mask_init_value
         self.temperature = 1.0
@@ -35,8 +35,8 @@ class ContSparseLayer(MaskLayer):
 
     def _sample_random_mask(self, param_type, force_resample=False):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
-        but where the ablated parameters are drawn from the complement of the trained binary mask. 
-        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than 
+        but where the ablated parameters are drawn from the complement of the trained binary mask.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
         ablating a random subnetwork.
 
         Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
@@ -74,7 +74,9 @@ class ContSparseLayer(MaskLayer):
         # Reformat indices into tuple form for indexing into tensor
         idxs = sample_complement_indices.shape[1]
 
-        sample_complement_indices = [sample_complement_indices[:, idx] for idx in range(idxs)]
+        sample_complement_indices = [
+            sample_complement_indices[:, idx] for idx in range(idxs)
+        ]
         sample_complement_indices = tuple(sample_complement_indices)
 
         # Create a mask with just the sampled indices removed to run random ablation experiments
@@ -114,12 +116,11 @@ class ContSparseLayer(MaskLayer):
 
         return mask
 
-        
     @abstractmethod
     def _generate_random_mask(self, param_type):
         # Used to create a mask of random values for random_ablate condition
         pass
-        
+
     def _compute_random_ablation(self, param_type):
         if param_type == "weight":
             params = self.weight
@@ -174,6 +175,10 @@ class ContSparseLinear(ContSparseLayer):
         else:
             bias = False
 
+        if not bias and mask_bias:
+            mask_bias = False
+            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
+
         cont_sparse = ContSparseLinear(
             layer.in_features,
             layer.out_features,
@@ -211,7 +216,7 @@ class ContSparseLinear(ContSparseLayer):
     def _generate_random_mask(self, param_type):
         if hasattr(self, "random_" + param_type):
             return getattr(self, "random_" + param_type)
-        
+
         if param_type == "weight":
             self.random_weight = nn.Parameter(torch.zeros(self.weight.shape))
             init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
@@ -229,7 +234,6 @@ class ContSparseLinear(ContSparseLayer):
         else:
             raise ValueError("generate_random_mask only supports weights and biases")
 
-    
     def forward(self, data: torch.Tensor, **kwargs) -> torch.Tensor:  # type: ignore
         """Perform the forward pass.
         Parameters
@@ -258,6 +262,108 @@ class ContSparseLinear(ContSparseLayer):
 
         out = F.linear(data, masked_weight, masked_bias)
         return out
+
+
+class ContSparseGPTConv1D(ContSparseLayer):
+    """For some reason, GPT uses a custom Conv1D layer instead of a linear layer
+
+    Basically works like a linear layer but the weights are transposed.
+
+    Args:
+        nf (`int`): The number of output features.
+        nx (`int`): The number of input features.
+    """
+
+    def __init__(
+        self,
+        nf,
+        nx,
+        ablation: str = "none",
+        mask_bias: bool = False,
+        mask_init_value: float = 0.0,
+    ):
+        super().__init__(ablation, mask_bias, mask_init_value)
+
+        self.nf = nf
+        w = torch.empty(nx, nf)
+        nn.init.normal_(w, std=0.02)
+        self.weight = nn.Parameter(w)
+        self.bias = nn.Parameter(torch.zeros(nf))
+
+        self._init_mask()
+
+    @classmethod
+    def from_layer(self, layer: Conv1D, ablation, mask_bias, mask_init_value):
+        cont_sparse = ContSparseGPTConv1D(
+            layer.nf,
+            layer.weight.shape[
+                0
+            ],  # For some reason, this layer doesn't store in_features as an attribute
+            ablation,
+            mask_bias, # This class always has a bias term
+            mask_init_value,
+        )
+        cont_sparse.weight = layer.weight
+        cont_sparse.bias = layer.bias
+
+        return cont_sparse
+
+    def _init_mask(self):
+        self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        nn.init.constant_(self.weight_mask_params, self.mask_init_value)
+
+        if self.mask_bias:
+            self.bias_mask_params = nn.Parameter(torch.zeros(self.bias.shape))
+            nn.init.constant_(self.bias_mask_params, self.mask_init_value)
+
+    def _generate_random_mask(self, param_type):
+        if hasattr(self, "random_" + param_type):
+            return getattr(self, "random_" + param_type)
+
+        if param_type == "weight":
+            self.random_weight = nn.Parameter(torch.zeros(self.weight.shape))
+            nn.init.normal_(self.random_weight, std=0.02)
+            self.random_weight.requires_grad = False
+            return self.random_weight
+
+        elif param_type == "bias":
+            self.random_bias = nn.Parameter(torch.zeros(self.bias.shape))
+            self.random_bias.requires_grad = False
+            return self.random_bias
+
+        else:
+            raise ValueError("generate_random_mask only supports weights and biases")
+
+    def forward(self, x):
+        """Perform the forward pass.
+        Parameters
+        ----------
+        data : torch.Tensor
+            N-dimensional tensor, with last dimension `in_features`
+        Returns
+        -------
+        torch.Tensor
+            N-dimensional tensor, with last dimension `out_features`
+        """
+        self.weight_mask = self._compute_mask("weight_mask_params")
+        if self.ablation == "random_ablate":
+            masked_weight = self._compute_random_ablation("weight")
+        else:
+            masked_weight = self.weight * self.weight_mask
+
+        if self.mask_bias:
+            self.bias_mask = self._compute_mask("bias_mask_params")
+            if self.ablation == "random_ablate":
+                masked_bias = self._compute_random_ablation("bias")
+            else:
+                masked_bias = self.bias * self.bias_mask
+        else:
+            masked_bias = self.bias
+
+        size_out = x.size()[:-1] + (self.nf,)
+        x = torch.addmm(masked_bias, x.view(-1, x.size(-1)), masked_weight)
+        x = x.view(size_out)
+        return x
 
 
 class _ContSparseConv(ContSparseLayer):
@@ -317,9 +423,11 @@ class _ContSparseConv(ContSparseLayer):
         # Create a random tensor to reinit ablated parameters
         if hasattr(self, "random_" + param_type):
             return getattr(self, "random_" + param_type)
-        
+
         if param_type == "weight":
-            self.random_weight = nn.Parameter(torch.empty(self._base_layer.weight.size()))
+            self.random_weight = nn.Parameter(
+                torch.empty(self._base_layer.weight.size())
+            )
             init.kaiming_uniform_(self.random_weight, a=math.sqrt(5))
             self.random_weight.requires_grad = False
             return self.random_weight
@@ -334,7 +442,7 @@ class _ContSparseConv(ContSparseLayer):
 
         else:
             raise ValueError("generate_random_mask only supports weights and biases")
-    
+
     def forward(self, x):
         self.weight_mask = self._compute_mask("weight_mask_params")
         if self.ablation == "random_ablate":
@@ -394,6 +502,10 @@ class ContSparseConv2d(_ContSparseConv):
             bias = True
         else:
             bias = False
+        
+        if not bias and mask_bias:
+            mask_bias = False
+            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
 
         cont_sparse = ContSparseConv2d(
             layer.in_channels,
@@ -455,6 +567,10 @@ class ContSparseConv1d(_ContSparseConv):
             bias = True
         else:
             bias = False
+
+        if not bias and mask_bias:
+            mask_bias = False
+            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
 
         cont_sparse = ContSparseConv1d(
             layer.in_channels,
