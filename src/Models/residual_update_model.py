@@ -1,10 +1,10 @@
 import torch.nn as nn
-from model_configs import ResidualUpdateModelConfig
+from .model_configs import ResidualUpdateModelConfig
+
 
 class ResidualUpdateModel(nn.Module):
-
-    def __init__(self, config: ResidualUpdateModelConfig, model:nn.Module):
-        super.__init__()
+    def __init__(self, config: ResidualUpdateModelConfig, model: nn.Module):
+        super().__init__()
         self.config = config
         self.model = model
         self.residual_stream_updates = {}
@@ -25,32 +25,58 @@ class ResidualUpdateModel(nn.Module):
     def _add_bert_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(self.model.encoder.layer[i].attention.output.dense.register_forward_hook(self._get_activation('attn_'+str(i))))
+                self.hooks.append(
+                    self.model.encoder.layer[
+                        i
+                    ].attention.output.dense.register_forward_hook(
+                        self._get_activation("attn_" + str(i))
+                    )
+                )
             if self.config.mlp:
-                self.hooks.append(self.model.encoder.layer[i].output.dense.register_forward_hook(self._get_activation('mlp_'+str(i))))
+                self.hooks.append(
+                    self.model.encoder.layer[i].output.dense.register_forward_hook(
+                        self._get_activation("mlp_" + str(i))
+                    )
+                )
 
     def _add_gpt_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(self.model.h[i].attn.register_forward_hook(self._get_activation('attn_'+str(i))))
+                self.hooks.append(
+                    self.model.h[i].attn.register_forward_hook(
+                        self._get_activation("attn_" + str(i))
+                    )
+                )
             if self.config.mlp:
-                self.hooks.append(self.model.h[i].mlp.register_forward_hook(self._get_activation('mlp_'+str(i))))
+                self.hooks.append(
+                    self.model.h[i].mlp.register_forward_hook(
+                        self._get_activation("mlp_" + str(i))
+                    )
+                )
 
     def _add_vit_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(self.model.encoder.layer[i].attention.register_forward_hook(self._get_activation('attn_'+str(i))))
+                self.hooks.append(
+                    self.model.encoder.layer[i].attention.register_forward_hook(
+                        self._get_activation("attn_" + str(i))
+                    )
+                )
             if self.config.mlp:
-                self.hooks.append(self.model.encoder.layer[i].output.dense.register_forward_hook(self._get_activation('mlp_'+str(i))))
+                self.hooks.append(
+                    self.model.encoder.layer[i].output.dense.register_forward_hook(
+                        self._get_activation("mlp_" + str(i))
+                    )
+                )
 
     def __call__(self, **kwargs):
         return self.forward(**kwargs)
-    
+
     def forward(self, **kwargs):
         return self.model(**kwargs)
-    
+
     def _get_activation(self, name):
-        #Credit to Jack Merullo for this code
+        # Credit to Jack Merullo for this code
         def hook(module, input, output):
             if self.config.model_type == "bert":
                 self.residual_stream_updates[name] = output
@@ -62,4 +88,5 @@ class ResidualUpdateModel(nn.Module):
                 self.residual_stream_updates[name] = output[0]
             elif self.config.model_type == "vit" and "mlp" in name:
                 self.residual_stream_updates[name] = output
+
         return hook

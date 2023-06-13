@@ -69,7 +69,9 @@ class CircuitModel(nn.Module):
 
                 setattr(earlier_component, component_path, masked_layer)
             except:
-                raise ValueError(f"{target_layer} is a {layer_type}, which is not a supported layer type")
+                raise ValueError(
+                    f"{target_layer} is a {layer_type}, which is not a supported layer type"
+                )
 
     def _create_torch2masked(self, config):
         if config.mask_method == "continuous_sparsification":
@@ -77,7 +79,7 @@ class CircuitModel(nn.Module):
                 nn.Linear: ContSparseLinear,
                 nn.Conv2d: ContSparseConv2d,
                 nn.Conv1d: ContSparseConv1d,
-                GPTConv1D: ContSparseGPTConv1D
+                GPTConv1D: ContSparseGPTConv1D,
             }
         else:
             raise ValueError("Only Continuous_Sparsification is supported at this time")
@@ -94,7 +96,7 @@ class CircuitModel(nn.Module):
 
     def train(self, train_bool=True):
         self.training = train_bool
-        
+
         if self.config.freeze_base:
             for layer in self.root_model.modules():
                 if not issubclass(type(layer), MaskLayer):
@@ -108,7 +110,7 @@ class CircuitModel(nn.Module):
                     )  # Set masklayers to train or eval, all weights and biases are frozen anyway
         else:
             for layer in self.root_model.modules():
-                layer.train(train_bool) 
+                layer.train(train_bool)
 
     def compute_l0_statistics(self):
         # Compute overall l0, max masking parameters, per-layer-l0 statistics

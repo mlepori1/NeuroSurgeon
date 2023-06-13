@@ -212,7 +212,11 @@ def test_forward_pass_gpt():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
         mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
-        target_layers=["transformer.h.0.attn.c_proj", "transformer.h.0.mlp.c_fc", "transformer.h.1.mlp.c_proj"],
+        target_layers=[
+            "transformer.h.0.attn.c_proj",
+            "transformer.h.0.mlp.c_fc",
+            "transformer.h.1.mlp.c_proj",
+        ],
         freeze_base=True,
         add_l0=True,
     )
@@ -348,8 +352,9 @@ def train_loop(model, dataloader):
 
 
 def test_training_gpt():
-
-    tokenizer = GPT2Tokenizer.from_pretrained("sshleifer/tiny-gpt2", pad_token="<|endoftext|>")
+    tokenizer = GPT2Tokenizer.from_pretrained(
+        "sshleifer/tiny-gpt2", pad_token="<|endoftext|>"
+    )
 
     dataloader = setup_gpt_dataset(tokenizer)
 
@@ -433,16 +438,16 @@ def test_training_gpt():
     assert torch.all(before_mask != after_mask)
 
 
-
-
 def setup_image_dataset(processor_name):
     dataset = load_dataset("beans")
     image_processor = AutoImageProcessor.from_pretrained(processor_name)
+
     def process(examples):
         return image_processor(
             examples["image"],
             return_tensors="pt",
         )
+
     dataset = dataset.map(process, batched=True)
     dataset = dataset.remove_columns(["image_file_path"])
     dataset = dataset.remove_columns(["image"])
@@ -453,7 +458,6 @@ def setup_image_dataset(processor_name):
 
 
 def test_training_resnet():
-
     dataloader = setup_image_dataset("microsoft/resnet-18")
 
     # Check that the training runs with the circuit model without bugs with frozen underlying model
@@ -533,7 +537,6 @@ def test_training_resnet():
 
 
 def test_training_vit():
-
     dataloader = setup_image_dataset("lysandre/tiny-vit-random")
 
     # Check that the training runs with the circuit model without bugs with frozen underlying model
