@@ -1,32 +1,59 @@
 import torch.nn as nn
 from .model_configs import ResidualUpdateModelConfig
+from transformers import BertPreTrainedModel, RobertaPreTrainedModel
 
 
 class ResidualUpdateModel(nn.Module):
-    def __init__(self, config: ResidualUpdateModelConfig, model: nn.Module):
+    def __init__(
+        self,
+        config: ResidualUpdateModelConfig,
+        model: nn.Module,
+    ):
         super().__init__()
         self.config = config
         self.model = model
+        self.circuit = self.config.circuit
+        self.base = self.config.base
         self.residual_stream_updates = {}
         self.hooks = []
 
+        if self.circuit:
+            self.to_hook = self.model.root_model
+        else:
+            self.to_hook = self.model
+
         if self.config.model_type == "gpt":
             # This applies to GPT-2 and GPT Neo in the transformers repo
+            if not self.base:
+                self.to_hook = self.to_hook.transformer
             self._add_gpt_hooks()
 
         elif self.config.model_type == "bert":
             # This applies to BERT and RoBERTa in the transformers repo
+            if not self.base:
+                if issubclass(self.to_hook.__class__, BertPreTrainedModel):
+                    self.to_hook = self.to_hook.bert
+                elif issubclass(self.to_hook.__class__, RobertaPreTrainedModel):
+                    self.to_hook = self.to_hook.roberta
+                else:
+                    raise ValueError(
+                        "We only support BERT and RoBERTa models currently"
+                    )
             self._add_bert_hooks()
 
         elif self.config.model_type == "vit":
             # This applies to ViT models in the transformers repo
+            if not self.base:
+                self.to_hook = self.to_hook.vit
             self._add_vit_hooks()
+        else:
+            raise ValueError("model type must be one of [gpt, bert, vit]")
 
     def _add_bert_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
                 self.hooks.append(
-                    self.model.encoder.layer[
+                    self.to_hook.encoder.layer[
                         i
                     ].attention.output.dense.register_forward_hook(
                         self._get_activation("attn_" + str(i))
@@ -34,7 +61,7 @@ class ResidualUpdateModel(nn.Module):
                 )
             if self.config.mlp:
                 self.hooks.append(
-                    self.model.encoder.layer[i].output.dense.register_forward_hook(
+                    self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
                         self._get_activation("mlp_" + str(i))
                     )
                 )
@@ -43,13 +70,13 @@ class ResidualUpdateModel(nn.Module):
         for i in self.config.target_layers:
             if self.config.attn:
                 self.hooks.append(
-                    self.model.h[i].attn.register_forward_hook(
+                    self.to_hook.h[i].attn.register_forward_hook(
                         self._get_activation("attn_" + str(i))
                     )
                 )
             if self.config.mlp:
                 self.hooks.append(
-                    self.model.h[i].mlp.register_forward_hook(
+                    self.to_hook.h[i].mlp.register_forward_hook(
                         self._get_activation("mlp_" + str(i))
                     )
                 )
@@ -58,13 +85,13 @@ class ResidualUpdateModel(nn.Module):
         for i in self.config.target_layers:
             if self.config.attn:
                 self.hooks.append(
-                    self.model.encoder.layer[i].attention.register_forward_hook(
+                    self.to_hook.encoder.layer[i].attention.register_forward_hook(
                         self._get_activation("attn_" + str(i))
                     )
                 )
             if self.config.mlp:
                 self.hooks.append(
-                    self.model.encoder.layer[i].output.dense.register_forward_hook(
+                    self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
                         self._get_activation("mlp_" + str(i))
                     )
                 )
@@ -74,6 +101,10 @@ class ResidualUpdateModel(nn.Module):
 
     def forward(self, **kwargs):
         return self.model(**kwargs)
+
+    def train(self, train_bool: bool = True):
+        self.training = train_bool
+        self.model.train(train_bool)
 
     def _get_activation(self, name):
         # Credit to Jack Merullo for this code

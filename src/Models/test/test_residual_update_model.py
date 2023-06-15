@@ -3,8 +3,11 @@ import torch
 from datasets import load_dataset
 from transformers import (
     BertModel,
+    BertForMaskedLM,
     GPT2Model,
+    GPT2LMHeadModel,
     ViTModel,
+    ViTForMaskedImageModeling,
     BertTokenizer,
     GPT2Tokenizer,
     AutoImageProcessor,
@@ -13,7 +16,7 @@ from ..residual_update_model import ResidualUpdateModel
 from ..model_configs import ResidualUpdateModelConfig
 
 
-def test_model_initializations():
+def test_base_model_initializations():
     # Test that residual models can be initialized for different model types
     bert_config = ResidualUpdateModelConfig("bert", [0, 1], True, True)
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
@@ -32,6 +35,27 @@ def test_model_initializations():
         bert_config = ResidualUpdateModelConfig("bert", [24], True, True)
         bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
         resid_model = ResidualUpdateModel(bert_config, bert)
+
+    # Assert that one cannot specify the wrong model type
+    with pytest.raises(Exception):
+        wrong_config = ResidualUpdateModelConfig("gpt", [0], True, True)
+        bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
+        resid_model = ResidualUpdateModel(wrong_config, bert)
+
+
+def test_generative_model_initializations():
+    # Test that residual models can be initialized for different model types
+    bert_config = ResidualUpdateModelConfig("bert", [0, 1], True, True, False, False)
+    bert = BertForMaskedLM.from_pretrained("prajjwal1/bert-tiny")
+    resid_model = ResidualUpdateModel(bert_config, bert)
+
+    gpt_config = ResidualUpdateModelConfig("gpt", [0, 1], True, True, False, False)
+    gpt = GPT2LMHeadModel.from_pretrained("sshleifer/tiny-gpt2")
+    resid_model = ResidualUpdateModel(gpt_config, gpt)
+
+    vit_config = ResidualUpdateModelConfig("vit", [0, 1], True, True, False, False)
+    vit = ViTForMaskedImageModeling.from_pretrained("lysandre/tiny-vit-random")
+    resid_model = ResidualUpdateModel(vit_config, vit)
 
 
 def test_model_forward_pass():
