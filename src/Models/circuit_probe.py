@@ -48,33 +48,6 @@ class CircuitProbe(nn.Module):
             resid_config.attn and not resid_config.mlp
         )
 
-    def _create_token_mask(self, input_ids=None):
-        # Labels are only provided at the word level, not the subword level
-        # Must identify the entries in seq_len tokens that correspond to the first token per word
-        # Extract those update vectors for representation matching
-
-        # Create a mask to get rid of subword tokens
-        strings = self.tokenizer.batch_decode(input_ids, skip_special_tokens=True)
-        strings = [st.split(" ") for st in strings]
-        encs = self.tokenizer(
-            strings,
-            is_split_into_words=True,
-            return_offsets_mapping=True,
-            return_special_tokens_mask=True,
-            return_tensors="pt",
-        )
-        offset_map = encs["offset_mapping"]
-        not_subword = offset_map[:, :, 0] == 0
-
-        # Compute mask to get rid of special tokens
-        not_special = ~encs["special_tokens_mask"].bool()
-
-        # Elementwise multiplication of masks to get first token for each word
-        token_mask = not_subword * not_special
-        token_mask = token_mask.bool()
-
-        return token_mask
-
     def _compute_representation_matching_loss(self, updates, labels):
         loss = None
 
@@ -115,8 +88,11 @@ class CircuitProbe(nn.Module):
         self.training = train_bool
         self.wrapped_model.train(train_bool)
 
-    def forward(self, input_ids=None, labels=None, return_dict=True, **kwargs):
-        token_mask = self._create_token_mask(input_ids)
+    def forward(
+        self, input_ids=None, labels=None, token_mask=None, return_dict=True, **kwargs
+    ):
+        # Must provide a token mask, which is a boolean mask for each input denoting which
+        # residual streams to compute loss over
 
         # Call model forward pass, get out the correct activations
         _ = self.wrapped_model(input_ids=input_ids, **kwargs)
@@ -130,16 +106,19 @@ class CircuitProbe(nn.Module):
         )
         updates = updates[token_mask]
 
-        labels = labels.reshape(-1)
-        assert len(updates) == len(
-            labels
-        )  # Ensure that there is only one update per label
+        if labels is not None:
+            # Get rid of padding on labels (which is only used for batching)
+            labels = labels[labels != -1]
+            labels = labels.reshape(-1)
+            assert len(updates) == len(
+                labels
+            )  # Ensure that there is only one update per label
 
         loss = None
 
-        # Compute Representation Matching Loss
-
-        loss = self._compute_representation_matching_loss(updates, labels)
+        if labels is not None:
+            # Compute Representation Matching Loss
+            loss = self._compute_representation_matching_loss(updates, labels)
 
         # Add in L0 Regularization to keep mask small
         if self.config.circuit_config.add_l0:
@@ -151,9 +130,11 @@ class CircuitProbe(nn.Module):
         if not return_dict:
             return (loss,) + (updates,) if loss is not None else updates
 
-        return SequenceClassifierOutput(
+        output = SequenceClassifierOutput(
             loss=loss,
             logits=None,
             hidden_states=updates,
             attentions=None,
         )
+        output.labels = labels
+        return output

@@ -177,7 +177,9 @@ class ContSparseLinear(ContSparseLayer):
 
         if not bias and mask_bias:
             mask_bias = False
-            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
+            warnings.warn(
+                f"Cannot mask bias for layer {layer} because {layer} has no bias term"
+            )
 
         cont_sparse = ContSparseLinear(
             layer.in_features,
@@ -246,14 +248,18 @@ class ContSparseLinear(ContSparseLayer):
             N-dimensional tensor, with last dimension `out_features`
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
-        if self.ablation == "random_ablate":
+        if not self.use_masks:
+            masked_weight = self.weight
+        elif self.ablation == "random_ablate":
             masked_weight = self._compute_random_ablation("weight")
         else:
             masked_weight = self.weight * self.weight_mask
 
         if self.mask_bias:
             self.bias_mask = self._compute_mask("bias_mask_params")
-            if self.ablation == "random_ablate":
+            if not self.use_masks:
+                masked_bias = self.bias
+            elif self.ablation == "random_ablate":
                 masked_bias = self._compute_random_ablation("bias")
             else:
                 masked_bias = self.bias * self.bias_mask
@@ -300,7 +306,7 @@ class ContSparseGPTConv1D(ContSparseLayer):
                 0
             ],  # For some reason, this layer doesn't store in_features as an attribute
             ablation,
-            mask_bias, # This class always has a bias term
+            mask_bias,  # This class always has a bias term
             mask_init_value,
         )
         cont_sparse.weight = layer.weight
@@ -346,14 +352,18 @@ class ContSparseGPTConv1D(ContSparseLayer):
             N-dimensional tensor, with last dimension `out_features`
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
-        if self.ablation == "random_ablate":
+        if not self.use_masks:
+            masked_weight = self.weight
+        elif self.ablation == "random_ablate":
             masked_weight = self._compute_random_ablation("weight")
         else:
             masked_weight = self.weight * self.weight_mask
 
         if self.mask_bias:
             self.bias_mask = self._compute_mask("bias_mask_params")
-            if self.ablation == "random_ablate":
+            if not self.use_masks:
+                masked_bias = self.bias
+            elif self.ablation == "random_ablate":
                 masked_bias = self._compute_random_ablation("bias")
             else:
                 masked_bias = self.bias * self.bias_mask
@@ -445,14 +455,18 @@ class _ContSparseConv(ContSparseLayer):
 
     def forward(self, x):
         self.weight_mask = self._compute_mask("weight_mask_params")
-        if self.ablation == "random_ablate":
+        if not self.use_masks:
+            masked_weight = self.weight
+        elif self.ablation == "random_ablate":
             masked_weight = self._compute_random_ablation("weight")
         else:
             masked_weight = self.weight * self.weight_mask
 
         if self.mask_bias:
             self.bias_mask = self._compute_mask("bias_mask_params")
-            if self.ablation == "random_ablate":
+            if not self.use_masks:
+                masked_bias = self.bias
+            elif self.ablation == "random_ablate":
                 masked_bias = self._compute_random_ablation("bias")
             else:
                 masked_bias = self.bias * self.bias_mask
@@ -502,10 +516,12 @@ class ContSparseConv2d(_ContSparseConv):
             bias = True
         else:
             bias = False
-        
+
         if not bias and mask_bias:
             mask_bias = False
-            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
+            warnings.warn(
+                f"Cannot mask bias for layer {layer} because {layer} has no bias term"
+            )
 
         cont_sparse = ContSparseConv2d(
             layer.in_channels,
@@ -570,7 +586,9 @@ class ContSparseConv1d(_ContSparseConv):
 
         if not bias and mask_bias:
             mask_bias = False
-            warnings.warn(f'Cannot mask bias for layer {layer} because {layer} has no bias term')
+            warnings.warn(
+                f"Cannot mask bias for layer {layer} because {layer} has no bias term"
+            )
 
         cont_sparse = ContSparseConv1d(
             layer.in_channels,

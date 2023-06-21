@@ -125,6 +125,26 @@ def test_linear_from_layer():
     assert not torch.all(masked_out == base_out)
 
 
+def test_linear_use_mask():
+    base_layer = nn.Linear(10, 20)
+    masked_layer = ContSparseLinear.from_layer(
+        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+    )
+
+    ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
+    base_out = base_layer(ipt_tensor)
+
+    # Assert that test mode masked_layer produces different output as base layer (because init_value is < 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out != base_out)
+
+    # Assert that turning off masks gives same output as base layer
+    masked_layer.use_masks = False
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out == base_out)
+
+
 def test_linear_zero_ablate():
     layer = ContSparseLinear(
         10, 10, bias=True, ablation="zero_ablate", mask_bias=False, mask_init_value=0.0
@@ -383,6 +403,28 @@ def test_gptconv1d_from_layer():
     masked_layer.train(True)
     masked_out = masked_layer(ipt_tensor)
     assert not torch.all(masked_out == base_out)
+
+
+def test_gptconv1d_use_mask():
+    base_layer = Conv1D(
+        20, 10
+    )  # For some reason, out_features comes first in this classes constructor...
+    masked_layer = ContSparseGPTConv1D.from_layer(
+        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+    )
+
+    ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
+    base_out = base_layer(ipt_tensor)
+
+    # Assert that test mode masked_layer produces different output as base layer (because init_value is < 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out != base_out)
+
+    # Assert that turning off masks gives same output as base layer
+    masked_layer.use_masks = False
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out == base_out)
 
 
 def test_gptconv1d_zero_ablate():
@@ -672,6 +714,26 @@ def test_conv1d_from_layer():
     masked_layer.train(True)
     masked_out = masked_layer(ipt_tensor)
     assert not torch.all(masked_out == base_out)
+
+
+def test_conv1d_use_mask():
+    base_layer = nn.Conv1d(1, 10, 3)
+    masked_layer = ContSparseConv1d.from_layer(
+        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+    )
+
+    ipt_tensor = torch.Tensor([[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0]])
+    base_out = base_layer(ipt_tensor)
+
+    # Assert that test mode masked_layer produces different output as base layer (because init_value is < 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out != base_out)
+
+    # Assert that turning off masks gives same output as base layer
+    masked_layer.use_masks = False
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out == base_out)
 
 
 def test_conv1d_zero_ablate():
@@ -998,6 +1060,34 @@ def test_conv2d_from_layer():
     masked_layer.train(True)
     masked_out = masked_layer(ipt_tensor)
     assert not torch.all(masked_out == base_out)
+
+
+def test_conv2d_use_mask():
+    base_layer = nn.Conv2d(1, 10, 3)
+    masked_layer = ContSparseConv2d.from_layer(
+        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+    )
+
+    ipt_tensor = torch.Tensor(
+        [
+            [
+                [0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0],
+                [0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0],
+                [0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0],
+            ]
+        ]
+    )
+    base_out = base_layer(ipt_tensor)
+
+    # Assert that test mode masked_layer produces different output as base layer (because init_value is < 0)
+    masked_layer.train(False)
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out != base_out)
+
+    # Assert that turning off masks gives same output as base layer
+    masked_layer.use_masks = False
+    masked_out = masked_layer(ipt_tensor)
+    assert torch.all(masked_out == base_out)
 
 
 def test_conv2d_zero_ablate():

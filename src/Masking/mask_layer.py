@@ -10,6 +10,7 @@ class MaskLayer(nn.Module):
         super().__init__()
         self.ablation = ablation
         self.mask_bias = mask_bias
+        self.use_masks = True  # Default behavior is to use the masks, but this can change for specific evaluations
 
     @property
     def ablation(self):
@@ -30,6 +31,14 @@ class MaskLayer(nn.Module):
     @mask_bias.setter
     def mask_bias(self, value):
         self._mask_bias = value
+
+    @property
+    def use_masks(self):
+        return self._use_masks
+
+    @use_masks.setter
+    def use_masks(self, value):
+        self._use_masks = value
 
     def train(self, train_bool):
         self.training = train_bool

@@ -130,24 +130,6 @@ def test_circuit_probe_training():
         assert m.training == False
 
 
-def test_token_mask_creation():
-    # Assert that token mask is correct, it ignores subwords and special tokens
-    probe = create_test_probe()
-
-    input_strings = ["This is a testtesttest", "This oneoneone is too"]
-
-    mask = probe._create_token_mask(probe.tokenizer(input_strings)["input_ids"])
-
-    ground_truth = torch.Tensor(
-        [
-            [False, True, True, True, True, False, False, False],
-            [False, True, True, False, False, True, True, False],
-        ]
-    ).bool()
-
-    assert torch.all(ground_truth == mask)
-
-
 def test_representation_matching_loss():
     # Assert that representation matching loss is correct
     probe = create_test_probe()
@@ -172,9 +154,12 @@ def test_forward_pass():
 
     probe = create_test_probe()
     input = ["the cat sleeps on the mat", "the dog rests in the rug"]
+    token_mask = torch.tensor(
+        [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
+    ).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
     encs = probe.tokenizer(input, return_tensors="pt")
-    out = probe(**encs, labels=labels)
+    out = probe(**encs, labels=labels, token_mask=token_mask)
 
     # Assert that residual stream updates are created in the right layer
     assert probe.config.probe_updates in probe.wrapped_model.residual_stream_updates
@@ -182,9 +167,12 @@ def test_forward_pass():
     low_loss = out.loss
 
     input = ["the cat sleeps on the mat", "jump near the big red flag"]
+    token_mask = torch.tensor(
+        [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
+    ).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
     encs = probe.tokenizer(input, return_tensors="pt")
-    out = probe(**encs, labels=labels)
+    out = probe(**encs, labels=labels, token_mask=token_mask)
 
     high_loss = out.loss
 
@@ -193,20 +181,23 @@ def test_forward_pass():
     # Assert that # labels must be equal to # of relevant (i.e. not special, not subword) tokens
     with pytest.raises(Exception):
         input = ["the cat sleeps on the mat"]
+        token_mask = torch.tensor([[0, 1, 1, 1, 1, 1, 1, 0]]).bool()
         labels = torch.tensor([[0, 1, 2, 3, 4]])
         encs = probe.tokenizer(input, return_tensors="pt")
-        out = probe(**encs, labels=labels)
+        out = probe(**encs, labels=labels, token_mask=token_mask)
 
     with pytest.raises(Exception):
         input = ["the catcat sleeps on the mat"]
+        token_mask = torch.tensor([[0, 1, 0, 1, 1, 1, 1, 1, 0]]).bool()
         labels = torch.tensor([[0, 1, 2, 3, 4, 5, 6]])
         encs = probe.tokenizer(input, return_tensors="pt")
-        out = probe(**encs, labels=labels)
+        out = probe(**encs, labels=labels, token_mask=token_mask)
 
     input = ["the catcat sleeps on the mat"]
+    token_mask = torch.tensor([[0, 1, 0, 1, 1, 1, 1, 1, 0]]).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5]])
     encs = probe.tokenizer(input, return_tensors="pt")
-    out = probe(**encs, labels=labels)
+    out = probe(**encs, labels=labels, token_mask=token_mask)
 
 
 def test_training_circuit_probe():
@@ -218,6 +209,9 @@ def test_training_circuit_probe():
         "the cat sleeps on the mat",
         "the dog rests in the rug",
     ]
+    token_mask = torch.tensor(
+        [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
+    ).bool()
     encs = probe.tokenizer(input_batch, return_tensors="pt")
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
 
@@ -225,7 +219,7 @@ def test_training_circuit_probe():
 
     probe.train()
 
-    outputs = probe(**encs, labels=labels)
+    outputs = probe(**encs, labels=labels, token_mask=token_mask)
     loss = outputs.loss
     loss.backward()
 

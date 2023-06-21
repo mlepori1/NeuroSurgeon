@@ -19,6 +19,7 @@ class CircuitModel(nn.Module):
         super().__init__()
         self.config = config
         self.root_model = root_model
+        self.temperature = 1.0
 
         self._replace_target_layers()
         self._handle_model_freezing()
@@ -184,3 +185,8 @@ class CircuitModel(nn.Module):
         for module in self.modules():
             if issubclass(type(module), MaskLayer):
                 module.ablation = ablation
+
+    def use_masks(self, value):
+        for module in self.modules():
+            if issubclass(type(module), MaskLayer):
+                module.use_masks = value

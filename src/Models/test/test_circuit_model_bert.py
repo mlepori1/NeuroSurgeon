@@ -194,6 +194,41 @@ def test_forward_pass_bert():
     assert not torch.all(train_circuit_logits == base_logits)
 
 
+def test_use_mask_bert():
+    # Assert that underlying model and masked model with negative mask weights
+    # give different output for eval mode, but same output when use_masks is set to False
+    circuit_config = CircuitConfig(
+        mask_method="continuous_sparsification",
+        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": -1.0},
+        target_layers=[
+            "bert.encoder.layer.0.attention.self.query",
+            "bert.encoder.layer.1.output.dense",
+            "bert.pooler.dense",
+        ],
+        freeze_base=True,
+        add_l0=True,
+    )
+
+    tokenizer = BertTokenizer.from_pretrained("prajjwal1/bert-tiny")
+    inputs = tokenizer("Hello, this is a test", return_tensors="pt")
+
+    model = BertForSequenceClassification.from_pretrained("prajjwal1/bert-tiny")
+    model.train(False)
+    base_logits = model(**inputs).logits.cpu()
+
+    model.train(True)
+    circuit_model = CircuitModel(circuit_config, model)
+    circuit_model.train(False)
+    use_masks_logits = circuit_model(**inputs).logits.cpu()
+
+    assert torch.all(use_masks_logits != base_logits)
+
+    circuit_model.use_masks = False
+    do_not_use_masks_logits = circuit_model(**inputs).logits.cpu()
+
+    assert not torch.all(do_not_use_masks_logits == base_logits)
+
+
 def test_l0_calc_bert():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
