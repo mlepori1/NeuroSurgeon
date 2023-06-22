@@ -1,12 +1,11 @@
-from .circuit_model import CircuitModel
-from .residual_update_model import ResidualUpdateModel
-from .model_configs import CircuitProbeConfig
+from ..Models.circuit_model import CircuitModel
+from ..Models.residual_update_model import ResidualUpdateModel
+from ..Probing.probe_configs import CircuitProbeConfig
 from transformers import PreTrainedTokenizerFast
 from transformers.modeling_outputs import SequenceClassifierOutput
 import torchmetrics
 import torch
 import torch.nn as nn
-import numpy as np
 
 
 class CircuitProbe(nn.Module):

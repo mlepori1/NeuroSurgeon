@@ -1,8 +1,9 @@
 import pytest
-from ..circuit_model import CircuitModel
-from ..circuit_probe import CircuitProbe
-from ..residual_update_model import ResidualUpdateModel
-from ..model_configs import *
+from ...Models.circuit_model import CircuitModel
+from ...Probing.circuit_probe import CircuitProbe
+from ...Probing.probe_configs import CircuitProbeConfig
+from ...Models.residual_update_model import ResidualUpdateModel
+from ...Models.model_configs import *
 from transformers import BertModel, BertTokenizerFast
 from ...Masking.mask_layer import MaskLayer
 import torch

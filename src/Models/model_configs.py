@@ -38,16 +38,3 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.attn = attn
         self.circuit = circuit
         self.base = base
-
-
-class CircuitProbeConfig(PretrainedConfig):
-    def __init__(
-        self,
-        probe_updates: str,
-        circuit_config: CircuitConfig,
-        resid_config: ResidualUpdateModelConfig,
-    ):
-        super().__init__()
-        self.probe_updates = probe_updates
-        self.circuit_config = circuit_config
-        self.resid_config = resid_config
