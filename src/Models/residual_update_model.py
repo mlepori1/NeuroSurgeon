@@ -1,6 +1,6 @@
 import torch.nn as nn
 from .model_configs import ResidualUpdateModelConfig
-from transformers import BertPreTrainedModel, RobertaPreTrainedModel
+from transformers import BertPreTrainedModel, RobertaPreTrainedModel, MPNetPreTrainedModel
 
 
 class ResidualUpdateModel(nn.Module):
@@ -35,9 +35,11 @@ class ResidualUpdateModel(nn.Module):
                     self.to_hook = self.to_hook.bert
                 elif issubclass(self.to_hook.__class__, RobertaPreTrainedModel):
                     self.to_hook = self.to_hook.roberta
+                elif issubclass(self.to_hook.__class__, MPNetPreTrainedModel):
+                    self.to_hook = self.to_hook.mpnet
                 else:
                     raise ValueError(
-                        "We only support BERT and RoBERTa models currently"
+                        "We only support BERT, RoBERTa, and MPNet models currently"
                     )
             self._add_bert_hooks()
 
