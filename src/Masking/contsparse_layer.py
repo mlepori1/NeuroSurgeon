@@ -84,6 +84,9 @@ class ContSparseLayer(MaskLayer):
         sampled_mask[sample_complement_indices] = 0.0
         sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
 
+        # Get device of mask param and send parameter to it
+        sampled_mask = sampled_mask.to(mask_param.device)
+
         setattr(self, "sampled_" + param_type, sampled_mask)
 
         return sampled_mask
