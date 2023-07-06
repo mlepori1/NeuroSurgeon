@@ -1,6 +1,6 @@
 import torch.nn as nn
 from .model_configs import ResidualUpdateModelConfig
-from transformers import BertPreTrainedModel, RobertaPreTrainedModel, MPNetPreTrainedModel
+from transformers import BertPreTrainedModel, RobertaPreTrainedModel, MPNetPreTrainedModel, XLMRobertaPreTrainedModel, ErniePreTrainedModel, ElectraPreTrainedModel, ConvBertPreTrainedModel
 
 
 class ResidualUpdateModel(nn.Module):
@@ -29,7 +29,7 @@ class ResidualUpdateModel(nn.Module):
             self._add_gpt_hooks()
 
         elif self.config.model_type == "bert":
-            # This applies to BERT and RoBERTa in the transformers repo
+            # This applies to BERT and RoBERTa-style models in the transformers repo
             if not self.base:
                 if issubclass(self.to_hook.__class__, BertPreTrainedModel):
                     self.to_hook = self.to_hook.bert
@@ -37,9 +37,17 @@ class ResidualUpdateModel(nn.Module):
                     self.to_hook = self.to_hook.roberta
                 elif issubclass(self.to_hook.__class__, MPNetPreTrainedModel):
                     self.to_hook = self.to_hook.mpnet
+                elif issubclass(self.to_hook.__class__, XLMRobertaPreTrainedModel):
+                    self.to_hook = self.to_hook.roberta
+                elif issubclass(self.to_hook.__class__, ErniePreTrainedModel):
+                    self.to_hook = self.to_hook.ernie
+                elif issubclass(self.to_hook.__class__, ElectraPreTrainedModel):
+                    self.to_hook = self.to_hook.electra
+                elif issubclass(self.to_hook.__class__, ConvBertPreTrainedModel):
+                    self.to_hook = self.to_hook.convbert
                 else:
                     raise ValueError(
-                        "We only support BERT, RoBERTa, and MPNet models currently"
+                        "We only support BERT, RoBERTa, MPNet, XLM-Roberta, Ernie, ConvBERT, and Electra models currently"
                     )
             self._add_bert_hooks()
 
