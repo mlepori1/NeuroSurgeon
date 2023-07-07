@@ -1,5 +1,5 @@
 from ..Models.circuit_model import CircuitModel
-from ..Models.residual_update_model import ResidualUpdateModel
+from .residual_update_model import ResidualUpdateModel
 from ..Probing.probe_configs import CircuitProbeConfig
 from transformers import PreTrainedTokenizerFast
 from transformers.modeling_outputs import SequenceClassifierOutput

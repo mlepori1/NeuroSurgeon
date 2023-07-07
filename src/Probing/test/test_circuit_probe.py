@@ -1,9 +1,9 @@
 import pytest
 from ...Models.circuit_model import CircuitModel
 from ...Probing.circuit_probe import CircuitProbe
-from ...Probing.probe_configs import CircuitProbeConfig
-from ...Models.residual_update_model import ResidualUpdateModel
-from ...Models.model_configs import *
+from ...Probing.probe_configs import *
+from ..residual_update_model import ResidualUpdateModel
+from ...Models.model_configs import CircuitConfig
 from transformers import BertModel, BertTokenizerFast
 from ...Masking.mask_layer import MaskLayer
 import torch
@@ -14,7 +14,7 @@ from copy import deepcopy
 def create_test_probe():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,
@@ -48,7 +48,7 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=False,
         add_l0=True,
@@ -68,7 +68,7 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,
@@ -88,7 +88,7 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,

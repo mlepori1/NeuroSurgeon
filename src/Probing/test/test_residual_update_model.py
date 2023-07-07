@@ -12,8 +12,8 @@ from transformers import (
     GPT2Tokenizer,
     AutoImageProcessor,
 )
-from ..residual_update_model import ResidualUpdateModel
-from ..model_configs import ResidualUpdateModelConfig
+from .. import ResidualUpdateModel
+from ..probe_configs import ResidualUpdateModelConfig
 
 
 def test_base_model_initializations():

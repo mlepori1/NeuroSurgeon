@@ -90,7 +90,7 @@ def test_linear_init():
 def test_linear_from_layer():
     base_layer = nn.Linear(10, 20)
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
     )
 
     # Ensure that masked layer is initialized correctly
@@ -111,7 +111,7 @@ def test_linear_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -128,7 +128,7 @@ def test_linear_from_layer():
 def test_linear_use_mask():
     base_layer = nn.Linear(10, 20)
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
@@ -370,7 +370,7 @@ def test_gptconv1d_from_layer():
         20, 10
     )  # For some reason, out_features comes first in this classes constructor...
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
     )
 
     # Ensure that masked layer is initialized correctly
@@ -391,7 +391,7 @@ def test_gptconv1d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -410,7 +410,7 @@ def test_gptconv1d_use_mask():
         20, 10
     )  # For some reason, out_features comes first in this classes constructor...
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
@@ -681,7 +681,7 @@ def test_conv1d_init():
 def test_conv1d_from_layer():
     base_layer = nn.Conv1d(1, 10, 3)
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
     )
 
     # Ensure that masked layer is initialized correctly
@@ -702,7 +702,7 @@ def test_conv1d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -719,7 +719,7 @@ def test_conv1d_from_layer():
 def test_conv1d_use_mask():
     base_layer = nn.Conv1d(1, 10, 3)
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     ipt_tensor = torch.Tensor([[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0]])
@@ -1019,7 +1019,7 @@ def test_conv2d_init():
 def test_conv2d_from_layer():
     base_layer = nn.Conv2d(1, 10, 3)
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
     )
 
     # Ensure that masked layer is initialized correctly
@@ -1048,7 +1048,7 @@ def test_conv2d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -1065,7 +1065,7 @@ def test_conv2d_from_layer():
 def test_conv2d_use_mask():
     base_layer = nn.Conv2d(1, 10, 3)
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_bias=True, mask_init_value=-1.0
+        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
     )
 
     ipt_tensor = torch.Tensor(

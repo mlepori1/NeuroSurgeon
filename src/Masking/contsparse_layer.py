@@ -10,8 +10,8 @@ import warnings
 
 
 class ContSparseLayer(MaskLayer):
-    def __init__(self, ablation: str, mask_bias: bool, mask_init_value: float):
-        super().__init__(ablation, mask_bias)
+    def __init__(self, ablation: str, mask_unit: str, mask_bias: bool, mask_init_value: float):
+        super().__init__(ablation, mask_unit, mask_bias)
         self.mask_init_value = mask_init_value
         self.temperature = 1.0
 
@@ -33,7 +33,7 @@ class ContSparseLayer(MaskLayer):
             raise ValueError("Temperature must be greater than 0")
         self._temperature = value
 
-    def _sample_random_mask(self, param_type, force_resample=False):
+    def _sample_mask_from_complement(self, param_type, force_resample=False):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
         but where the ablated parameters are drawn from the complement of the trained binary mask.
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
@@ -79,7 +79,7 @@ class ContSparseLayer(MaskLayer):
         ]
         sample_complement_indices = tuple(sample_complement_indices)
 
-        # Create a mask with just the sampled indices removed to run random ablation experiments
+        # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating learned subnetworks
         sampled_mask = torch.ones(mask_param.shape)
         sampled_mask[sample_complement_indices] = 0.0
         sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
@@ -94,8 +94,10 @@ class ContSparseLayer(MaskLayer):
     def _compute_mask(self, param_type):
         if param_type == "weight_mask_params":
             mask_param = self.weight_mask_params
+            base_param = self.weight
         elif param_type == "bias_mask_params":
             mask_param = self.bias_mask_params
+            base_param = self.bias
         else:
             raise ValueError(
                 "Only weight_mask_params and bias_mask_params are supported param_types"
@@ -105,7 +107,7 @@ class ContSparseLayer(MaskLayer):
         if (self.ablation == "none") and hard_mask:
             mask = (mask_param > 0).float()  # Hard Mask when not training
         elif self.ablation == "randomly_sampled":
-            mask = self._sample_random_mask(
+            mask = self._sample_mask_from_complement(
                 param_type, force_resample=False
             )  # Generates a randomly sampled mask of equal size to trained mask
         elif (self.ablation != "none") and hard_mask:
@@ -117,10 +119,22 @@ class ContSparseLayer(MaskLayer):
                 self.temperature * mask_param
             )  # Generate a soft mask for training
 
+        # Handle Neuron masking
+        if mask.shape != base_param.shape:
+            mask_shape = torch.tensor(mask.shape)
+            base_shape = torch.tensor(base_param.shape)
+            dims = mask_shape != base_shape
+            assert torch.sum(dims) == 1 # masking whole neurons
+            assert mask_shape[dims] == 1 # Weight mask applies to each neuron equally
+            repeats = torch.ones(base_shape.shape)
+            repeats[dims] = base_shape[dims]
+            mask = mask.repeat(repeats.int().tolist())
+            assert mask.shape == base_param.shape
+
         return mask
 
     @abstractmethod
-    def _generate_random_mask(self, param_type):
+    def _generate_random_values(self, param_type):
         # Used to create a mask of random values for random_ablate condition
         pass
 
@@ -128,11 +142,11 @@ class ContSparseLayer(MaskLayer):
         if param_type == "weight":
             params = self.weight
             params_mask = self.weight_mask
-            random_params = self._generate_random_mask("weight")
+            random_params = self._generate_random_values("weight")
         elif param_type == "bias":
             params = self.bias
             params_mask = self.bias_mask
-            random_params = self._generate_random_mask("bias")
+            random_params = self._generate_random_values("bias")
         else:
             raise ValueError("Only accepts weight and bias")
 
@@ -152,10 +166,11 @@ class ContSparseLinear(ContSparseLayer):
         out_features: int,
         bias: bool = True,
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_init_value)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_value)
 
         self.in_features = in_features
         self.out_features = out_features
@@ -172,7 +187,7 @@ class ContSparseLinear(ContSparseLayer):
         self.reset_parameters()
 
     @classmethod
-    def from_layer(self, layer: nn.Linear, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Linear, ablation, mask_unit, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
@@ -188,9 +203,10 @@ class ContSparseLinear(ContSparseLayer):
             layer.in_features,
             layer.out_features,
             bias,
-            ablation,
-            mask_bias,
-            mask_init_value,
+            ablation=ablation,
+            mask_unit=mask_unit,
+            mask_bias=mask_bias,
+            mask_init_value=mask_init_value,
         )
         cont_sparse.weight = layer.weight
         if bias:
@@ -199,7 +215,11 @@ class ContSparseLinear(ContSparseLayer):
         return cont_sparse
 
     def _init_mask(self):
-        self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape[0], 1))
+
         nn.init.constant_(self.weight_mask_params, self.mask_init_value)
 
         if self.mask_bias:
@@ -218,7 +238,7 @@ class ContSparseLinear(ContSparseLayer):
             bound = 1 / math.sqrt(fan_in) if fan_in > 0 else 0
             init.uniform_(self.bias, -bound, bound)
 
-    def _generate_random_mask(self, param_type):
+    def _generate_random_values(self, param_type):
         if hasattr(self, "random_" + param_type):
             return getattr(self, "random_" + param_type)
 
@@ -237,7 +257,7 @@ class ContSparseLinear(ContSparseLayer):
             return self.random_bias
 
         else:
-            raise ValueError("generate_random_mask only supports weights and biases")
+            raise ValueError("generate_random_values only supports weights and biases")
 
     def forward(self, data: torch.Tensor, **kwargs) -> torch.Tensor:  # type: ignore
         """Perform the forward pass.
@@ -251,6 +271,7 @@ class ContSparseLinear(ContSparseLayer):
             N-dimensional tensor, with last dimension `out_features`
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
+
         if not self.use_masks:
             masked_weight = self.weight
         elif self.ablation == "random_ablate":
@@ -288,10 +309,11 @@ class ContSparseGPTConv1D(ContSparseLayer):
         nf,
         nx,
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_init_value)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_value)
 
         self.nf = nf
         w = torch.empty(nx, nf)
@@ -302,15 +324,16 @@ class ContSparseGPTConv1D(ContSparseLayer):
         self._init_mask()
 
     @classmethod
-    def from_layer(self, layer: Conv1D, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: Conv1D, ablation, mask_unit, mask_bias, mask_init_value):
         cont_sparse = ContSparseGPTConv1D(
             layer.nf,
             layer.weight.shape[
                 0
             ],  # For some reason, this layer doesn't store in_features as an attribute
-            ablation,
-            mask_bias,  # This class always has a bias term
-            mask_init_value,
+            ablation=ablation,
+            mask_unit=mask_unit,
+            mask_bias=mask_bias,  # This class always has a bias term
+            mask_init_value=mask_init_value,
         )
         cont_sparse.weight = layer.weight
         cont_sparse.bias = layer.bias
@@ -318,14 +341,19 @@ class ContSparseGPTConv1D(ContSparseLayer):
         return cont_sparse
 
     def _init_mask(self):
-        self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            self.weight_mask_params = nn.Parameter(torch.zeros(1, self.weight.shape[1]))
+        
         nn.init.constant_(self.weight_mask_params, self.mask_init_value)
 
         if self.mask_bias:
             self.bias_mask_params = nn.Parameter(torch.zeros(self.bias.shape))
             nn.init.constant_(self.bias_mask_params, self.mask_init_value)
 
-    def _generate_random_mask(self, param_type):
+    def _generate_random_values(self, param_type):
         if hasattr(self, "random_" + param_type):
             return getattr(self, "random_" + param_type)
 
@@ -341,7 +369,7 @@ class ContSparseGPTConv1D(ContSparseLayer):
             return self.random_bias
 
         else:
-            raise ValueError("generate_random_mask only supports weights and biases")
+            raise ValueError("generate_random_values only supports weights and biases")
 
     def forward(self, x):
         """Perform the forward pass.
@@ -355,6 +383,7 @@ class ContSparseGPTConv1D(ContSparseLayer):
             N-dimensional tensor, with last dimension `out_features`
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
+
         if not self.use_masks:
             masked_weight = self.weight
         elif self.ablation == "random_ablate":
@@ -393,10 +422,11 @@ class _ContSparseConv(ContSparseLayer):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_init_value)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_value)
 
         self._base_layer = layer_fn(
             in_channels,
@@ -425,14 +455,21 @@ class _ContSparseConv(ContSparseLayer):
         self.bias = self._base_layer.bias
 
     def _init_mask(self):
-        self.weight_mask_params = nn.Parameter(torch.empty(self.weight.size()))
+
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            mask_shape = self.weight.shape
+            mask_shape[1] = 1
+            self.weight_mask_params = nn.Parameter(torch.zeros(mask_shape))
+
         nn.init.constant_(self.weight_mask_params, self.mask_init_value)
 
         if self.mask_bias:
             self.bias_mask_params = nn.Parameter(torch.empty(self.bias.shape))
             nn.init.constant_(self.bias_mask_params, self.mask_init_value)
 
-    def _generate_random_mask(self, param_type):
+    def _generate_random_values(self, param_type):
         # Create a random tensor to reinit ablated parameters
         if hasattr(self, "random_" + param_type):
             return getattr(self, "random_" + param_type)
@@ -454,10 +491,11 @@ class _ContSparseConv(ContSparseLayer):
             return self.random_bias
 
         else:
-            raise ValueError("generate_random_mask only supports weights and biases")
+            raise ValueError("generate_random_values only supports weights and biases")
 
     def forward(self, x):
         self.weight_mask = self._compute_mask("weight_mask_params")
+
         if not self.use_masks:
             masked_weight = self.weight
         elif self.ablation == "random_ablate":
@@ -493,6 +531,7 @@ class ContSparseConv2d(_ContSparseConv):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
@@ -509,12 +548,13 @@ class ContSparseConv2d(_ContSparseConv):
             bias=bias,
             padding_mode=padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
             mask_init_value=mask_init_value,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Conv2d, ablation, mask_unit, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
@@ -537,6 +577,7 @@ class ContSparseConv2d(_ContSparseConv):
             bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
             mask_init_value=mask_init_value,
         )
@@ -560,6 +601,7 @@ class ContSparseConv1d(_ContSparseConv):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
         mask_init_value: float = 0.0,
     ):
@@ -576,12 +618,13 @@ class ContSparseConv1d(_ContSparseConv):
             bias=bias,
             padding_mode=padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
             mask_init_value=mask_init_value,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, mask_init_value):
+    def from_layer(self, layer: nn.Conv1d, ablation, mask_unit, mask_bias, mask_init_value):
         if layer.bias is not None:
             bias = True
         else:
@@ -604,6 +647,7 @@ class ContSparseConv1d(_ContSparseConv):
             bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
             mask_init_value=mask_init_value,
         )

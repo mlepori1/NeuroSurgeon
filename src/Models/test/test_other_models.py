@@ -24,7 +24,7 @@ from transformers import (
 def test_replace_layers_gpt():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[],
         freeze_base=True,
         add_l0=False,
@@ -76,7 +76,7 @@ def test_replace_layers_gpt():
 def test_replace_layers_resnet():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[],
         freeze_base=True,
         add_l0=False,
@@ -143,7 +143,7 @@ def test_replace_layers_resnet():
 def test_replace_layers_vit():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[],
         freeze_base=True,
         add_l0=False,
@@ -211,7 +211,7 @@ def test_forward_pass_gpt():
     # give the same output for eval mode, different for train mode
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[
             "transformer.h.0.attn.c_proj",
             "transformer.h.0.mlp.c_fc",
@@ -247,7 +247,7 @@ def test_forward_pass_resnet():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[
             "resnet.encoder.stages.0.layers.0.layer.0.convolution",
             "resnet.encoder.stages.3.layers.0.shortcut.convolution",
@@ -283,7 +283,7 @@ def test_forward_pass_vit():
     # give the same output for eval mode, different for train mode
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
         target_layers=[
             "vit.encoder.layer.9.output.dense",
             "vit.encoder.layer.11.attention.attention.query",
@@ -361,7 +361,7 @@ def test_training_gpt():
     # Check that the training runs with the circuit model without bugs with frozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "transformer.h.1.mlp.c_proj",
         ],
@@ -400,7 +400,7 @@ def test_training_gpt():
     # Assert that the trainer runs with the circuit model without bugs with unfrozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "transformer.h.1.mlp.c_proj",
         ],
@@ -463,7 +463,7 @@ def test_training_resnet():
     # Check that the training runs with the circuit model without bugs with frozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "resnet.encoder.stages.0.layers.0.layer.0.convolution",
         ],
@@ -500,7 +500,7 @@ def test_training_resnet():
     # Assert that the trainer runs with the circuit model without bugs with unfrozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "resnet.encoder.stages.0.layers.0.layer.0.convolution",
         ],
@@ -542,7 +542,7 @@ def test_training_vit():
     # Check that the training runs with the circuit model without bugs with frozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "vit.encoder.layer.0.attention.attention.query",
         ],
@@ -579,7 +579,7 @@ def test_training_vit():
     # Assert that the trainer runs with the circuit model without bugs with unfrozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
         target_layers=[
             "vit.encoder.layer.0.attention.attention.query",
         ],

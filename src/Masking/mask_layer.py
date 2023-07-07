@@ -6,9 +6,10 @@ import torch
 class MaskLayer(nn.Module):
     """Base Class for masking layers. Inherits from nn.Module"""
 
-    def __init__(self, ablation: str, mask_bias: bool):
+    def __init__(self, ablation: str, mask_unit: str, mask_bias: bool):
         super().__init__()
         self.ablation = ablation
+        self.mask_unit = mask_unit
         self.mask_bias = mask_bias
         self.use_masks = True  # Default behavior is to use the masks, but this can change for specific evaluations
 
@@ -31,6 +32,14 @@ class MaskLayer(nn.Module):
     @mask_bias.setter
     def mask_bias(self, value):
         self._mask_bias = value
+
+    @property
+    def mask_unit(self):
+        return self._mask_unit
+
+    @mask_unit.setter
+    def mask_unit(self, value):
+        self._mask_unit = value
 
     @property
     def use_masks(self):

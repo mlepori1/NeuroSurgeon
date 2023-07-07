@@ -89,6 +89,7 @@ class CircuitModel(nn.Module):
         if config.mask_method == "continuous_sparsification":
             return [
                 config.mask_hparams["ablation"],
+                config.mask_hparams["mask_unit"],
                 config.mask_hparams["mask_bias"],
                 config.mask_hparams["mask_init_value"],
             ]

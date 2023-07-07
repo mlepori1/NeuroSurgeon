@@ -1,5 +1,5 @@
 import torch.nn as nn
-from .model_configs import ResidualUpdateModelConfig
+from ..Models.model_configs import ResidualUpdateModelConfig
 from transformers import BertPreTrainedModel, RobertaPreTrainedModel, MPNetPreTrainedModel, XLMRobertaPreTrainedModel, ErniePreTrainedModel, ElectraPreTrainedModel, ConvBertPreTrainedModel
 
 
