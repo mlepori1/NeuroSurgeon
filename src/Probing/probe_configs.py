@@ -2,6 +2,7 @@ from transformers import PretrainedConfig
 from typing import List
 from ..Models.model_configs import CircuitConfig
 
+
 class ResidualUpdateModelConfig(PretrainedConfig):
     def __init__(
         self,
@@ -19,6 +20,7 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.attn = attn
         self.circuit = circuit
         self.base = base
+
 
 class CircuitProbeConfig(PretrainedConfig):
     def __init__(

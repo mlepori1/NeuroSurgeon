@@ -90,7 +90,11 @@ def test_linear_init():
 def test_linear_from_layer():
     base_layer = nn.Linear(10, 20)
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=1.0,
     )
 
     # Ensure that masked layer is initialized correctly
@@ -111,7 +115,11 @@ def test_linear_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -128,7 +136,11 @@ def test_linear_from_layer():
 def test_linear_use_mask():
     base_layer = nn.Linear(10, 20)
     masked_layer = ContSparseLinear.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
@@ -256,7 +268,7 @@ def test_linear_masking():
     out = layer(ipt)
     assert torch.all(out == layer.bias)
 
-    # Test that masking one neuron gives a particular zero entry
+    # Test that masking one full neuron gives a particular zero entry
     layer = ContSparseLinear(
         10, 15, bias=True, ablation="none", mask_bias=True, mask_init_value=1.0
     )
@@ -327,6 +339,76 @@ def test_linear_temperature():
     assert train_l0 == test_l0
 
 
+def test_linear_neuron_pruning():
+    # Assert that masking out a single element in the mask matrix knocks out a full neuron
+    layer = ContSparseLinear(
+        10,
+        20,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=True,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[5] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+
+    b_params = layer.bias_mask_params
+    b_params.requires_grad = False
+    b_params[5] = 0
+    b_params.requires_grad = True
+    layer.bias_mask_params = b_params
+
+    ipt = torch.ones(10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out[5] == 0.0)
+
+
+def test_linear_neuron_l0():
+    # Assert that L0 norm is always a multiple of the # of input parameters
+    layer = ContSparseLinear(
+        10,
+        20,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=False,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 190
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[1] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 180
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[2] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 170
+
+
 ### Test ContSparseGPTConv1d Layer
 
 
@@ -370,7 +452,11 @@ def test_gptconv1d_from_layer():
         20, 10
     )  # For some reason, out_features comes first in this classes constructor...
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=1.0,
     )
 
     # Ensure that masked layer is initialized correctly
@@ -391,7 +477,11 @@ def test_gptconv1d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -410,7 +500,11 @@ def test_gptconv1d_use_mask():
         20, 10
     )  # For some reason, out_features comes first in this classes constructor...
     masked_layer = ContSparseGPTConv1D.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     ipt_tensor = torch.Tensor([0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0])
@@ -596,6 +690,69 @@ def test_gptconv1d_temperature():
     assert train_l0 == test_l0
 
 
+def test_gptconv1d_neuron_pruning():
+    # Assert that masking out a single element in the mask matrix knocks out a full neuron
+    layer = ContSparseGPTConv1D(
+        20, 10, ablation="none", mask_unit="neuron", mask_bias=True, mask_init_value=1.0
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0, 5] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+
+    b_params = layer.bias_mask_params
+    b_params.requires_grad = False
+    b_params[5] = 0
+    b_params.requires_grad = True
+    layer.bias_mask_params = b_params
+
+    ipt = torch.ones(10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out[5] == 0.0)
+
+
+def test_gptconv1d_neuron_l0():
+    # Assert that L0 norm is always a multiple of the # of input parameters
+    layer = ContSparseGPTConv1D(
+        10,
+        20,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=False,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0, 0] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 180
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0, 1] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 160
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0, 2] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 140
+
+
 ### Test ContSparseConv1d Layer
 
 
@@ -681,7 +838,11 @@ def test_conv1d_init():
 def test_conv1d_from_layer():
     base_layer = nn.Conv1d(1, 10, 3)
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=1.0,
     )
 
     # Ensure that masked layer is initialized correctly
@@ -702,7 +863,11 @@ def test_conv1d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -719,7 +884,11 @@ def test_conv1d_from_layer():
 def test_conv1d_use_mask():
     base_layer = nn.Conv1d(1, 10, 3)
     masked_layer = ContSparseConv1d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     ipt_tensor = torch.Tensor([[0.0, 1.0, 2.0, 3.0, 4.0, 0.0, 1.0, 2.0, 3.0, 4.0]])
@@ -934,6 +1103,79 @@ def test_conv1d_temperature():
     assert train_l0 == test_l0
 
 
+def test_conv1d_neuron_pruning():
+    # Assert that masking out a single element in the mask matrix knocks out a full neuron
+    layer = ContSparseConv1d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=True,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+
+    w_params[5] = 0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+
+    b_params = layer.bias_mask_params
+    b_params.requires_grad = False
+    b_params[5] = 0
+    b_params.requires_grad = True
+    layer.bias_mask_params = b_params
+
+    ipt = torch.ones(1, 10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out[5, :] == 0.0)
+
+
+def test_conv1d_neuron_l0():
+    # Assert that L0 norm is always a multiple of the # of channel parameters
+    layer = ContSparseConv1d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=False,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 27
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[1] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 24
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[2] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 21
+
+
 ### Test ContSparseConv2d Layer
 
 
@@ -1019,7 +1261,11 @@ def test_conv2d_init():
 def test_conv2d_from_layer():
     base_layer = nn.Conv2d(1, 10, 3)
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=1.0,
     )
 
     # Ensure that masked layer is initialized correctly
@@ -1048,7 +1294,11 @@ def test_conv2d_from_layer():
     assert not torch.all(masked_out == base_out)
 
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     # Assert that test mode masked_layer produces diff output as base layer (because init_value is < 0)
@@ -1065,7 +1315,11 @@ def test_conv2d_from_layer():
 def test_conv2d_use_mask():
     base_layer = nn.Conv2d(1, 10, 3)
     masked_layer = ContSparseConv2d.from_layer(
-        base_layer, ablation="none", mask_unit="weight", mask_bias=True, mask_init_value=-1.0
+        base_layer,
+        ablation="none",
+        mask_unit="weight",
+        mask_bias=True,
+        mask_init_value=-1.0,
     )
 
     ipt_tensor = torch.Tensor(
@@ -1284,3 +1538,76 @@ def test_conv2d_temperature():
     test_l0 = layer.calculate_l0()
 
     assert train_l0 == test_l0
+
+
+def test_conv2d_neuron_pruning():
+    # Assert that masking out a single element in the mask matrix knocks out a full neuron
+    layer = ContSparseConv2d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=True,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+
+    w_params[5] = 0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+
+    b_params = layer.bias_mask_params
+    b_params.requires_grad = False
+    b_params[5] = 0
+    b_params.requires_grad = True
+    layer.bias_mask_params = b_params
+
+    ipt = torch.ones(1, 10, 10)
+    layer.train(False)
+    out = layer(ipt)
+    assert torch.all(out[5, :] == 0.0)
+
+
+def test_conv2d_neuron_l0():
+    # Assert that L0 norm is always a multiple of the # channel parameters
+    layer = ContSparseConv2d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="none",
+        mask_unit="neuron",
+        mask_bias=False,
+        mask_init_value=1.0,
+    )
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[0] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 81
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[1] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 72
+
+    w_params = layer.weight_mask_params
+    w_params.requires_grad = False
+    w_params[2] = 0.0
+    w_params.requires_grad = True
+    layer.weight_mask_params = w_params
+    layer.train(False)
+
+    assert layer.calculate_l0() == 63

@@ -14,7 +14,12 @@ from copy import deepcopy
 def create_test_probe():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,
@@ -48,7 +53,12 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=False,
         add_l0=True,
@@ -68,7 +78,12 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,
@@ -88,7 +103,12 @@ def test_incompatible_configuration_exceptions():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=["encoder.layer.1.output.dense"],
         freeze_base=True,
         add_l0=True,

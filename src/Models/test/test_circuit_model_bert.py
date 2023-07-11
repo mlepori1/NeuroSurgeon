@@ -21,7 +21,12 @@ from transformers import (
 def test_replace_layers_bert():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[],
         freeze_base=True,
         add_l0=False,
@@ -79,7 +84,12 @@ def test_model_freezing_bert():
     # Test with freeze_base == True
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[],
         freeze_base=True,
         add_l0=False,
@@ -120,7 +130,12 @@ def test_model_freezing_bert():
     # Test with freeze_base == False
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[],
         freeze_base=False,
         add_l0=False,
@@ -164,7 +179,12 @@ def test_forward_pass_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.attention.self.query",
             "bert.encoder.layer.1.output.dense",
@@ -199,7 +219,12 @@ def test_use_mask_bert():
     # give different output for eval mode, but same output when use_masks is set to False
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": -1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": -1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.attention.self.query",
             "bert.encoder.layer.1.output.dense",
@@ -232,7 +257,12 @@ def test_use_mask_bert():
 def test_l0_calc_bert():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -248,7 +278,12 @@ def test_l0_calc_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -262,7 +297,12 @@ def test_l0_calc_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": True, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": True,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
             "bert.encoder.layer.1.output.dense",
@@ -283,7 +323,12 @@ def test_temperature():
     # Assert that model outputs change accordingly
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -326,7 +371,12 @@ def test_temperature():
 def test_ablate_mode_bert():
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -354,7 +404,12 @@ def test_ablate_mode_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": -1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": -1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -377,7 +432,12 @@ def test_compute_l0_loss_bert():
     # Assert that L0 loss is correct in train mode, returns 0 in eval mode
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight",  "mask_bias": False, "mask_init_value": 0.75},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.75,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -442,7 +502,12 @@ def test_training_bert():
     # Check that the training runs with the circuit model without bugs with frozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -482,7 +547,12 @@ def test_training_bert():
     # Assert that the trainer runs with the circuit model without bugs with unfrozen underlying model
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -527,7 +597,12 @@ def test_lambda_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -547,7 +622,12 @@ def test_lambda_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -567,7 +647,12 @@ def test_lambda_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -594,7 +679,12 @@ def test_mask_init_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": -1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": -1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -613,7 +703,12 @@ def test_mask_init_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 0.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 0.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
@@ -632,7 +727,12 @@ def test_mask_init_effect_bert():
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
-        mask_hparams={"ablation": "none", "mask_unit": "weight", "mask_bias": False, "mask_init_value": 1.0},
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_value": 1.0,
+        },
         target_layers=[
             "bert.encoder.layer.0.output.dense",
         ],
