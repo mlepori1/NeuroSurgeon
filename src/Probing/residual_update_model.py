@@ -36,6 +36,11 @@ class ResidualUpdateModel(nn.Module):
                 self.to_hook = self.to_hook.transformer
             self._add_gpt_hooks()
 
+        elif self.config.model_type == "gpt_neox":
+            if not self.base:
+                self.to_hook = self.to_hook.gpt_neox
+            self._add_gpt_neox_hooks()
+
         elif self.config.model_type == "bert":
             # This applies to BERT and RoBERTa-style models in the transformers repo
             if not self.base:
@@ -99,6 +104,20 @@ class ResidualUpdateModel(nn.Module):
                     )
                 )
 
+    def _add_gpt_neox_hooks(self):
+        for i in self.config.target_layers:
+            if self.config.attn:
+                self.hooks.append(
+                    self.to_hook.layers[i].attention.register_forward_hook(
+                        self._get_activation("attn_" + str(i))
+                    )
+                )
+            if self.config.mlp:
+                self.hooks.append(
+                    self.to_hook.layers[i].mlp.register_forward_hook(
+                        self._get_activation("mlp_" + str(i))
+                    )
+                )
     def _add_vit_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
@@ -132,6 +151,10 @@ class ResidualUpdateModel(nn.Module):
             elif self.config.model_type == "gpt" and "attn" in name:
                 self.residual_stream_updates[name] = output[0]
             elif self.config.model_type == "gpt" and "mlp" in name:
+                self.residual_stream_updates[name] = output
+            elif self.config.model_type == "gpt_neox" and "attn" in name:
+                self.residual_stream_updates[name] = output[0]
+            elif self.config.model_type == "gpt_neox" and "mlp" in name:
                 self.residual_stream_updates[name] = output
             elif self.config.model_type == "vit" and "attn" in name:
                 self.residual_stream_updates[name] = output[0]
