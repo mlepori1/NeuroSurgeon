@@ -93,6 +93,60 @@ class ContSparseLayer(MaskLayer):
 
         return sampled_mask
 
+    def _sample_mask_randomly(self, param_type, force_resample=False):
+        """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
+        but where the ablated parameters are randomly drawn.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
+        ablating a random subnetwork.
+
+        Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
+        get a distribution over random mask samples
+        """
+        if hasattr(self, "sampled_" + param_type) and not force_resample:
+            return getattr(self, "sampled_" + param_type)
+
+        if param_type == "weight_mask_params":
+            mask_param = self.weight_mask_params
+        elif param_type == "bias_mask_params":
+            mask_param = self.bias_mask_params
+        else:
+            raise ValueError(
+                "Only weight_mask_params and bias_mask_params are supported param_types"
+            )
+
+        # Get number of parameters to ablate
+        sampled_size = torch.sum((mask_param > 0).int())
+
+        # Get all indices
+        all_indices_mask = torch.ones(mask_param.shape)
+        all_indices = all_indices_mask.nonzero(
+            as_tuple=False
+        )  
+        # shuffle the all indices, take the first sample_size indices as your sampled mask
+        sampled_indices = all_indices[
+            torch.randperm(all_indices.size(0))
+        ][:sampled_size]
+
+        # Reformat indices into tuple form for indexing into tensor
+        idxs = sampled_indices.shape[1]
+
+        sampled_indices = [
+            sampled_indices[:, idx] for idx in range(idxs)
+        ]
+        sampled_indices = tuple(sampled_indices)
+
+        # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating learned subnetworks
+        sampled_mask = torch.ones(mask_param.shape)
+        sampled_mask[sampled_indices] = 0.0
+        sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
+
+        # Get device of mask param and send parameter to it
+        sampled_mask = sampled_mask.to(mask_param.device)
+
+        setattr(self, "sampled_" + param_type, sampled_mask)
+
+        return sampled_mask
+
     def _compute_mask(self, param_type):
         if param_type == "weight_mask_params":
             mask_param = self.weight_mask_params
@@ -108,10 +162,14 @@ class ContSparseLayer(MaskLayer):
         hard_mask = not self.training or mask_param.requires_grad == False
         if (self.ablation == "none") and hard_mask:
             mask = (mask_param > 0).float()  # Hard Mask when not training
-        elif self.ablation == "randomly_sampled":
+        elif self.ablation == "complement_sampled":
             mask = self._sample_mask_from_complement(
                 param_type, force_resample=False
-            )  # Generates a randomly sampled mask of equal size to trained mask
+            )  # Generates a randomly sampled mask of equal size to trained mask from complement of subnetwork
+        elif self.ablation == "randomly_sampled":
+            mask = self._sample_mask_randomly(
+                param_type, force_resample=False
+            )
         elif (self.ablation != "none") and hard_mask:
             mask = (
                 mask_param <= 0

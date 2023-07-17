@@ -211,7 +211,7 @@ def test_linear_sampled_ablate():
         10,
         10,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
@@ -237,7 +237,7 @@ def test_linear_sampled_ablate():
         10,
         10,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
@@ -567,7 +567,7 @@ def test_gptconv1d_random_ablate():
 
 def test_gptconv1d_sampled_ablate():
     layer = ContSparseGPTConv1D(
-        10, 10, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0
+        10, 10, ablation="complement_sampled", mask_bias=False, mask_init_value=0.0
     )
     ipt = torch.ones(10)
     layer.weight_mask_params = nn.Parameter(
@@ -588,7 +588,7 @@ def test_gptconv1d_sampled_ablate():
 
     # Assert that an error is thrown if the subnetwork params contain >50% of parameters
     layer = ContSparseGPTConv1D(
-        10, 10, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0
+        10, 10, ablation="complement_sampled", mask_bias=False, mask_init_value=0.0
     )
     layer.weight_mask_params = nn.Parameter(
         torch.rand(layer.weight_mask_params.size()) - 0.3
@@ -973,7 +973,7 @@ def test_conv1d_sampled_ablate():
         10,
         3,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
@@ -1000,7 +1000,7 @@ def test_conv1d_sampled_ablate():
         10,
         3,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
@@ -1412,7 +1412,7 @@ def test_conv2d_sampled_ablate():
         10,
         3,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
@@ -1439,7 +1439,7 @@ def test_conv2d_sampled_ablate():
         10,
         3,
         bias=True,
-        ablation="randomly_sampled",
+        ablation="complement_sampled",
         mask_bias=False,
         mask_init_value=0.0,
     )
