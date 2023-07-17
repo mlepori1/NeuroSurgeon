@@ -16,6 +16,7 @@ class ContSparseLayer(MaskLayer):
         super().__init__(ablation, mask_unit, mask_bias)
         self.mask_init_value = mask_init_value
         self.temperature = 1.0
+        self.force_resample = False
 
     @property
     def mask_init_value(self):
@@ -35,7 +36,15 @@ class ContSparseLayer(MaskLayer):
             raise ValueError("Temperature must be greater than 0")
         self._temperature = value
 
-    def _sample_mask_from_complement(self, param_type, force_resample=False):
+    @property
+    def force_resample(self):
+        return self._force_resample
+
+    @force_resample.setter
+    def force_resample(self, value):
+        self._force_resample = value
+
+    def _sample_mask_from_complement(self, param_type):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
         but where the ablated parameters are drawn from the complement of the trained binary mask.
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
@@ -44,8 +53,10 @@ class ContSparseLayer(MaskLayer):
         Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
         get a distribution over random mask samples
         """
-        if hasattr(self, "sampled_" + param_type) and not force_resample:
+        if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
+        # Setting force_resample=True makes mask get resampled once
+        self.force_resample = False
 
         if param_type == "weight_mask_params":
             mask_param = self.weight_mask_params
@@ -93,7 +104,7 @@ class ContSparseLayer(MaskLayer):
 
         return sampled_mask
 
-    def _sample_mask_randomly(self, param_type, force_resample=False):
+    def _sample_mask_randomly(self, param_type):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
         but where the ablated parameters are randomly drawn.
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
@@ -102,8 +113,10 @@ class ContSparseLayer(MaskLayer):
         Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
         get a distribution over random mask samples
         """
-        if hasattr(self, "sampled_" + param_type) and not force_resample:
+        if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
+        # Setting force_resample=True makes mask get resampled once
+        self.force_resample = False
 
         if param_type == "weight_mask_params":
             mask_param = self.weight_mask_params
@@ -164,11 +177,11 @@ class ContSparseLayer(MaskLayer):
             mask = (mask_param > 0).float()  # Hard Mask when not training
         elif self.ablation == "complement_sampled":
             mask = self._sample_mask_from_complement(
-                param_type, force_resample=False
+                param_type
             )  # Generates a randomly sampled mask of equal size to trained mask from complement of subnetwork
         elif self.ablation == "randomly_sampled":
             mask = self._sample_mask_randomly(
-                param_type, force_resample=False
+                param_type
             )
         elif (self.ablation != "none") and hard_mask:
             mask = (
