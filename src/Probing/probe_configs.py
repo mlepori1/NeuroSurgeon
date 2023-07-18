@@ -12,6 +12,8 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         attn: bool,
         circuit: bool = False,
         base: bool = True,
+        updates: bool = True,
+        residual: bool = False,
     ):
         super().__init__()
         self.model_type = model_type
@@ -20,16 +22,37 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.attn = attn
         self.circuit = circuit
         self.base = base
+        self.updates = updates
+        self.residual = residual
+        if updates == residual:
+            raise ValueError("ResidualUpdateModel must track EITHER updates or residual activations, not both, not neither")
 
 
 class CircuitProbeConfig(PretrainedConfig):
     def __init__(
         self,
-        probe_updates: str,
+        probe_activations: str,
         circuit_config: CircuitConfig,
         resid_config: ResidualUpdateModelConfig,
     ):
         super().__init__()
-        self.probe_updates = probe_updates
+        self.probe_activations = probe_activations
         self.circuit_config = circuit_config
         self.resid_config = resid_config
+
+class SubnetworkProbeConfig(PretrainedConfig):
+    def __init__(
+        self,
+        probe_activations: str,
+        intermediate_size: int,
+        n_classes: int,
+        circuit_config: CircuitConfig,
+        resid_config: ResidualUpdateModelConfig,
+    ):
+        super().__init__()
+        self.probe_activations = probe_activations
+        self.circuit_config = circuit_config
+        self.resid_config = resid_config
+        self.intermediate_size = intermediate_size
+        self.n_classes = n_classes
+

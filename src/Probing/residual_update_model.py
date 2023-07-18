@@ -22,7 +22,7 @@ class ResidualUpdateModel(nn.Module):
         self.model = model
         self.circuit = self.config.circuit
         self.base = self.config.base
-        self.residual_stream_updates = {}
+        self.residual_stream_activations = {}
         self.hooks = []
 
         if self.circuit:
@@ -75,64 +75,132 @@ class ResidualUpdateModel(nn.Module):
     def _add_bert_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(
-                    self.to_hook.encoder.layer[
-                        i
-                    ].attention.output.dense.register_forward_hook(
-                        self._get_activation("attn_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[
+                            i
+                        ].attention.output.dense.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
                     )
-                )
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[
+                            i
+                        ].attention.output.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )                        
+                    )
             if self.config.mlp:
-                self.hooks.append(
-                    self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
-                        self._get_activation("mlp_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
                     )
-                )
-
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i].output.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
+                    )
     def _add_gpt_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(
-                    self.to_hook.h[i].attn.register_forward_hook(
-                        self._get_activation("attn_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.h[i].attn.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
                     )
-                )
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.h[i].attn.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
+                    )
+                    self.hooks.append(
+                        self.to_hook.h[i].register_forward_hook(
+                            self._add_hidden_state("attn_" + str(i))
+                        )
+                    )            
             if self.config.mlp:
-                self.hooks.append(
-                    self.to_hook.h[i].mlp.register_forward_hook(
-                        self._get_activation("mlp_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.h[i].mlp.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
                     )
-                )
-
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.h[i].register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
+                    )
     def _add_gpt_neox_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(
-                    self.to_hook.layers[i].attention.register_forward_hook(
-                        self._get_activation("attn_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.layers[i].attention.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
                     )
-                )
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.layers[i].attention.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
+                    )
+                    self.hooks.append(
+                        self.to_hook.h[i].register_forward_hook(
+                            self._add_hidden_state("attn_" + str(i))
+                        )
+                    )             
             if self.config.mlp:
-                self.hooks.append(
-                    self.to_hook.layers[i].mlp.register_forward_hook(
-                        self._get_activation("mlp_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.layers[i].mlp.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
                     )
-                )
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.layers[i].register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
+                    )    
     def _add_vit_hooks(self):
         for i in self.config.target_layers:
             if self.config.attn:
-                self.hooks.append(
-                    self.to_hook.encoder.layer[i].attention.register_forward_hook(
-                        self._get_activation("attn_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i].attention.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
                     )
-                )
+                elif self.config.residual:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i].attention.register_forward_hook(
+                            self._get_activation("attn_" + str(i))
+                        )
+                    )
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i](
+                            self._add_hidden_state("attn_" + str(i))
+                        )
+                    )
             if self.config.mlp:
-                self.hooks.append(
-                    self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
-                        self._get_activation("mlp_" + str(i))
+                if self.config.updates:
+                    self.hooks.append(
+                        self.to_hook.encoder.layer[i].output.dense.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
                     )
-                )
-
+                elif self.config.residual:
+                        self.to_hook.encoder.layer[i].output.register_forward_hook(
+                            self._get_activation("mlp_" + str(i))
+                        )
     def __call__(self, **kwargs):
         return self.forward(**kwargs)
 
@@ -146,19 +214,50 @@ class ResidualUpdateModel(nn.Module):
     def _get_activation(self, name):
         # Credit to Jack Merullo for this code
         def hook(module, input, output):
-            if self.config.model_type == "bert":
-                self.residual_stream_updates[name] = output
-            elif self.config.model_type == "gpt" and "attn" in name:
-                self.residual_stream_updates[name] = output[0]
-            elif self.config.model_type == "gpt" and "mlp" in name:
-                self.residual_stream_updates[name] = output
-            elif self.config.model_type == "gpt_neox" and "attn" in name:
-                self.residual_stream_updates[name] = output[0]
-            elif self.config.model_type == "gpt_neox" and "mlp" in name:
-                self.residual_stream_updates[name] = output
-            elif self.config.model_type == "vit" and "attn" in name:
-                self.residual_stream_updates[name] = output[0]
-            elif self.config.model_type == "vit" and "mlp" in name:
-                self.residual_stream_updates[name] = output
+            if self.config.updates:
+                if self.config.model_type == "bert":
+                    self.residual_stream_activations[name] = output
+                elif self.config.model_type == "gpt" and "attn" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "gpt" and "mlp" in name:
+                    self.residual_stream_activations[name] = output
+                elif self.config.model_type == "gpt_neox" and "attn" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "gpt_neox" and "mlp" in name:
+                    self.residual_stream_activations[name] = output
+                elif self.config.model_type == "vit" and "attn" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "vit" and "mlp" in name:
+                    self.residual_stream_activations[name] = output
+            elif self.config.residual:
+                if self.config.model_type == "bert":
+                    self.residual_stream_activations[name] = output
+                elif self.config.model_type == "gpt" and "attn" in name:
+                    self.residual_stream_activations[name] = output[0] 
+                elif self.config.model_type == "gpt" and "mlp" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "gpt_neox" and "attn" in name:
+                    # Be careful! Need use_parallel_residual = False for this to work!
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "gpt_neox" and "mlp" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "vit" and "attn" in name:
+                    self.residual_stream_activations[name] = output[0]
+                elif self.config.model_type == "vit" and "mlp" in name:
+                    self.residual_stream_activations[name] = output
+
+        return hook
+
+    def _add_hidden_state(self, name):
+        # Credit to Jack Merullo for this code
+        def hook(module, input, output):
+            if self.config.residual:
+                if self.config.model_type == "gpt" and "attn" in name:
+                    self.residual_stream_activations[name] += input[0]
+                elif self.config.model_type == "gpt_neox" and "attn" in name:
+                    self.residual_stream_activations[name] += input[0]
+                elif self.config.model_type == "vit" and "attn" in name:
+                    self.residual_stream_activations[name] += input[0]
+
 
         return hook

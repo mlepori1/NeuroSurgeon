@@ -31,7 +31,7 @@ def create_test_probe():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_updates="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
     )
 
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
@@ -70,7 +70,7 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_updates="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
     )
 
     with pytest.raises(Exception):
@@ -95,7 +95,7 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_updates="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
     )
 
     with pytest.raises(Exception):
@@ -120,7 +120,7 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_updates="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
     )
 
     with pytest.raises(Exception):
@@ -183,7 +183,7 @@ def test_forward_pass():
     out = probe(**encs, labels=labels, token_mask=token_mask)
 
     # Assert that residual stream updates are created in the right layer
-    assert probe.config.probe_updates in probe.wrapped_model.residual_stream_updates
+    assert probe.config.probe_activations in probe.wrapped_model.residual_stream_activations
 
     low_loss = out.loss
 
