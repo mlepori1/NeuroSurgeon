@@ -1,1 +1,1 @@
-__all__ = ["circuit_probe", "probe_configs"]
+__all__ = ["circuit_probe", "probe_configs", "subnetwork_probe"]
