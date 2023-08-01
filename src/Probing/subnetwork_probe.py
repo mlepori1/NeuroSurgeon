@@ -56,12 +56,10 @@ class SubnetworkProbe(nn.Module):
             return nn.Sequential(
                 nn.Linear(input_size, self.config.intermediate_size),
                 nn.ReLU(),
-                nn.Linear(self.config.intermediate_size, self.config.n_classes)
+                nn.Linear(self.config.intermediate_size, self.config.n_classes),
             )
         else:
-            return nn.Sequential(
-                nn.Linear(input_size, self.config.n_classes)
-            )      
+            return nn.Sequential(nn.Linear(input_size, self.config.n_classes))
 
     def train(self, train_bool: bool = True):
         self.training = train_bool
@@ -75,7 +73,9 @@ class SubnetworkProbe(nn.Module):
 
         # Call model forward pass, get out the correct activations
         _ = self.wrapped_model(input_ids=input_ids, **kwargs)
-        updates = self.wrapped_model.residual_stream_activations[self.config.probe_activations]
+        updates = self.wrapped_model.residual_stream_activations[
+            self.config.probe_activations
+        ]
 
         # Get one residual stream activation per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream activations

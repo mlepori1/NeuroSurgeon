@@ -13,14 +13,9 @@ class CircuitProbe(nn.Module):
         self,
         config: CircuitProbeConfig,
         model: nn.Module,
-        tokenizer: PreTrainedTokenizerFast,
     ):
         super().__init__()
         self.config = config
-        self.tokenizer = tokenizer
-
-        # Must be PreTrainedTokenizerFast for subword masking functionality
-        assert issubclass(self.tokenizer.__class__, PreTrainedTokenizerFast)
 
         self._validate_configs()
 
@@ -95,7 +90,7 @@ class CircuitProbe(nn.Module):
 
         # Call model forward pass, get out the correct activations
         _ = self.wrapped_model(input_ids=input_ids, **kwargs)
-        updates = self.wrapped_model.residual_stream_updates[self.config.probe_activations]
+        updates = self.wrapped_model.vector_cache[self.config.probe_activations]
 
         # Get one residual stream update per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream updates

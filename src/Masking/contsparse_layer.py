@@ -132,20 +132,16 @@ class ContSparseLayer(MaskLayer):
 
         # Get all indices
         all_indices_mask = torch.ones(mask_param.shape)
-        all_indices = all_indices_mask.nonzero(
-            as_tuple=False
-        )  
+        all_indices = all_indices_mask.nonzero(as_tuple=False)
         # shuffle the all indices, take the first sample_size indices as your sampled mask
-        sampled_indices = all_indices[
-            torch.randperm(all_indices.size(0))
-        ][:sampled_size]
+        sampled_indices = all_indices[torch.randperm(all_indices.size(0))][
+            :sampled_size
+        ]
 
         # Reformat indices into tuple form for indexing into tensor
         idxs = sampled_indices.shape[1]
 
-        sampled_indices = [
-            sampled_indices[:, idx] for idx in range(idxs)
-        ]
+        sampled_indices = [sampled_indices[:, idx] for idx in range(idxs)]
         sampled_indices = tuple(sampled_indices)
 
         # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating learned subnetworks
@@ -180,9 +176,7 @@ class ContSparseLayer(MaskLayer):
                 param_type
             )  # Generates a randomly sampled mask of equal size to trained mask from complement of subnetwork
         elif self.ablation == "randomly_sampled":
-            mask = self._sample_mask_randomly(
-                param_type
-            )
+            mask = self._sample_mask_randomly(param_type)
         elif (self.ablation != "none") and hard_mask:
             mask = (
                 mask_param <= 0

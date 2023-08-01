@@ -19,7 +19,13 @@ class MaskLayer(nn.Module):
 
     @ablation.setter
     def ablation(self, value):
-        if value not in ["none", "randomly_sampled", "zero_ablate", "random_ablate, complement_sampled"]:
+        if value not in [
+            "none",
+            "randomly_sampled",
+            "zero_ablate",
+            "random_ablate",
+            "complement_sampled",
+        ]:
             raise ValueError(
                 "Only none, randomly_sampled, zero_ablate, random_ablate, and complement_sampled are supported"
             )

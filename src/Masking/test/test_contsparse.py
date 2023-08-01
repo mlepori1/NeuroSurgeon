@@ -206,7 +206,46 @@ def test_linear_random_ablate():
     assert torch.all(rand_out != zero_out)
 
 
-def test_linear_sampled_ablate():
+def test_linear_randomly_sampled_ablate():
+    layer = ContSparseLinear(
+        10,
+        10,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    ipt = torch.ones(10)
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.6
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+
+    # Assert that the layer is masking out the same number of parameters as are in the subnetwork
+    subnetwork_params = layer.weight_mask_params > 0
+    assert torch.sum(~layer.weight_mask.bool()) == torch.sum(subnetwork_params)
+
+    # Ensure no error is thrown if the subnetwork params contain >50% of parameters
+    layer = ContSparseLinear(
+        10,
+        10,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.3
+    )
+    layer.train(False)
+    _ = layer(ipt)
+
+
+def test_linear_complement_sampled_ablate():
     layer = ContSparseLinear(
         10,
         10,
@@ -565,7 +604,36 @@ def test_gptconv1d_random_ablate():
     assert torch.all(rand_out != zero_out)
 
 
-def test_gptconv1d_sampled_ablate():
+def test_gptconv1d_randomly_sampled_ablate():
+    layer = ContSparseGPTConv1D(
+        10, 10, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0
+    )
+    ipt = torch.ones(10)
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.6
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+
+    # Assert that the layer is masking out the same number of parameters as are in the subnetwork
+    subnetwork_params = layer.weight_mask_params > 0
+    assert torch.sum(~layer.weight_mask.bool()) == torch.sum(subnetwork_params)
+
+    # Assert that no error is thrown if the subnetwork params contain >50% of parameters
+    layer = ContSparseGPTConv1D(
+        10, 10, ablation="randomly_sampled", mask_bias=False, mask_init_value=0.0
+    )
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.3
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+
+def test_gptconv1d_complement_sampled_ablate():
     layer = ContSparseGPTConv1D(
         10, 10, ablation="complement_sampled", mask_bias=False, mask_init_value=0.0
     )
@@ -967,7 +1035,48 @@ def test_conv1d_random_ablate():
     assert torch.all(rand_out != zero_out)
 
 
-def test_conv1d_sampled_ablate():
+def test_conv1d_randomly_sampled_ablate():
+    layer = ContSparseConv1d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    ipt = torch.ones(1, 10)
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.7
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+
+    # Assert that the layer is masking out the same number of parameters as are in the subnetwork
+    subnetwork_params = layer.weight_mask_params > 0
+    assert torch.sum(~layer.weight_mask.bool()) == torch.sum(subnetwork_params)
+
+    # Assert that no error is thrown if the subnetwork params contain >50% of parameters
+    layer = ContSparseConv1d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.1
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+
+def test_conv1d_complement_sampled_ablate():
     layer = ContSparseConv1d(
         1,
         10,
@@ -1406,7 +1515,48 @@ def test_conv2d_random_ablate():
     assert torch.all(rand_out != zero_out)
 
 
-def test_conv2d_sampled_ablate():
+def test_conv2d_randomly_sampled_ablate():
+    layer = ContSparseConv2d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    ipt = torch.ones(1, 10, 10)
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.7
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+    # Assert that mask is binary
+    assert torch.all(torch.logical_or(layer.weight_mask == 1, layer.weight_mask == 0))
+
+    # Assert that the layer is masking out the same number of parameters as are in the subnetwork
+    subnetwork_params = layer.weight_mask_params > 0
+    assert torch.sum(~layer.weight_mask.bool()) == torch.sum(subnetwork_params)
+
+    # Assert that no error is thrown if the subnetwork params contain >50% of parameters
+    layer = ContSparseConv2d(
+        1,
+        10,
+        3,
+        bias=True,
+        ablation="randomly_sampled",
+        mask_bias=False,
+        mask_init_value=0.0,
+    )
+    layer.weight_mask_params = nn.Parameter(
+        torch.rand(layer.weight_mask_params.size()) - 0.1
+    )
+    layer.train(False)
+    _ = layer(ipt)  # Weight mask computed during forward pass
+
+
+def test_conv2d_complement_sampled_ablate():
     layer = ContSparseConv2d(
         1,
         10,

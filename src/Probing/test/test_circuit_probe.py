@@ -27,17 +27,25 @@ def create_test_probe():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=True, attn=False, circuit=True, base=True
+        "bert",
+        target_layers=[1],
+        mlp=True,
+        attn=False,
+        circuit=True,
+        base=True,
+        updates=True,
+        stream=False,
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_update_1",
+        circuit_config=circuit_config,
+        resid_config=resid_config,
     )
 
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
-    tokenizer = BertTokenizerFast.from_pretrained("prajjwal1/bert-tiny")
 
-    probe = CircuitProbe(probe_config, bert, tokenizer)
+    probe = CircuitProbe(probe_config, bert)
     return probe
 
 
@@ -49,7 +57,6 @@ def test_circuit_probe_initialization():
 def test_incompatible_configuration_exceptions():
     # Assert that an error is thrown if configurations are incompatible with circuit probing
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
-    tokenizer = BertTokenizerFast.from_pretrained("prajjwal1/bert-tiny")
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
@@ -70,11 +77,13 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1",
+        circuit_config=circuit_config,
+        resid_config=resid_config,
     )
 
     with pytest.raises(Exception):
-        CircuitProbe(probe_config, bert, tokenizer)
+        CircuitProbe(probe_config, bert)
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
@@ -95,11 +104,13 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1",
+        circuit_config=circuit_config,
+        resid_config=resid_config,
     )
 
     with pytest.raises(Exception):
-        CircuitProbe(probe_config, bert, tokenizer)
+        CircuitProbe(probe_config, bert)
 
     circuit_config = CircuitConfig(
         mask_method="continuous_sparsification",
@@ -120,11 +131,13 @@ def test_incompatible_configuration_exceptions():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1", circuit_config=circuit_config, resid_config=resid_config
+        probe_activations="mlp_1",
+        circuit_config=circuit_config,
+        resid_config=resid_config,
     )
 
     with pytest.raises(Exception):
-        CircuitProbe(probe_config, bert, tokenizer)
+        CircuitProbe(probe_config, bert)
 
 
 def test_circuit_probe_training():
@@ -174,16 +187,18 @@ def test_forward_pass():
     # assigned to words in different contexts
 
     probe = create_test_probe()
+    tokenizer = BertTokenizerFast.from_pretrained("prajjwal1/bert-tiny")
+
     input = ["the cat sleeps on the mat", "the dog rests in the rug"]
     token_mask = torch.tensor(
         [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
     ).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
-    encs = probe.tokenizer(input, return_tensors="pt")
+    encs = tokenizer(input, return_tensors="pt")
     out = probe(**encs, labels=labels, token_mask=token_mask)
 
     # Assert that residual stream updates are created in the right layer
-    assert probe.config.probe_activations in probe.wrapped_model.residual_stream_activations
+    assert probe.config.probe_activations in probe.wrapped_model.vector_cache
 
     low_loss = out.loss
 
@@ -192,7 +207,7 @@ def test_forward_pass():
         [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
     ).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
-    encs = probe.tokenizer(input, return_tensors="pt")
+    encs = tokenizer(input, return_tensors="pt")
     out = probe(**encs, labels=labels, token_mask=token_mask)
 
     high_loss = out.loss
@@ -204,20 +219,20 @@ def test_forward_pass():
         input = ["the cat sleeps on the mat"]
         token_mask = torch.tensor([[0, 1, 1, 1, 1, 1, 1, 0]]).bool()
         labels = torch.tensor([[0, 1, 2, 3, 4]])
-        encs = probe.tokenizer(input, return_tensors="pt")
+        encs = tokenizer(input, return_tensors="pt")
         out = probe(**encs, labels=labels, token_mask=token_mask)
 
     with pytest.raises(Exception):
         input = ["the catcat sleeps on the mat"]
         token_mask = torch.tensor([[0, 1, 0, 1, 1, 1, 1, 1, 0]]).bool()
         labels = torch.tensor([[0, 1, 2, 3, 4, 5, 6]])
-        encs = probe.tokenizer(input, return_tensors="pt")
+        encs = tokenizer(input, return_tensors="pt")
         out = probe(**encs, labels=labels, token_mask=token_mask)
 
     input = ["the catcat sleeps on the mat"]
     token_mask = torch.tensor([[0, 1, 0, 1, 1, 1, 1, 1, 0]]).bool()
     labels = torch.tensor([[0, 1, 2, 3, 4, 5]])
-    encs = probe.tokenizer(input, return_tensors="pt")
+    encs = tokenizer(input, return_tensors="pt")
     out = probe(**encs, labels=labels, token_mask=token_mask)
 
 
@@ -225,6 +240,7 @@ def test_training_circuit_probe():
     # Assert that training circuit probe only updates the mask parameters
     probe = create_test_probe()
     original_probe = deepcopy(probe)
+    tokenizer = BertTokenizerFast.from_pretrained("prajjwal1/bert-tiny")
 
     input_batch = [
         "the cat sleeps on the mat",
@@ -233,7 +249,7 @@ def test_training_circuit_probe():
     token_mask = torch.tensor(
         [[0, 1, 1, 1, 1, 1, 1, 0], [0, 1, 1, 1, 1, 1, 1, 0]]
     ).bool()
-    encs = probe.tokenizer(input_batch, return_tensors="pt")
+    encs = tokenizer(input_batch, return_tensors="pt")
     labels = torch.tensor([[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]])
 
     optimizer = AdamW(probe.parameters(), lr=5e-2)
