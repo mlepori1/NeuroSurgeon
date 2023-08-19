@@ -188,7 +188,12 @@ class CircuitModel(nn.Module):
                 module.ablation = ablation
                 module.force_resample = force_resample
 
-    def use_masks(self, value):
-        for module in self.modules():
-            if issubclass(type(module), MaskLayer):
-                module.use_masks = value
+    def use_masks(self, value, name_list=None):
+        for name, module in self.named_modules():
+            if name_list is not None:
+                if issubclass(type(module), MaskLayer) and name in name_list:
+                    module.use_masks = value
+            else:
+                if issubclass(type(module), MaskLayer):
+                    module.use_masks = value
+
