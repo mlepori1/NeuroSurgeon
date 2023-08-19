@@ -10,6 +10,13 @@ from ..Masking.contsparse_layer import (
     ContSparseConv2d,
     ContSparseGPTConv1D,
 )
+from ..Masking.magprune_layer import (
+    MagPruneLayer,
+    MagPruneLinear,
+    MagPruneConv1d,
+    MagPruneConv2d,
+    MagPruneGPTConv1D
+)
 from ..Masking.mask_layer import MaskLayer
 import warnings
 
@@ -82,8 +89,15 @@ class CircuitModel(nn.Module):
                 nn.Conv1d: ContSparseConv1d,
                 GPTConv1D: ContSparseGPTConv1D,
             }
+        elif config.mask_method == "magnitude_pruning":
+            return {
+                nn.Linear: MagPruneLinear,
+                nn.Conv2d: MagPruneConv2d,
+                nn.Conv1d: MagPruneConv1d,
+                GPTConv1D: MagPruneGPTConv1D,
+            }
         else:
-            raise ValueError("Only Continuous_Sparsification is supported at this time")
+            raise ValueError("Only Continuous_Sparsification and Magnitude_Pruning is supported at this time")
 
     def _create_masked_args(self, config):
         if config.mask_method == "continuous_sparsification":
@@ -93,8 +107,14 @@ class CircuitModel(nn.Module):
                 config.mask_hparams["mask_bias"],
                 config.mask_hparams["mask_init_value"],
             ]
+        if config.mask_method == "magnitude_pruning":
+            return [
+                config.mask_hparams["ablation"],
+                config.mask_hparams["mask_bias"],
+                config.mask_hparams["mask_percentage"],
+            ]
         else:
-            raise ValueError("Only Continuous_Sparsification is supported at this time")
+            raise ValueError("Only Continuous_Sparsification and Magnitude_Pruning is supported at this time")
 
     def train(self, train_bool=True):
         self.training = train_bool
