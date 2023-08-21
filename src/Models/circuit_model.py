@@ -11,11 +11,16 @@ from ..Masking.contsparse_layer import (
     ContSparseGPTConv1D,
 )
 from ..Masking.magprune_layer import (
-    MagPruneLayer,
     MagPruneLinear,
     MagPruneConv1d,
     MagPruneConv2d,
-    MagPruneGPTConv1D
+    MagPruneGPTConv1D,
+)
+from ..Masking.hardconcrete_layer import (
+    HardConcreteLinear,
+    HardConcreteConv1d,
+    HardConcreteConv2d,
+    HardConcreteGPTConv1D,
 )
 from ..Masking.mask_layer import MaskLayer
 import warnings
@@ -96,8 +101,17 @@ class CircuitModel(nn.Module):
                 nn.Conv1d: MagPruneConv1d,
                 GPTConv1D: MagPruneGPTConv1D,
             }
+        elif config.mask_method == "hard_concrete":
+            return {
+                nn.Linear: HardConcreteLinear,
+                nn.Conv2d: HardConcreteConv2d,
+                nn.Conv1d: HardConcreteConv1d,
+                GPTConv1D: HardConcreteGPTConv1D,
+            }
         else:
-            raise ValueError("Only Continuous_Sparsification and Magnitude_Pruning is supported at this time")
+            raise ValueError(
+                "Only Continuous_Sparsification, Hard_Concrete, and Magnitude_Pruning is supported at this time"
+            )
 
     def _create_masked_args(self, config):
         if config.mask_method == "continuous_sparsification":
@@ -107,6 +121,13 @@ class CircuitModel(nn.Module):
                 config.mask_hparams["mask_bias"],
                 config.mask_hparams["mask_init_value"],
             ]
+        if config.mask_method == "hard_concrete":
+            return [
+                config.mask_hparams["ablation"],
+                config.mask_hparams["mask_unit"],
+                config.mask_hparams["mask_bias"],
+                config.mask_hparams["mask_init_percentage"],
+            ]
         if config.mask_method == "magnitude_pruning":
             return [
                 config.mask_hparams["ablation"],
@@ -114,7 +135,9 @@ class CircuitModel(nn.Module):
                 config.mask_hparams["mask_percentage"],
             ]
         else:
-            raise ValueError("Only Continuous_Sparsification and Magnitude_Pruning is supported at this time")
+            raise ValueError(
+                "Only Continuous_Sparsification, Hard_Concrete, and Magnitude_Pruning is supported at this time"
+            )
 
     def train(self, train_bool=True):
         self.training = train_bool
@@ -216,4 +239,3 @@ class CircuitModel(nn.Module):
             else:
                 if issubclass(type(module), MaskLayer):
                     module.use_masks = value
-

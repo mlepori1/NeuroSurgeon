@@ -171,16 +171,18 @@ class ContSparseLayer(MaskLayer):
         hard_mask = not self.training or mask_param.requires_grad == False
         if (self.ablation == "none") and hard_mask:
             mask = (mask_param > 0).float()  # Hard Mask when not training
-        elif self.ablation == "complement_sampled":
+        elif self.ablation == "complement_sampled" and hard_mask:
             mask = self._sample_mask_from_complement(
                 param_type
             )  # Generates a randomly sampled mask of equal size to trained mask from complement of subnetwork
-        elif self.ablation == "randomly_sampled":
+        elif self.ablation == "randomly_sampled" and hard_mask:
             mask = self._sample_mask_randomly(param_type)
         elif (self.ablation != "none") and hard_mask:
             mask = (
                 mask_param <= 0
             ).float()  # Inverse hard mask for subnetwork ablation
+        elif (self.ablation != "none") and not hard_mask:
+            raise ValueError("Can't ablate while training")
         else:
             mask = F.sigmoid(
                 self.temperature * mask_param

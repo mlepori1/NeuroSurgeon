@@ -9,19 +9,31 @@ from abc import abstractmethod
 import warnings
 
 
-class MagPruneLayer(MaskLayer):
-    def __init__(self, ablation: str, mask_bias: bool, mask_percentage: float):
-        super().__init__(ablation, "weight", mask_bias)
-        self.mask_percentage = mask_percentage
+class HardConcreteLayer(MaskLayer):
+    def __init__(
+        self,
+        ablation: str,
+        mask_unit: str,
+        mask_bias: bool,
+        mask_init_percentage: float,
+        left_stretch: float = -0.1,
+        right_stretch: float = 1.1,
+        temperature: float = 2 / 3,
+    ):
+        super().__init__(ablation, mask_unit, mask_bias)
+        self.mask_init_percentage = mask_init_percentage
+        self.left_stretch = left_stretch
+        self.right_stretch = right_stretch
+        self.temperature = temperature
         self.force_resample = False
 
     @property
-    def mask_percentage(self):
-        return self._mask_percentage
+    def mask_init_percentage(self):
+        return self._mask_init_percentage
 
-    @mask_percentage.setter
-    def mask_percentage(self, value):
-        self._mask_percentage = value
+    @mask_init_percentage.setter
+    def mask_init_percentage(self, value):
+        self._mask_init_percentage = value
 
     @property
     def force_resample(self):
@@ -31,38 +43,73 @@ class MagPruneLayer(MaskLayer):
     def force_resample(self, value):
         self._force_resample = value
 
-    def _sample_mask_from_complement(self, param_type):
-        """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
-        but where the ablated parameters are drawn from the complement of the magnitude pruning mask.
+    def calculate_l0(self):
+        """Overrides function defined in mask_layer to provide regularization term given in Louizos et al. 2017 during train"""
+        if self.training:
+            l0 = torch.sum(
+                torch.sigmoid(
+                    self.weight_mask_params
+                    - (
+                        self.temperature
+                        * torch.log(-self.left_stretch / self.right_stretch)
+                    )
+                )
+            )
+            if self.mask_bias:
+                l0 += torch.sum(
+                    torch.sigmoid(
+                        self.bias_mask_params
+                        - (
+                            self.temperature
+                            * torch.log(-self.left_stretch / self.right_stretch)
+                        )
+                    )
+                )
+        else:
+            # During evaluation, compute L0 according to the actual number of masked params
+            l0 = torch.sum(self._compute_mask("weight_mask_params"))
+            if self.mask_bias:
+                l0 += torch.sum(self._compute_mask("bias_mask_params"))
+        return l0
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Set force_resample=True to resample
+    def _compute_initial_mask_value(self):
+        stretched_p = (self.mask_init_percentage - self.left_stretch) / (
+            self.right_stretch - self.left_stretch
+        )
+        return torch.log(stretched_p / (1 - stretched_p))
+
+    def _sample_mask_from_complement(self, param_type, mask):
+        """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
+        but where the ablated parameters are drawn from the complement of the trained binary mask.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
+        ablating a random subnetwork.
+
+        Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
+        get a distribution over random mask samples, or set force_resample=True
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
-        # Setting force_resample=True makes mask get resampled
+        # Setting force_resample=True makes mask get resampled once
         self.force_resample = False
 
         if param_type == "weight_mask_params":
-            base_param = self.weight
+            mask_param = self.weight_mask_params
         elif param_type == "bias_mask_params":
-            base_param = self.bias
+            mask_param = self.bias_mask_params
         else:
             raise ValueError(
                 "Only weight_mask_params and bias_mask_params are supported param_types"
             )
 
-        # Make sure that one can sample from the complement
-        if self.mask_percentage <= 0.5:
+        # Get hard mask
+        sampled_size = torch.sum(mask.int())
+        if sampled_size > torch.sum(~mask.int()):
             raise ValueError(
                 "Trying to sample random masks, but original mask contains > 50 percent of weights"
             )
 
-        # Get hard mask
-        threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
-        mask = (base_param > threshold).float()
-        sampled_size = torch.sum(mask).int()
         # Sample sample_size number of weights from the complement of the mask given by mask_weight
-        complement_mask_weights = base_param < threshold
+        complement_mask_weights = ~mask
         sample_complement_indices = complement_mask_weights.nonzero(
             as_tuple=False
         )  # get indices of complement weights
@@ -79,23 +126,26 @@ class MagPruneLayer(MaskLayer):
         ]
         sample_complement_indices = tuple(sample_complement_indices)
 
-        # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating magnitude pruned subnetworks
-        sampled_mask = torch.ones(base_param.shape)
+        # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating learned subnetworks
+        sampled_mask = torch.ones(mask_param.shape)
         sampled_mask[sample_complement_indices] = 0.0
         sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
 
         # Get device of mask param and send parameter to it
-        sampled_mask = sampled_mask.to(base_param.device)
+        sampled_mask = sampled_mask.to(mask_param.device)
 
         setattr(self, "sampled_" + param_type, sampled_mask)
 
         return sampled_mask
 
-    def _sample_mask_randomly(self, param_type):
+    def _sample_mask_randomly(self, param_type, mask):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
         but where the ablated parameters are randomly drawn.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
+        ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Set force_resample=True to resample mask
+        Sample a random mask once and then use it to evaluate a whole dataset. Create more models like this to
+        get a distribution over random mask samples, or set force_resample=True
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
@@ -103,21 +153,19 @@ class MagPruneLayer(MaskLayer):
         self.force_resample = False
 
         if param_type == "weight_mask_params":
-            base_param = self.weight
+            mask_param = self.weight_mask_params
         elif param_type == "bias_mask_params":
-            base_param = self.bias
+            mask_param = self.bias_mask_params
         else:
             raise ValueError(
                 "Only weight_mask_params and bias_mask_params are supported param_types"
             )
 
         # Get number of parameters to ablate
-        threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
-        mask = (base_param > threshold).float()
-        sampled_size = torch.sum(mask).int()
+        sampled_size = torch.sum(mask.int())
 
         # Get all indices
-        all_indices_mask = torch.ones(base_param.shape)
+        all_indices_mask = torch.ones(mask_param.shape)
         all_indices = all_indices_mask.nonzero(as_tuple=False)
         # shuffle the all indices, take the first sample_size indices as your sampled mask
         sampled_indices = all_indices[torch.randperm(all_indices.size(0))][
@@ -131,12 +179,12 @@ class MagPruneLayer(MaskLayer):
         sampled_indices = tuple(sampled_indices)
 
         # Create a mask with just the sampled indices removed to compare ablating random subnetworks to ablating learned subnetworks
-        sampled_mask = torch.ones(base_param.shape)
+        sampled_mask = torch.ones(mask_param.shape)
         sampled_mask[sampled_indices] = 0.0
         sampled_mask = nn.Parameter(sampled_mask, requires_grad=False)
 
         # Get device of mask param and send parameter to it
-        sampled_mask = sampled_mask.to(base_param.device)
+        sampled_mask = sampled_mask.to(mask_param.device)
 
         setattr(self, "sampled_" + param_type, sampled_mask)
 
@@ -144,28 +192,57 @@ class MagPruneLayer(MaskLayer):
 
     def _compute_mask(self, param_type):
         if param_type == "weight_mask_params":
+            mask_param = self.weight_mask_params
             base_param = self.weight
         elif param_type == "bias_mask_params":
+            mask_param = self.bias_mask_params
             base_param = self.bias
         else:
             raise ValueError(
                 "Only weight_mask_params and bias_mask_params are supported param_types"
             )
 
-        if self.ablation == "none":
-            threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
-            mask = (base_param > threshold).float()
-        elif self.ablation == "complement_sampled":
+        hard_mask = not self.training or mask_param.requires_grad == False
+
+        if hard_mask:
+            s = torch.sigmoid(mask_param)  # Hard Mask when not training
+        else:
+            u = torch.clamp(
+                torch.zeros(mask_param.shape).uniform_(), 0.0001, 0.9999
+            )  # Avoid undefined log errors
+            s = torch.sigmoid(
+                (torch.log(u) - torch.log(1 - u) + mask_param) / self.temperature
+            )
+
+        s = (s * (self.right_stretch - self.left_stretch)) + self.left_stretch
+        mask = torch.clamp(s, min=0.0, max=1.0)
+
+        if hard_mask:
+            mask = mask > 0.5  # Ensure that the mask is hard when not training
+
+        # Handle ablation cases
+        if self.ablation == "complement_sampled" and hard_mask:
             mask = self._sample_mask_from_complement(
-                param_type
+                param_type, mask
             )  # Generates a randomly sampled mask of equal size to trained mask from complement of subnetwork
-        elif self.ablation == "randomly_sampled":
-            mask = self._sample_mask_randomly(param_type)
-        elif self.ablation != "none":
-            threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
-            mask = (
-                base_param <= threshold
-            ).float()  # Inverse hard mask for subnetwork ablation
+        elif self.ablation == "randomly_sampled" and hard_mask:
+            mask = self._sample_mask_randomly(param_type, mask)
+        elif (self.ablation != "none") and hard_mask:
+            mask = ~mask.float()  # Inverse hard mask for subnetwork ablation
+        elif (self.ablation != "none") and not hard_mask:
+            raise ValueError("Can't ablate while training")
+
+        # Handle Neuron masking
+        if mask.shape != base_param.shape:
+            mask_shape = torch.tensor(mask.shape)
+            base_shape = torch.tensor(base_param.shape)
+            dims = mask_shape != base_shape
+            assert torch.sum(dims) == 1  # masking whole neurons
+            assert mask_shape[dims] == 1  # Weight mask applies to each neuron equally
+            repeats = torch.ones(base_shape.shape)
+            repeats[dims] = base_shape[dims]
+            mask = mask.repeat(repeats.int().tolist())
+            assert mask.shape == base_param.shape
 
         return mask
 
@@ -195,17 +272,18 @@ class MagPruneLayer(MaskLayer):
         return masked_params
 
 
-class MagPruneLinear(MagPruneLayer):
+class HardConcreteLinear(HardConcreteLayer):
     def __init__(
         self,
         in_features: int,
         out_features: int,
         bias: bool = True,
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        mask_init_percentage: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_percentage)
 
         self.in_features = in_features
         self.out_features = out_features
@@ -222,7 +300,9 @@ class MagPruneLinear(MagPruneLayer):
         self.reset_parameters()
 
     @classmethod
-    def from_layer(self, layer: nn.Linear, ablation, mask_bias, mask_percentage):
+    def from_layer(
+        self, layer: nn.Linear, ablation, mask_unit, mask_bias, mask_init_percentage
+    ):
         if layer.bias is not None:
             bias = True
         else:
@@ -234,26 +314,37 @@ class MagPruneLinear(MagPruneLayer):
                 f"Cannot mask bias for layer {layer} because {layer} has no bias term"
             )
 
-        mag_prune = MagPruneLinear(
+        hard_concrete = HardConcreteLinear(
             layer.in_features,
             layer.out_features,
             bias,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
-        mag_prune.weight = layer.weight
+        hard_concrete.weight = layer.weight
         if bias:
-            mag_prune.bias = layer.bias
+            hard_concrete.bias = layer.bias
 
-        return mag_prune
+        return hard_concrete
 
     def _init_mask(self):
-        # Included to conform to mask_layer abstract class
-        pass
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape[0], 1))
+
+        nn.init.constant_(self.weight_mask_params, self._compute_initial_mask_value())
+
+        if self.mask_bias:
+            self.bias_mask_params = nn.Parameter(torch.zeros(self.bias.shape))
+            nn.init.constant_(self.bias_mask_params, self._compute_initial_mask_value)
 
     def reset_parameters(self):
         """Reset network parameters."""
+        self._init_mask()
+
         init.kaiming_uniform_(
             self.weight, a=math.sqrt(5)
         )  # Update Linear reset to match torch 1.12 https://pytorch.org/docs/stable/_modules/torch/nn/modules/linear.html#Linear
@@ -318,7 +409,7 @@ class MagPruneLinear(MagPruneLayer):
         return out
 
 
-class MagPruneGPTConv1D(MagPruneLayer):
+class HardConcreteGPTConv1D(HardConcreteLayer):
     """For some reason, GPT uses a custom Conv1D layer instead of a linear layer
 
     Basically works like a linear layer but the weights are transposed.
@@ -333,10 +424,11 @@ class MagPruneGPTConv1D(MagPruneLayer):
         nf,
         nx,
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        mask_init_percentage: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_percentage)
 
         self.nf = nf
         w = torch.empty(nx, nf)
@@ -347,23 +439,35 @@ class MagPruneGPTConv1D(MagPruneLayer):
         self._init_mask()
 
     @classmethod
-    def from_layer(self, layer: Conv1D, ablation, mask_bias, mask_percentage):
-        mag_prune = MagPruneGPTConv1D(
+    def from_layer(
+        self, layer: Conv1D, ablation, mask_unit, mask_bias, mask_init_percentage
+    ):
+        hard_concrete = HardConcreteGPTConv1D(
             layer.nf,
             layer.weight.shape[
                 0
             ],  # For some reason, this layer doesn't store in_features as an attribute
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,  # This class always has a bias term
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
-        mag_prune.weight = layer.weight
-        mag_prune.bias = layer.bias
+        hard_concrete.weight = layer.weight
+        hard_concrete.bias = layer.bias
 
-        return mag_prune
+        return hard_concrete
 
     def _init_mask(self):
-        pass
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            self.weight_mask_params = nn.Parameter(torch.zeros(1, self.weight.shape[1]))
+
+        nn.init.constant_(self.weight_mask_params, self._compute_initial_mask_value())
+
+        if self.mask_bias:
+            self.bias_mask_params = nn.Parameter(torch.zeros(self.bias.shape))
+            nn.init.constant_(self.bias_mask_params, self._compute_initial_mask_value())
 
     def _generate_random_values(self, param_type):
         if hasattr(self, "random_" + param_type):
@@ -420,7 +524,7 @@ class MagPruneGPTConv1D(MagPruneLayer):
         return x
 
 
-class _MagPruneConv(MagPruneLayer):
+class _HardConcreteConv(HardConcreteLayer):
     def __init__(
         self,
         layer_fn,
@@ -434,10 +538,11 @@ class _MagPruneConv(MagPruneLayer):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        mask_init_percentage: float = 0.0,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_unit, mask_bias, mask_init_percentage)
 
         self._base_layer = layer_fn(
             in_channels,
@@ -460,12 +565,24 @@ class _MagPruneConv(MagPruneLayer):
         self.reset_parameters()
 
     def reset_parameters(self) -> None:
+        self._init_mask()
         self._base_layer.reset_parameters()
         self.weight = self._base_layer.weight
         self.bias = self._base_layer.bias
 
     def _init_mask(self):
-        pass
+        if self.mask_unit == "weight":
+            self.weight_mask_params = nn.Parameter(torch.zeros(self.weight.shape))
+        if self.mask_unit == "neuron":
+            mask_shape = list(self.weight.shape)
+            mask_shape[1] = 1
+            self.weight_mask_params = nn.Parameter(torch.zeros(mask_shape))
+
+        nn.init.constant_(self.weight_mask_params, self._compute_initial_mask_value())
+
+        if self.mask_bias:
+            self.bias_mask_params = nn.Parameter(torch.empty(self.bias.shape))
+            nn.init.constant_(self.bias_mask_params, self._compute_initial_mask_value())
 
     def _generate_random_values(self, param_type):
         # Create a random tensor to reinit ablated parameters
@@ -516,7 +633,7 @@ class _MagPruneConv(MagPruneLayer):
         return out
 
 
-class MagPruneConv2d(_MagPruneConv):
+class HardConcreteConv2d(_HardConcreteConv):
     def __init__(
         self,
         in_channels,
@@ -529,8 +646,9 @@ class MagPruneConv2d(_MagPruneConv):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        mask_init_percentage: float = 0.0,
     ):
         layer_fn = nn.Conv2d
         super().__init__(
@@ -545,12 +663,15 @@ class MagPruneConv2d(_MagPruneConv):
             bias=bias,
             padding_mode=padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, mask_percentage):
+    def from_layer(
+        self, layer: nn.Conv2d, ablation, mask_unit, mask_bias, mask_init_percentage
+    ):
         if layer.bias is not None:
             bias = True
         else:
@@ -562,7 +683,7 @@ class MagPruneConv2d(_MagPruneConv):
                 f"Cannot mask bias for layer {layer} because {layer} has no bias term"
             )
 
-        mag_prune = MagPruneConv2d(
+        hard_concrete = HardConcreteConv2d(
             layer.in_channels,
             layer.out_channels,
             layer.kernel_size,
@@ -573,17 +694,18 @@ class MagPruneConv2d(_MagPruneConv):
             bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
-        mag_prune.weight = layer.weight
+        hard_concrete.weight = layer.weight
         if bias:
-            mag_prune.bias = layer.bias
+            hard_concrete.bias = layer.bias
 
-        return mag_prune
+        return hard_concrete
 
 
-class MagPruneConv1d(_MagPruneConv):
+class HardConcreteConv1d(_HardConcreteConv):
     def __init__(
         self,
         in_channels,
@@ -596,8 +718,9 @@ class MagPruneConv1d(_MagPruneConv):
         bias=True,
         padding_mode="zeros",
         ablation: str = "none",
+        mask_unit: str = "weight",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        mask_init_percentage: float = 0.0,
     ):
         layer_fn = nn.Conv1d
         super().__init__(
@@ -612,12 +735,15 @@ class MagPruneConv1d(_MagPruneConv):
             bias=bias,
             padding_mode=padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, mask_percentage):
+    def from_layer(
+        self, layer: nn.Conv1d, ablation, mask_unit, mask_bias, mask_init_percentage
+    ):
         if layer.bias is not None:
             bias = True
         else:
@@ -629,7 +755,7 @@ class MagPruneConv1d(_MagPruneConv):
                 f"Cannot mask bias for layer {layer} because {layer} has no bias term"
             )
 
-        mag_prune = MagPruneConv1d(
+        hard_concrete = HardConcreteConv1d(
             layer.in_channels,
             layer.out_channels,
             layer.kernel_size,
@@ -640,11 +766,12 @@ class MagPruneConv1d(_MagPruneConv):
             bias=bias,
             padding_mode=layer.padding_mode,
             ablation=ablation,
+            mask_unit=mask_unit,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            mask_init_percentage=mask_init_percentage,
         )
-        mag_prune.weight = layer.weight
+        hard_concrete.weight = layer.weight
         if bias:
-            mag_prune.bias = layer.bias
+            hard_concrete.bias = layer.bias
 
-        return mag_prune
+        return hard_concrete
