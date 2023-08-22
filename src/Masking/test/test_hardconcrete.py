@@ -290,11 +290,9 @@ def test_linear_complement_sampled_ablate():
         mask_init_percentage=0.0,
     )
     ipt = torch.ones(10)
-    print(layer.weight_mask_params)
     layer.weight_mask_params = nn.Parameter(
         torch.rand(layer.weight_mask_params.size()) - 0.8
     )
-    print(layer.weight_mask_params)
     layer.train(False)
     _ = layer(ipt)  # Weight mask computed during forward pass
 
@@ -886,6 +884,40 @@ def test_conv1d_init():
         )
 
 
+def test_conv1d_init_percentage():
+    # Assert that the number of parameters that would be masked for a given forward pass sample
+    # is close to the expected number
+    mask_init_p = 0.9
+    layer = HardConcreteConv1d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.1 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.1 - 500
+    )
+
+    mask_init_p = 0.1
+    layer = HardConcreteConv1d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.9 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.9 - 500
+    )
+
+    mask_init_p = 0.5
+    layer = HardConcreteConv1d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.5 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.5 - 500
+    )
+
+
 def test_conv1d_from_layer():
     base_layer = nn.Conv1d(1, 10, 3)
     masked_layer = HardConcreteConv1d.from_layer(
@@ -1304,6 +1336,40 @@ def test_conv2d_init():
             mask_bias=True,
             mask_init_percentage=mask_init_p,
         )
+
+
+def test_conv2d_init_percentage():
+    # Assert that the number of parameters that would be masked for a given forward pass sample
+    # is close to the expected number
+    mask_init_p = 0.9
+    layer = HardConcreteConv2d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.1 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.1 - 500
+    )
+
+    mask_init_p = 0.1
+    layer = HardConcreteConv2d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.9 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.9 - 500
+    )
+
+    mask_init_p = 0.5
+    layer = HardConcreteConv2d(
+        100, 100, 3, ablation="none", mask_bias=False, mask_init_percentage=mask_init_p
+    )
+    mask = layer._compute_mask("weight_mask_params")
+    assert (
+        torch.sum(mask < 0.5) < torch.sum(torch.ones(mask.shape)) * 0.5 + 500
+        and torch.sum(mask < 0.5) > torch.sum(torch.ones(mask.shape)) * 0.5 - 500
+    )
 
 
 def test_conv2d_from_layer():

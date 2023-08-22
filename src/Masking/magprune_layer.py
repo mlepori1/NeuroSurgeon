@@ -10,18 +10,18 @@ import warnings
 
 
 class MagPruneLayer(MaskLayer):
-    def __init__(self, ablation: str, mask_bias: bool, mask_percentage: float):
+    def __init__(self, ablation: str, mask_bias: bool, prune_percentage: float):
         super().__init__(ablation, "weight", mask_bias)
-        self.mask_percentage = mask_percentage
+        self.prune_percentage = prune_percentage
         self.force_resample = False
 
     @property
-    def mask_percentage(self):
-        return self._mask_percentage
+    def prune_percentage(self):
+        return self._prune_percentage
 
-    @mask_percentage.setter
-    def mask_percentage(self, value):
-        self._mask_percentage = value
+    @prune_percentage.setter
+    def prune_percentage(self, value):
+        self._prune_percentage = value
 
     @property
     def force_resample(self):
@@ -52,13 +52,13 @@ class MagPruneLayer(MaskLayer):
             )
 
         # Make sure that one can sample from the complement
-        if self.mask_percentage <= 0.5:
+        if self.prune_percentage <= 0.5:
             raise ValueError(
                 "Trying to sample random masks, but original mask contains > 50 percent of weights"
             )
 
         # Get hard mask
-        threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
+        threshold = torch.quantile(base_param.reshape(-1), self.prune_percentage)
         mask = (base_param > threshold).float()
         sampled_size = torch.sum(mask).int()
         # Sample sample_size number of weights from the complement of the mask given by mask_weight
@@ -112,7 +112,7 @@ class MagPruneLayer(MaskLayer):
             )
 
         # Get number of parameters to ablate
-        threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
+        threshold = torch.quantile(base_param.reshape(-1), self.prune_percentage)
         mask = (base_param > threshold).float()
         sampled_size = torch.sum(mask).int()
 
@@ -153,8 +153,12 @@ class MagPruneLayer(MaskLayer):
             )
 
         if self.ablation == "none":
-            threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
-            mask = (base_param > threshold).float()
+            threshold = torch.quantile(base_param.reshape(-1), self.prune_percentage)
+            # Give the expected behavior of masking all weights at prune_percentage = 1.0, none at 0.0
+            if self.prune_percentage == 1.0:
+                mask = (base_param > threshold).float()
+            else:
+                mask = (base_param >= threshold).float()
         elif self.ablation == "complement_sampled":
             mask = self._sample_mask_from_complement(
                 param_type
@@ -162,9 +166,9 @@ class MagPruneLayer(MaskLayer):
         elif self.ablation == "randomly_sampled":
             mask = self._sample_mask_randomly(param_type)
         elif self.ablation != "none":
-            threshold = torch.quantile(base_param.reshape(-1), self.mask_percentage)
+            threshold = torch.quantile(base_param.reshape(-1), self.prune_percentage)
             mask = (
-                base_param <= threshold
+                base_param < threshold
             ).float()  # Inverse hard mask for subnetwork ablation
 
         return mask
@@ -203,9 +207,9 @@ class MagPruneLinear(MagPruneLayer):
         bias: bool = True,
         ablation: str = "none",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        prune_percentage: float = 0.2,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_bias, prune_percentage)
 
         self.in_features = in_features
         self.out_features = out_features
@@ -222,7 +226,7 @@ class MagPruneLinear(MagPruneLayer):
         self.reset_parameters()
 
     @classmethod
-    def from_layer(self, layer: nn.Linear, ablation, mask_bias, mask_percentage):
+    def from_layer(self, layer: nn.Linear, ablation, mask_bias, prune_percentage):
         if layer.bias is not None:
             bias = True
         else:
@@ -240,7 +244,7 @@ class MagPruneLinear(MagPruneLayer):
             bias,
             ablation=ablation,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
         mag_prune.weight = layer.weight
         if bias:
@@ -334,9 +338,9 @@ class MagPruneGPTConv1D(MagPruneLayer):
         nx,
         ablation: str = "none",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        prune_percentage: float = 0.2,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_bias, prune_percentage)
 
         self.nf = nf
         w = torch.empty(nx, nf)
@@ -347,7 +351,7 @@ class MagPruneGPTConv1D(MagPruneLayer):
         self._init_mask()
 
     @classmethod
-    def from_layer(self, layer: Conv1D, ablation, mask_bias, mask_percentage):
+    def from_layer(self, layer: Conv1D, ablation, mask_bias, prune_percentage):
         mag_prune = MagPruneGPTConv1D(
             layer.nf,
             layer.weight.shape[
@@ -355,7 +359,7 @@ class MagPruneGPTConv1D(MagPruneLayer):
             ],  # For some reason, this layer doesn't store in_features as an attribute
             ablation=ablation,
             mask_bias=mask_bias,  # This class always has a bias term
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
         mag_prune.weight = layer.weight
         mag_prune.bias = layer.bias
@@ -435,9 +439,9 @@ class _MagPruneConv(MagPruneLayer):
         padding_mode="zeros",
         ablation: str = "none",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        prune_percentage: float = 0.2,
     ):
-        super().__init__(ablation, mask_bias, mask_percentage)
+        super().__init__(ablation, mask_bias, prune_percentage)
 
         self._base_layer = layer_fn(
             in_channels,
@@ -530,7 +534,7 @@ class MagPruneConv2d(_MagPruneConv):
         padding_mode="zeros",
         ablation: str = "none",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        prune_percentage: float = 0.2,
     ):
         layer_fn = nn.Conv2d
         super().__init__(
@@ -546,11 +550,11 @@ class MagPruneConv2d(_MagPruneConv):
             padding_mode=padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, mask_percentage):
+    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, prune_percentage):
         if layer.bias is not None:
             bias = True
         else:
@@ -574,7 +578,7 @@ class MagPruneConv2d(_MagPruneConv):
             padding_mode=layer.padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
         mag_prune.weight = layer.weight
         if bias:
@@ -597,7 +601,7 @@ class MagPruneConv1d(_MagPruneConv):
         padding_mode="zeros",
         ablation: str = "none",
         mask_bias: bool = False,
-        mask_percentage: float = 0.2,
+        prune_percentage: float = 0.2,
     ):
         layer_fn = nn.Conv1d
         super().__init__(
@@ -613,11 +617,11 @@ class MagPruneConv1d(_MagPruneConv):
             padding_mode=padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, mask_percentage):
+    def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, prune_percentage):
         if layer.bias is not None:
             bias = True
         else:
@@ -641,7 +645,7 @@ class MagPruneConv1d(_MagPruneConv):
             padding_mode=layer.padding_mode,
             ablation=ablation,
             mask_bias=mask_bias,
-            mask_percentage=mask_percentage,
+            prune_percentage=prune_percentage,
         )
         mag_prune.weight = layer.weight
         if bias:
