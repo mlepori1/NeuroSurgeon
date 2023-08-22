@@ -4,6 +4,7 @@ import torch.nn as nn
 from transformers.pytorch_utils import Conv1D
 import torch.nn.functional as F
 import torch.nn.init as init
+import numpy as np
 import math
 from abc import abstractmethod
 import warnings
@@ -33,7 +34,9 @@ class HardConcreteLayer(MaskLayer):
 
     @mask_init_percentage.setter
     def mask_init_percentage(self, value):
-        self._mask_init_percentage = value
+        if value < 0.0 or value > 1.0:
+            raise ValueError("Mask Init Percentage can't be outside of [0.0, 1.0]")
+        self._mask_init_percentage = np.clip(value, 0.0001, 0.9999)
 
     @property
     def force_resample(self):
@@ -51,7 +54,9 @@ class HardConcreteLayer(MaskLayer):
                     self.weight_mask_params
                     - (
                         self.temperature
-                        * torch.log(-self.left_stretch / self.right_stretch)
+                        * torch.log(
+                            torch.tensor([-self.left_stretch / self.right_stretch])
+                        )
                     )
                 )
             )
@@ -61,7 +66,9 @@ class HardConcreteLayer(MaskLayer):
                         self.bias_mask_params
                         - (
                             self.temperature
-                            * torch.log(-self.left_stretch / self.right_stretch)
+                            * torch.log(
+                                torch.tensor([-self.left_stretch / self.right_stretch])
+                            )
                         )
                     )
                 )
@@ -70,13 +77,17 @@ class HardConcreteLayer(MaskLayer):
             l0 = torch.sum(self._compute_mask("weight_mask_params"))
             if self.mask_bias:
                 l0 += torch.sum(self._compute_mask("bias_mask_params"))
+            l0 = l0.float()
         return l0
 
     def _compute_initial_mask_value(self):
-        stretched_p = (self.mask_init_percentage - self.left_stretch) / (
-            self.right_stretch - self.left_stretch
-        )
-        return torch.log(stretched_p / (1 - stretched_p))
+        """NOTE This initialization strategy is used by Louizos et al. 2018, but a slightly different one is
+        used in Cao et al. 2021. This initialization scheme is used because it provides approximately the correct
+        number of masked parameters after sampling from the uniform distribution and binarizing the mask using mask < 0.5
+        """
+        return torch.log(
+            torch.tensor([self.mask_init_percentage / (1 - self.mask_init_percentage)])
+        )[0]
 
     def _sample_mask_from_complement(self, param_type, mask):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
@@ -103,7 +114,7 @@ class HardConcreteLayer(MaskLayer):
 
         # Get hard mask
         sampled_size = torch.sum(mask.int())
-        if sampled_size > torch.sum(~mask.int()):
+        if sampled_size > torch.sum((~mask).int()):
             raise ValueError(
                 "Trying to sample random masks, but original mask contains > 50 percent of weights"
             )
@@ -228,7 +239,7 @@ class HardConcreteLayer(MaskLayer):
         elif self.ablation == "randomly_sampled" and hard_mask:
             mask = self._sample_mask_randomly(param_type, mask)
         elif (self.ablation != "none") and hard_mask:
-            mask = ~mask.float()  # Inverse hard mask for subnetwork ablation
+            mask = (~mask).float()  # Inverse hard mask for subnetwork ablation
         elif (self.ablation != "none") and not hard_mask:
             raise ValueError("Can't ablate while training")
 
@@ -267,7 +278,7 @@ class HardConcreteLayer(MaskLayer):
             params * params_mask
         )  # This will give you a mask with 0's for subnetwork weights
         masked_params += (
-            ~params_mask.bool()
+            ~(params_mask.bool())
         ).float() * random_params  # Invert the mask to target the 0'd weights, make them random
         return masked_params
 
@@ -339,7 +350,7 @@ class HardConcreteLinear(HardConcreteLayer):
 
         if self.mask_bias:
             self.bias_mask_params = nn.Parameter(torch.zeros(self.bias.shape))
-            nn.init.constant_(self.bias_mask_params, self._compute_initial_mask_value)
+            nn.init.constant_(self.bias_mask_params, self._compute_initial_mask_value())
 
     def reset_parameters(self):
         """Reset network parameters."""
