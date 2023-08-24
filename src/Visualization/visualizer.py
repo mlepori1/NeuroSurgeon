@@ -7,8 +7,8 @@ import torch
 
 
 class VisualizerConfig:
-    """This config defines the output plots of the Visualizer
-    """
+    """This config defines the output plots of the Visualizer"""
+
     def __init__(
         self,
         state_dicts: List,
@@ -57,8 +57,8 @@ class VisualizerConfig:
 
 
 class Visualizer:
-    """Class that produces plots of subnetwork distribution through a model
-    """
+    """Class that produces plots of subnetwork distribution through a model"""
+
     def __init__(self, config):
         self.config = config
 
