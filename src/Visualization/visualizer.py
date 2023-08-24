@@ -7,6 +7,8 @@ import torch
 
 
 class VisualizerConfig:
+    """This config defines the output plots of the Visualizer
+    """
     def __init__(
         self,
         state_dicts: List,
@@ -55,6 +57,8 @@ class VisualizerConfig:
 
 
 class Visualizer:
+    """Class that produces plots of subnetwork distribution through a model
+    """
     def __init__(self, config):
         self.config = config
 
@@ -153,6 +157,7 @@ class Visualizer:
         return filtered_keys
 
     def _create_layer2nodes(self, plot_nodes, config):
+        # Maps layers to the nodes inside of those layers
         model_layer2node_dicts = []
         for model in plot_nodes:
             layer2nodes = defaultdict(list)
@@ -169,6 +174,7 @@ class Visualizer:
         return model_layer2node_dicts
 
     def _get_layer2masks(self, model_layer2node_dicts, config):
+        # Maps layers to masks for each node in that layer
         model_layer2mask_dicts = []
         for i in range(len(config.state_dicts)):
             state_dict = config.state_dicts[i]
@@ -201,6 +207,7 @@ class Visualizer:
         return overlap_dict
 
     def _compute_node_overlap(self, model_layer2mask_dicts, config):
+        # Computes the overlap of inidividual weight matrices between subnetworks
         overlap_dict = {}
         if len(config.state_dicts) == 2:
             model_0 = model_layer2mask_dicts[0]
@@ -257,6 +264,7 @@ class Visualizer:
         return overlap_dict
 
     def _compute_layer_overlap(self, model_layer2mask_dicts, config):
+        # Computes the overlap of full layers between subnetworks
         overlap_dict = {}
         if len(config.state_dicts) == 2:
             model_0 = model_layer2mask_dicts[0]
@@ -433,6 +441,7 @@ class Visualizer:
                 )
 
     def _create_graph(self, node_overlaps, config):
+        # Inspired by the tutorial: https://matplotlib.org/matplotblog/posts/mpl-for-making-diagrams/
         fig, ax = self._create_blank_diagram(config)
 
         rectangle_width = 0.75  # Rectangles should be .75 as wide as the image
