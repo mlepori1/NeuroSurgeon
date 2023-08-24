@@ -248,10 +248,10 @@ def test_use_mask_bert():
 
     assert torch.all(use_masks_logits != base_logits)
 
-    circuit_model.use_masks = False
+    circuit_model.use_masks(False)
     do_not_use_masks_logits = circuit_model(**inputs).logits.cpu()
 
-    assert not torch.all(do_not_use_masks_logits == base_logits)
+    assert torch.all(do_not_use_masks_logits == base_logits)
 
 
 def test_l0_calc_bert():
@@ -496,7 +496,7 @@ def train_loop(model, dataloader):
         progress_bar.update(1)
 
 
-def test_training_bert():
+def test_contsparse_training_bert():
     dataloader = setup_dataset()
 
     # Check that the training runs with the circuit model without bugs with frozen underlying model
@@ -588,6 +588,161 @@ def test_training_bert():
 
     assert torch.all(before_weight != after_weight)
     assert torch.all(before_mask != after_mask)
+
+
+def test_hardconcrete_training_bert():
+    dataloader = setup_dataset()
+
+    # Check that the training runs with the circuit model without bugs with frozen underlying model
+    circuit_config = CircuitConfig(
+        mask_method="hard_concrete",
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_percentage": 0.9,
+        },
+        target_layers=[
+            "bert.encoder.layer.0.output.dense",
+        ],
+        freeze_base=True,
+        add_l0=True,
+    )
+
+    model = BertForSequenceClassification.from_pretrained(
+        "prajjwal1/bert-tiny", num_labels=2
+    )
+    circuit_model = CircuitModel(circuit_config, model)
+
+    mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
+
+    before_weight = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+    )
+    before_mask = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+    )
+
+    pre_train_l0_loss = circuit_model._compute_l0_loss()
+
+    train_loop(circuit_model, dataloader)
+
+    post_train_l0_loss = circuit_model._compute_l0_loss()
+
+    # Assert that L0 loss drops after training
+    assert pre_train_l0_loss > post_train_l0_loss
+
+    # Assert that mask weights are different, but all underlying weights are the same
+    mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
+
+    after_weight = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+    )
+    after_mask = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+    )
+
+    assert torch.all(before_weight == after_weight)
+    assert torch.all(before_mask != after_mask)
+
+    # Assert that the trainer runs with the circuit model without bugs with unfrozen underlying model
+    circuit_config = CircuitConfig(
+        mask_method="hard_concrete",
+        mask_hparams={
+            "ablation": "none",
+            "mask_unit": "weight",
+            "mask_bias": False,
+            "mask_init_percentage": 0.9,
+        },
+        target_layers=[
+            "bert.encoder.layer.0.output.dense",
+        ],
+        freeze_base=False,
+        add_l0=True,
+    )
+
+    model = BertForSequenceClassification.from_pretrained(
+        "prajjwal1/bert-tiny", num_labels=2
+    )
+    circuit_model = CircuitModel(circuit_config, model)
+
+    mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
+
+    before_weight = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+    )
+    before_mask = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+    )
+
+    train_loop(circuit_model, dataloader)
+
+    # Assert that all weights are different.
+    mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
+
+    after_weight = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+    )
+    after_mask = torch.clone(
+        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+    )
+
+    assert torch.all(before_weight != after_weight)
+    assert torch.all(before_mask != after_mask)
+
+
+def test_magnitude_pruning_bert():
+    # Assert that magnitude pruning works, giving different the right L0 with different percentages
+    # and producing different outputs
+    circuit_config = CircuitConfig(
+        mask_method="magnitude_pruning",
+        mask_hparams={
+            "ablation": "none",
+            "mask_bias": False,
+            "prune_percentage": 0.5,
+        },
+        target_layers=[
+            "bert.encoder.layer.1.output.dense",
+        ],
+        freeze_base=True,
+        add_l0=True,
+    )
+
+    tokenizer = BertTokenizer.from_pretrained("prajjwal1/bert-tiny")
+    inputs = tokenizer("Hello, this is a test", return_tensors="pt")
+
+    model = BertForSequenceClassification.from_pretrained("prajjwal1/bert-tiny")
+    base_logits = model(**inputs).logits.cpu()
+
+    circuit_model = CircuitModel(circuit_config, model)
+    l0_prune_50 = circuit_model.compute_l0_statistics()["total_l0"]
+    use_masks_logits = circuit_model(**inputs).logits.cpu()
+
+    assert not torch.all(use_masks_logits == base_logits)
+
+    circuit_model.use_masks(False)
+    do_not_use_masks_logits = circuit_model(**inputs).logits.cpu()
+
+    assert torch.all(do_not_use_masks_logits == base_logits)
+
+    circuit_config = CircuitConfig(
+        mask_method="magnitude_pruning",
+        mask_hparams={
+            "ablation": "none",
+            "mask_bias": False,
+            "prune_percentage": 0.75,
+        },
+        target_layers=[
+            "bert.encoder.layer.1.output.dense",
+        ],
+        freeze_base=True,
+        add_l0=True,
+    )
+
+    model = BertForSequenceClassification.from_pretrained("prajjwal1/bert-tiny")
+    circuit_model = CircuitModel(circuit_config, model)
+    l0_prune_75 = circuit_model.compute_l0_statistics()["total_l0"]
+    assert (l0_prune_75 * 2) == l0_prune_50
 
 
 def test_lambda_effect_bert():

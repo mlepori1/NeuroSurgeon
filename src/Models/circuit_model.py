@@ -132,7 +132,7 @@ class CircuitModel(nn.Module):
             return [
                 config.mask_hparams["ablation"],
                 config.mask_hparams["mask_bias"],
-                config.mask_hparams["mask_percentage"],
+                config.mask_hparams["prune_percentage"],
             ]
         else:
             raise ValueError(
