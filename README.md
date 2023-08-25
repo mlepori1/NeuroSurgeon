@@ -48,7 +48,3 @@ class TemperatureCallback(Callback):
             temp = pl_module.mlp.get_temp()
             pl_module.mlp.set_temp(temp * self.temp_increase)
 ```
-
-## CRAFT + Circuits Idea
-To find circuits in that implement CRAFT concepts, we need only to freeze the underlying model and define a loss function that rewards the model for representing one target concept, while penalizing it for representing any other concept. We will then only train binary masks to automatically discover disentangeled circuits that are responsible for the target concept. I recommend training with L0 regularization to get maximally sparse circuits. We will need to search over layer combinations to find the circuit, but starting one layer behind where the CRAFT concepts are calculated seems like a good start.
-
