@@ -22,19 +22,6 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.stream = stream
 
 
-class CircuitProbeConfig(PretrainedConfig):
-    def __init__(
-        self,
-        probe_vectors: str,
-        circuit_config: CircuitConfig,
-        resid_config: ResidualUpdateModelConfig,
-    ):
-        super().__init__()
-        self.probe_vectors = probe_vectors
-        self.circuit_config = circuit_config
-        self.resid_config = resid_config
-
-
 class SubnetworkProbeConfig(PretrainedConfig):
     def __init__(
         self,
