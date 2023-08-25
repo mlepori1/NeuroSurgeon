@@ -27,10 +27,10 @@ import warnings
 
 
 class CircuitModel(nn.Module):
-    def __init__(self, config: CircuitConfig, root_model: nn.Module):
+    def __init__(self, config: CircuitConfig, model: nn.Module):
         super().__init__()
         self.config = config
-        self.root_model = root_model
+        self.wrapped_model = model
         self.temperature = 1.0
 
         self._replace_target_layers()
@@ -42,14 +42,14 @@ class CircuitModel(nn.Module):
 
         # Remove gradients from all parameters except mask params
         if self.config.freeze_base:
-            for layer in self.root_model.modules():
+            for layer in self.wrapped_model.modules():
                 if not issubclass(type(layer), MaskLayer):
                     layer.train(False)
                 if hasattr(layer, "weight") and layer.weight != None:
                     layer.weight.requires_grad = False
                 if hasattr(layer, "bias") and layer.bias != None:
                     layer.bias.requires_grad = False
-            for layer in self.root_model.modules():
+            for layer in self.wrapped_model.modules():
                 if issubclass(type(layer), MaskLayer):
                     layer.train(True)
 
@@ -66,7 +66,7 @@ class CircuitModel(nn.Module):
                 layer_path = [target_layer]
 
             earlier_component = None
-            current_component = self.root_model
+            current_component = self.wrapped_model
             try:
                 for component_path in layer_path:
                     earlier_component = current_component
@@ -143,18 +143,18 @@ class CircuitModel(nn.Module):
         self.training = train_bool
 
         if self.config.freeze_base:
-            for layer in self.root_model.modules():
+            for layer in self.wrapped_model.modules():
                 if not issubclass(type(layer), MaskLayer):
                     layer.train(
                         False
                     )  # Keep all non-masklayers train=False, to handle dropout, batchnorm, etc
-            for layer in self.root_model.modules():
+            for layer in self.wrapped_model.modules():
                 if issubclass(type(layer), MaskLayer):
                     layer.train(
                         train_bool
                     )  # Set masklayers to train or eval, all weights and biases are frozen anyway
         else:
-            for layer in self.root_model.modules():
+            for layer in self.wrapped_model.modules():
                 layer.train(train_bool)
 
     def compute_l0_statistics(self):
@@ -165,7 +165,7 @@ class CircuitModel(nn.Module):
         max_l0 = 0
         layer2l0 = {}
         layer2maxl0 = {}
-        for name, layer in self.root_model.named_modules():
+        for name, layer in self.wrapped_model.named_modules():
             if issubclass(type(layer), MaskLayer):
                 layer_l0 = layer.calculate_l0()
                 layer_max_l0 = layer.calculate_max_l0()
@@ -185,7 +185,7 @@ class CircuitModel(nn.Module):
         # add L0 loss when training
         if self.training:
             total_l0 = 0.0
-            for _, layer in self.root_model.named_modules():
+            for _, layer in self.wrapped_model.named_modules():
                 if issubclass(type(layer), MaskLayer):
                     layer_l0 = layer.calculate_l0()
                     total_l0 += layer_l0
@@ -216,7 +216,7 @@ class CircuitModel(nn.Module):
 
     def forward(self, **kwargs):
         # Call forward of model, add l0 regularization if appropriate
-        output = self.root_model(**kwargs, return_dict=True)
+        output = self.wrapped_model(**kwargs, return_dict=True)
         if self.config.add_l0:
             if hasattr(output, "loss") and output.loss is not None:
                 output.loss = output.loss + (

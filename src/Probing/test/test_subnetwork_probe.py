@@ -31,8 +31,6 @@ def create_test_probe(labeling="sequence"):
         target_layers=[1],
         mlp=True,
         attn=False,
-        circuit=True,
-        base=True,
         updates=False,
         stream=True,
     )
@@ -78,8 +76,6 @@ def test_incompatible_configuration_exceptions():
         target_layers=[1],
         mlp=True,
         attn=True,
-        circuit=True,
-        base=True,
         updates=False,
         stream=True,
     )
@@ -113,8 +109,6 @@ def test_incompatible_configuration_exceptions():
         target_layers=[1, 2],
         mlp=True,
         attn=False,
-        circuit=True,
-        base=True,
         updates=False,
         stream=True,
     )
@@ -147,8 +141,6 @@ def test_incompatible_configuration_exceptions():
         target_layers=[1],
         mlp=False,
         attn=False,
-        circuit=True,
-        base=True,
         updates=False,
         stream=True,
     )

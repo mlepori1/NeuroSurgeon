@@ -42,7 +42,7 @@ def test_replace_layers_bert():
     ]
     circuit_model = CircuitModel(circuit_config, bert)
     circuit_modules = {}
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         circuit_modules[name] = mod
 
     clean_bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
@@ -107,7 +107,7 @@ def test_model_freezing_bert():
 
     # Assert that only weight_mask_param and bias_mask_param require gradients
     # Assert that everything except mask_layers are in eval mode
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         if name in circuit_config.target_layers:
             assert mod.training == True
             assert mod.weight.requires_grad == False
@@ -121,7 +121,7 @@ def test_model_freezing_bert():
 
     circuit_model.train(False)
 
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         if name in circuit_config.target_layers:
             assert mod.training == False
         else:
@@ -152,7 +152,7 @@ def test_model_freezing_bert():
     circuit_model.train(True)
 
     # Assert that everything is in train mode and requires_gradients
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         if name in circuit_config.target_layers:
             assert mod.training == True
             assert mod.weight.requires_grad == True
@@ -166,7 +166,7 @@ def test_model_freezing_bert():
 
     circuit_model.train(False)
 
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         if name in circuit_config.target_layers:
             assert mod.training == False
         else:
@@ -450,7 +450,7 @@ def test_compute_l0_loss_bert():
     train_l0_loss = circuit_model._compute_l0_loss()
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
     hypothesized_l0_loss = len(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight.reshape(-1)
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight.reshape(-1)
     ) * nn.functional.sigmoid(torch.tensor([0.75]))
     assert train_l0_loss.detach() == pytest.approx(hypothesized_l0_loss.item(), 0.01)
 
@@ -523,10 +523,10 @@ def test_contsparse_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -535,10 +535,10 @@ def test_contsparse_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight == after_weight)
@@ -568,10 +568,10 @@ def test_contsparse_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -580,10 +580,10 @@ def test_contsparse_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight != after_weight)
@@ -617,10 +617,10 @@ def test_hardconcrete_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     pre_train_l0_loss = circuit_model._compute_l0_loss()
@@ -636,10 +636,10 @@ def test_hardconcrete_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight == after_weight)
@@ -669,10 +669,10 @@ def test_hardconcrete_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -681,10 +681,10 @@ def test_hardconcrete_training_bert():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight != after_weight)

@@ -31,8 +31,6 @@ def create_test_probe():
         target_layers=[1],
         mlp=True,
         attn=False,
-        circuit=True,
-        base=True,
         updates=True,
         stream=False,
     )
@@ -73,7 +71,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=True, attn=False, circuit=True, base=True
+        "bert",
+        target_layers=[1],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
@@ -100,7 +101,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1, 2], mlp=True, attn=False, circuit=True, base=True
+        "bert",
+        target_layers=[1, 2],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
@@ -127,7 +131,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=False, attn=False, circuit=True, base=True
+        "bert",
+        target_layers=[1],
+        mlp=False,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(

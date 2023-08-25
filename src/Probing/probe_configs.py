@@ -10,8 +10,6 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         target_layers: List[int],
         mlp: bool,
         attn: bool,
-        circuit: bool = False,
-        base: bool = True,
         updates: bool = True,
         stream: bool = False,
     ):
@@ -20,8 +18,6 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.target_layers = target_layers
         self.mlp = mlp
         self.attn = attn
-        self.circuit = circuit
-        self.base = base
         self.updates = updates
         self.stream = stream
 

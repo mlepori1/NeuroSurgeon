@@ -18,6 +18,7 @@ class SubnetworkProbe(nn.Module):
         self.config = config
         self._validate_configs()
 
+        self.hidden_size = model.config.hidden_size
         # First create a CircuitModel
         self.wrapped_model = CircuitModel(self.config.circuit_config, model)
         # Then wrap it to get intermediate activations
@@ -48,7 +49,7 @@ class SubnetworkProbe(nn.Module):
         assert self.config.labeling in ["sequence", "token"]
 
     def create_probe(self):
-        input_size = self.wrapped_model.model.root_model.config.hidden_size
+        input_size = self.hidden_size
         if self.config.intermediate_size != -1:
             return nn.Sequential(
                 nn.Linear(input_size, self.config.intermediate_size),
@@ -81,9 +82,7 @@ class SubnetworkProbe(nn.Module):
         if self.config.labeling == "sequence":
             assert torch.sum(token_mask) == len(input_ids)
 
-        updates = updates.reshape(
-            -1, self.wrapped_model.model.root_model.config.hidden_size
-        )
+        updates = updates.reshape(-1, self.hidden_size)
         updates = updates[token_mask]
 
         if labels is not None and self.config.labeling == "token":

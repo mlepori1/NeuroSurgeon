@@ -19,6 +19,7 @@ class CircuitProbe(nn.Module):
 
         self._validate_configs()
 
+        self.hidden_size = model.config.hidden_size
         # First create a CircuitModel
         self.wrapped_model = CircuitModel(self.config.circuit_config, model)
         # Then wrap it to get intermediate activations
@@ -95,9 +96,7 @@ class CircuitProbe(nn.Module):
         # Get one residual stream update per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream updates
         token_mask = token_mask.reshape(-1)
-        updates = updates.reshape(
-            -1, self.wrapped_model.model.root_model.config.hidden_size
-        )
+        updates = updates.reshape(-1, self.hidden_size)
         updates = updates[token_mask]
 
         if labels is not None:
@@ -118,7 +117,7 @@ class CircuitProbe(nn.Module):
         if self.config.circuit_config.add_l0:
             loss += (
                 self.config.circuit_config.l0_lambda
-                * self.wrapped_model.model._compute_l0_loss()
+                * self.wrapped_model.wrapped_model._compute_l0_loss()
             )
 
         if not return_dict:

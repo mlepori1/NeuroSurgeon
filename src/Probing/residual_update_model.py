@@ -2,15 +2,8 @@ import torch.nn as nn
 import torch
 import warnings
 from .probe_configs import ResidualUpdateModelConfig
-from transformers import (
-    BertPreTrainedModel,
-    RobertaPreTrainedModel,
-    MPNetPreTrainedModel,
-    XLMRobertaPreTrainedModel,
-    ErniePreTrainedModel,
-    ElectraPreTrainedModel,
-    ConvBertPreTrainedModel,
-)
+from ..Models.circuit_model import CircuitModel
+import warnings
 
 
 class ResidualUpdateModel(nn.Module):
@@ -21,54 +14,49 @@ class ResidualUpdateModel(nn.Module):
     ):
         super().__init__()
         self.config = config
-        self.model = model
-        self.circuit = self.config.circuit
-        self.base = self.config.base
+        self.wrapped_model = model
         self.vector_cache = {}
         self.hooks = []
 
-        if self.circuit:
-            self.to_hook = self.model.root_model
+        if issubclass(self.wrapped_model.__class__, CircuitModel):
+            self.to_hook = self.wrapped_model.wrapped_model
         else:
-            self.to_hook = self.model
+            self.to_hook = self.wrapped_model
 
         if self.config.model_type == "gpt":
             # This applies to GPT-2 and GPT Neo in the transformers repo
-            if not self.base:
+            if hasattr(self.to_hook, "transformer"):
                 self.to_hook = self.to_hook.transformer
             self._add_gpt_hooks()
 
         elif self.config.model_type == "gpt_neox":
-            if not self.base:
+            if hasattr(self.to_hook, "gpt_neox"):
                 self.to_hook = self.to_hook.gpt_neox
             self._add_gpt_neox_hooks()
 
         elif self.config.model_type == "bert":
             # This applies to BERT and RoBERTa-style models in the transformers repo
-            if not self.base:
-                if issubclass(self.to_hook.__class__, BertPreTrainedModel):
-                    self.to_hook = self.to_hook.bert
-                elif issubclass(self.to_hook.__class__, RobertaPreTrainedModel):
-                    self.to_hook = self.to_hook.roberta
-                elif issubclass(self.to_hook.__class__, MPNetPreTrainedModel):
-                    self.to_hook = self.to_hook.mpnet
-                elif issubclass(self.to_hook.__class__, XLMRobertaPreTrainedModel):
-                    self.to_hook = self.to_hook.roberta
-                elif issubclass(self.to_hook.__class__, ErniePreTrainedModel):
-                    self.to_hook = self.to_hook.ernie
-                elif issubclass(self.to_hook.__class__, ElectraPreTrainedModel):
-                    self.to_hook = self.to_hook.electra
-                elif issubclass(self.to_hook.__class__, ConvBertPreTrainedModel):
-                    self.to_hook = self.to_hook.convbert
-                else:
-                    raise ValueError(
-                        "We only support BERT, RoBERTa, MPNet, XLM-Roberta, Ernie, ConvBERT, and Electra models currently"
-                    )
+            if hasattr(self.to_hook, "bert"):
+                self.to_hook = self.to_hook.bert
+            elif hasattr(self.to_hook, "roberta"):
+                self.to_hook = self.to_hook.roberta
+            elif hasattr(self.to_hook, "mpnet"):
+                self.to_hook = self.to_hook.mpnet
+            elif hasattr(self.to_hook, "ernie"):
+                self.to_hook = self.to_hook.ernie
+            elif hasattr(self.to_hook, "electra"):
+                self.to_hook = self.to_hook.electra
+            elif hasattr(self.to_hook, "convbert"):
+                self.to_hook = self.to_hook.convbert
+            else:
+                warnings.warn(
+                    "ResidualUpdateModel only supports BERT, RoBERTa, MPNet, Ernie, Electra, and ConvBERT bert-style models right now"
+                )
             self._add_bert_hooks()
 
         elif self.config.model_type == "vit":
             # This applies to ViT models in the transformers repo
-            if not self.base:
+            if hasattr(self.to_hook, "vit"):
                 self.to_hook = self.to_hook.vit
             self._add_vit_hooks()
         else:
@@ -218,11 +206,11 @@ class ResidualUpdateModel(nn.Module):
         return self.forward(**kwargs)
 
     def forward(self, **kwargs):
-        return self.model(**kwargs)
+        return self.wrapped_model(**kwargs)
 
     def train(self, train_bool: bool = True):
         self.training = train_bool
-        self.model.train(train_bool)
+        self.wrapped_model.train(train_bool)
 
     def _get_activation(self, name):
         # Credit to Jack Merullo for this code

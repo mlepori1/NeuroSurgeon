@@ -56,19 +56,19 @@ def test_base_model_initializations():
 def test_generative_model_initializations():
     # Test that residual models can be initialized for different model types
     bert_config = ResidualUpdateModelConfig(
-        "bert", [0, 1], True, True, circuit=False, base=False, updates=True, stream=True
+        "bert", [0, 1], True, True, updates=True, stream=True
     )
     bert = BertForMaskedLM.from_pretrained("prajjwal1/bert-tiny")
     resid_model = ResidualUpdateModel(bert_config, bert)
 
     gpt_config = ResidualUpdateModelConfig(
-        "gpt", [0, 1], True, True, circuit=False, base=False, updates=True, stream=True
+        "gpt", [0, 1], True, True, updates=True, stream=True
     )
     gpt = GPT2LMHeadModel.from_pretrained("sshleifer/tiny-gpt2")
     resid_model = ResidualUpdateModel(gpt_config, gpt)
 
     vit_config = ResidualUpdateModelConfig(
-        "vit", [0, 1], True, True, circuit=False, base=False, updates=True, stream=True
+        "vit", [0, 1], True, True, updates=True, stream=True
     )
     vit = ViTForMaskedImageModeling.from_pretrained("lysandre/tiny-vit-random")
     resid_model = ResidualUpdateModel(vit_config, vit)
@@ -77,7 +77,7 @@ def test_generative_model_initializations():
 def test_model_forward_pass():
     # Test that you can run a forward pass on models
     bert_config = ResidualUpdateModelConfig(
-        "bert", [0, 1], True, True, circuit=False, base=True, updates=True, stream=True
+        "bert", [0, 1], True, True, updates=True, stream=True
     )
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
     resid_model = ResidualUpdateModel(bert_config, bert)
@@ -90,7 +90,7 @@ def test_model_forward_pass():
 def test_residual_stream_dict_updates():
     # Test that running a forward pass updates the vector_cache dict correctly
     bert_config = ResidualUpdateModelConfig(
-        "bert", [0, 1], True, True, circuit=False, base=True, updates=True, stream=True
+        "bert", [0, 1], True, True, updates=True, stream=True
     )
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
     resid_model = ResidualUpdateModel(bert_config, bert)
@@ -130,7 +130,7 @@ def test_residual_stream_dict_updates():
 def test_self_consistency_bert():
     # Assert that you can recover the next layer from the previous layer + the residual stream updates
     bert_config = ResidualUpdateModelConfig(
-        "bert", [1], True, True, circuit=False, base=True, updates=True, stream=True
+        "bert", [1], True, True, updates=True, stream=True
     )
     bert = BertModel.from_pretrained("prajjwal1/bert-tiny")
     resid_model = ResidualUpdateModel(bert_config, bert)
@@ -146,12 +146,12 @@ def test_self_consistency_bert():
     mlp_update = resid_model.vector_cache["mlp_update_1"]
 
     # Need to do the layernorms in the right place
-    mid_stream = resid_model.model.encoder.layer[1].attention.output.LayerNorm(
+    mid_stream = resid_model.wrapped_model.encoder.layer[1].attention.output.LayerNorm(
         pre_layer_residual_stream + attn_update
     )
     assert torch.all(mid_stream == resid_model.vector_cache["attn_stream_1"])
 
-    post_stream = resid_model.model.encoder.layer[1].output.LayerNorm(
+    post_stream = resid_model.wrapped_model.encoder.layer[1].output.LayerNorm(
         mid_stream + mlp_update
     )
     assert torch.all(post_stream == resid_model.vector_cache["mlp_stream_1"])
@@ -161,7 +161,7 @@ def test_self_consistency_bert():
 def test_self_consistency_gpt():
     # Assert that you can recover the next layer from the previous layer + the residual stream updates
     gpt_config = ResidualUpdateModelConfig(
-        "gpt", [0], True, True, circuit=False, base=True, updates=True, stream=True
+        "gpt", [0], True, True, updates=True, stream=True
     )
     gpt = GPT2Model.from_pretrained("sshleifer/tiny-gpt2")
     resid_model = ResidualUpdateModel(gpt_config, gpt)
@@ -188,7 +188,7 @@ def test_self_consistency_gpt():
 def test_self_consistency_vit():
     # Assert that you can recover the next layer from the previous layer + the residual stream updates
     vit_config = ResidualUpdateModelConfig(
-        "vit", [0], True, True, circuit=False, base=True, updates=True, stream=True
+        "vit", [0], True, True, updates=True, stream=True
     )
     vit = ViTModel.from_pretrained("lysandre/tiny-vit-random")
     resid_model = ResidualUpdateModel(vit_config, vit)
@@ -204,15 +204,8 @@ def test_self_consistency_vit():
     post_layer_residual_stream = output.hidden_states[1]
 
     attn_update = resid_model.vector_cache["attn_update_0"]
-    print("attn update")
-    print(attn_update)
     mlp_update = resid_model.vector_cache["mlp_update_0"]
 
-    print("pre stream")
-    print(pre_layer_residual_stream)
-
-    print("attn stream")
-    print(resid_model.vector_cache["attn_stream_0"])
     mid_stream = pre_layer_residual_stream + attn_update
     assert torch.all(mid_stream == resid_model.vector_cache["attn_stream_0"])
 

@@ -41,7 +41,7 @@ def test_replace_layers_gpt():
     circuit_config.target_layers = ["h.0.attn.c_proj", "h.0.mlp.c_fc", "h.1.mlp.c_proj"]
     circuit_model = CircuitModel(circuit_config, gpt)
     circuit_modules = {}
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         circuit_modules[name] = mod
 
     clean_gpt = GPT2Model.from_pretrained("sshleifer/tiny-gpt2")
@@ -101,7 +101,7 @@ def test_replace_layers_resnet():
     ]
     circuit_model = CircuitModel(circuit_config, rn)
     circuit_modules = {}
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         circuit_modules[name] = mod
 
     clean_rn = ResNetModel.from_pretrained("microsoft/resnet-18")
@@ -172,7 +172,7 @@ def test_replace_layers_vit():
     ]
     circuit_model = CircuitModel(circuit_config, vit)
     circuit_modules = {}
-    for name, mod in circuit_model.root_model.named_modules():
+    for name, mod in circuit_model.wrapped_model.named_modules():
         circuit_modules[name] = mod
 
     clean_vit = ViTModel.from_pretrained("lysandre/tiny-vit-random")
@@ -411,10 +411,10 @@ def test_training_gpt():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -423,10 +423,10 @@ def test_training_gpt():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight == after_weight)
@@ -456,10 +456,10 @@ def test_training_gpt():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -468,10 +468,10 @@ def test_training_gpt():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight != after_weight)
@@ -521,10 +521,10 @@ def test_training_resnet():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -533,10 +533,10 @@ def test_training_resnet():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight == after_weight)
@@ -564,10 +564,10 @@ def test_training_resnet():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -576,10 +576,10 @@ def test_training_resnet():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight != after_weight)
@@ -610,10 +610,10 @@ def test_training_vit():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -622,10 +622,10 @@ def test_training_vit():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight == after_weight)
@@ -653,10 +653,10 @@ def test_training_vit():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     before_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     before_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     train_loop(circuit_model, dataloader)
@@ -665,10 +665,10 @@ def test_training_vit():
     mod_dict = {item[0]: item[1] for item in circuit_model.named_modules()}
 
     after_weight = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight
     )
     after_mask = torch.clone(
-        mod_dict["root_model." + circuit_config.target_layers[0]].weight_mask_params
+        mod_dict["wrapped_model." + circuit_config.target_layers[0]].weight_mask_params
     )
 
     assert torch.all(before_weight != after_weight)
