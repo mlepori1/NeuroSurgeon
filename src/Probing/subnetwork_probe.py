@@ -13,15 +13,9 @@ class SubnetworkProbe(nn.Module):
         self,
         config: SubnetworkProbeConfig,
         model: nn.Module,
-        tokenizer: PreTrainedTokenizerFast,
     ):
         super().__init__()
         self.config = config
-        self.tokenizer = tokenizer
-
-        # Must be PreTrainedTokenizerFast for subword masking functionality
-        assert issubclass(self.tokenizer.__class__, PreTrainedTokenizerFast)
-
         self._validate_configs()
 
         # First create a CircuitModel
@@ -50,6 +44,9 @@ class SubnetworkProbe(nn.Module):
             resid_config.attn and not resid_config.mlp
         )
 
+        # Labeling must be either "sequence" or "token", corresponding to the probing task
+        assert self.config.labeling in ["sequence", "token"]
+
     def create_probe(self):
         input_size = self.wrapped_model.model.root_model.config.hidden_size
         if self.config.intermediate_size != -1:
@@ -63,7 +60,8 @@ class SubnetworkProbe(nn.Module):
 
     def train(self, train_bool: bool = True):
         self.training = train_bool
-        self.wrapped_model.train(train_bool)
+        for module in self.children():
+            module.train(train_bool)
 
     def forward(
         self, input_ids=None, labels=None, token_mask=None, return_dict=True, **kwargs
@@ -73,30 +71,34 @@ class SubnetworkProbe(nn.Module):
 
         # Call model forward pass, get out the correct activations
         _ = self.wrapped_model(input_ids=input_ids, **kwargs)
-        updates = self.wrapped_model.residual_stream_activations[
-            self.config.probe_activations
-        ]
+        updates = self.wrapped_model.vector_cache[self.config.probe_vectors]
 
         # Get one residual stream activation per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream activations
         token_mask = token_mask.reshape(-1)
+
+        # Must be one label for each sequence if labeling==sequence
+        if self.config.labeling == "sequence":
+            assert torch.sum(token_mask) == len(input_ids)
+
         updates = updates.reshape(
             -1, self.wrapped_model.model.root_model.config.hidden_size
         )
         updates = updates[token_mask]
 
-        if labels is not None:
+        if labels is not None and self.config.labeling == "token":
             # Get rid of padding on labels (which is only used for batching)
             labels = labels[labels != -1]
-            labels = labels.reshape(-1)
-            assert len(updates) == len(
-                labels
-            )  # Ensure that there is only one update per label
+
+        labels = labels.reshape(-1)
+        assert len(updates) == len(
+            labels
+        )  # Ensure that there is only one update per label
+
+        logits = self.probe(updates)
 
         loss = None
-
         if labels is not None:
-            logits = self.probe(updates)
             loss = self.loss(logits, labels)
 
         if not return_dict:

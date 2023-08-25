@@ -90,7 +90,7 @@ class CircuitProbe(nn.Module):
 
         # Call model forward pass, get out the correct activations
         _ = self.wrapped_model(input_ids=input_ids, **kwargs)
-        updates = self.wrapped_model.vector_cache[self.config.probe_activations]
+        updates = self.wrapped_model.vector_cache[self.config.probe_vectors]
 
         # Get one residual stream update per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream updates

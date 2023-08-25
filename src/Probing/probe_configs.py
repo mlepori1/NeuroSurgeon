@@ -29,12 +29,12 @@ class ResidualUpdateModelConfig(PretrainedConfig):
 class CircuitProbeConfig(PretrainedConfig):
     def __init__(
         self,
-        probe_activations: str,
+        probe_vectors: str,
         circuit_config: CircuitConfig,
         resid_config: ResidualUpdateModelConfig,
     ):
         super().__init__()
-        self.probe_activations = probe_activations
+        self.probe_vectors = probe_vectors
         self.circuit_config = circuit_config
         self.resid_config = resid_config
 
@@ -42,15 +42,17 @@ class CircuitProbeConfig(PretrainedConfig):
 class SubnetworkProbeConfig(PretrainedConfig):
     def __init__(
         self,
-        probe_activations: str,
-        intermediate_size: int,
+        probe_vectors: str,
         n_classes: int,
         circuit_config: CircuitConfig,
         resid_config: ResidualUpdateModelConfig,
+        intermediate_size: int = -1,
+        labeling: str = "sequence",
     ):
         super().__init__()
-        self.probe_activations = probe_activations
+        self.probe_vectors = probe_vectors
         self.circuit_config = circuit_config
         self.resid_config = resid_config
         self.intermediate_size = intermediate_size
         self.n_classes = n_classes
+        self.labeling = labeling
