@@ -1,2 +1,4 @@
 *.pyc*
 events*
+build/*
+dist/*
