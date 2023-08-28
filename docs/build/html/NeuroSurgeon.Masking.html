@@ -18,7 +18,9 @@
         <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NeuroSurgeon.Models package" href="NeuroSurgeon.Models.html" />
+    <link rel="prev" title="Introduction" href="intro.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -40,116 +42,49 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">NeuroSurgeon.Masking package</a><ul>
-<li><a class="reference internal" href="#submodules">Submodules</a><ul>
-<li><a class="reference internal" href="#continuous-sparsification"><code class="docutils literal notranslate"><span class="pre">Continuous</span> <span class="pre">Sparsification</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv1d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseConv1d.from_layer()</span></code></a></li>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">NeuroSurgeon.Masking package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#continuous-sparsification"><code class="docutils literal notranslate"><span class="pre">Continuous</span> <span class="pre">Sparsification</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv1d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv2d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseConv2d.from_layer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#hard-concrete-masking"><code class="docutils literal notranslate"><span class="pre">Hard</span> <span class="pre">Concrete</span> <span class="pre">Masking</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv1d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D.from_layer()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#magnitude-pruning"><code class="docutils literal notranslate"><span class="pre">Magnitude</span> <span class="pre">Pruning</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv1d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv2d</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear</span></code></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.force_resample</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.mask_init_value"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.mask_init_value</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.temperature"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.temperature</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.forward"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.from_layer()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.reset_parameters()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#hard-concrete-masking"><code class="docutils literal notranslate"><span class="pre">Hard</span> <span class="pre">Concrete</span> <span class="pre">Masking</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv1d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv1d.from_layer()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv2d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv2d.from_layer()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D.from_layer()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.calculate_l0"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.calculate_l0()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.force_resample</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.mask_init_percentage"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.mask_init_percentage</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.forward"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.from_layer()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.reset_parameters()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mask-layer"><code class="docutils literal notranslate"><span class="pre">Mask</span> <span class="pre">Layer</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="docutils literal notranslate"><span class="pre">MaskLayer</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a class="reference internal" href="#magnitude-pruning"><code class="docutils literal notranslate"><span class="pre">Magnitude</span> <span class="pre">Pruning</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv1d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneConv1d.from_layer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv2d</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneConv2d.from_layer()</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="NeuroSurgeon.Models.html">NeuroSurgeon.Models package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NeuroSurgeon.Probing.html">NeuroSurgeon.Probing package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="NeuroSurgeon.Visualization.html">NeuroSurgeon.Visualization package</a></li>
 </ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D.from_layer()</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer.force_resample</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.prune_percentage"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer.prune_percentage</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.forward"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.from_layer()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.reset_parameters()</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#mask-layer"><code class="docutils literal notranslate"><span class="pre">Mask</span> <span class="pre">Layer</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="docutils literal notranslate"><span class="pre">MaskLayer</span></code></a><ul>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.ablation"><code class="docutils literal notranslate"><span class="pre">MaskLayer.ablation</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_l0"><code class="docutils literal notranslate"><span class="pre">MaskLayer.calculate_l0()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_max_l0"><code class="docutils literal notranslate"><span class="pre">MaskLayer.calculate_max_l0()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.forward"><code class="docutils literal notranslate"><span class="pre">MaskLayer.forward()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.from_layer"><code class="docutils literal notranslate"><span class="pre">MaskLayer.from_layer()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_bias"><code class="docutils literal notranslate"><span class="pre">MaskLayer.mask_bias</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_unit"><code class="docutils literal notranslate"><span class="pre">MaskLayer.mask_unit</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.reset_parameters"><code class="docutils literal notranslate"><span class="pre">MaskLayer.reset_parameters()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.train"><code class="docutils literal notranslate"><span class="pre">MaskLayer.train()</span></code></a></li>
-<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.use_masks"><code class="docutils literal notranslate"><span class="pre">MaskLayer.use_masks</span></code></a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#module-contents">Module contents</a></li>
-</ul>
-</li>
-</ul>
-</div>
+
         </div>
       </div>
     </nav>
@@ -1247,7 +1182,10 @@ Valid options include:
 
            </div>
           </div>
-          <footer>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="intro.html" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="NeuroSurgeon.Models.html" class="btn btn-neutral float-right" title="NeuroSurgeon.Models package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 

@@ -9,12 +9,12 @@ Welcome to NeuroSurgeon's documentation!
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
-
-intro
-NeuroSurgeon.Masking
-NeuroSurgeon.Models
-NeuroSurgeon.Probing
-NeuroSurgeon.Visualization
+   
+   intro
+   NeuroSurgeon.Masking
+   NeuroSurgeon.Models
+   NeuroSurgeon.Probing
+   NeuroSurgeon.Visualization
 
 Indices and tables
 ==================
