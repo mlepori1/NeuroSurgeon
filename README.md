@@ -16,12 +16,13 @@ NeuroSurgeon is a python toolkit built to enable deep learning researchers to ea
 - Training with L0 Regularization
     - Relevant Papers:
         - [Louizos et al. 2018](https://arxiv.org/abs/1712.01312)
-        - [Savarese et al. 2020](https://arxiv.org/abs/1912.04427)  
-
+        - [Savarese et al. 2020](https://arxiv.org/abs/1912.04427)
+     
+[Read the NeuroSurgeon Documentation](https://neurosurgeon.readthedocs.io/en/latest/)
 
 ## Install
 
-NeuroSurgeon requires python 3.9 or higher and several libraries including Transformers and Pytorch. Installation can be done using PyPi:
+NeuroSurgeon requires python 3.9 or higher and several libraries, including Transformers and PyTorch. Installation can be done using PyPi:
 
 `pip install NeuroSurgeon`
 
