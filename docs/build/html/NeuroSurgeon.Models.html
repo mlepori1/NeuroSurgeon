@@ -111,6 +111,18 @@ is defined in the CircuitConfig.</p>
 </dd>
 </dl>
 <dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.train" title="Link to this definition"></a></dt>
+<dd><p>Similar to the normal nn.Module train function, except keeps the underlying model weights
+frozen if that is specified by the config argument</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>train_bool</strong> (<em>bool</em>) – Whether to put the model in train mode or eval mode, defaults to True</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.compute_l0_statistics">
 <span class="sig-name descname"><span class="pre">compute_l0_statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.compute_l0_statistics" title="Link to this definition"></a></dt>
 <dd><p>Compute overall l0, max masking parameters, per-layer-l0 statistics</p>
@@ -120,6 +132,20 @@ is defined in the CircuitConfig.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.temperature">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.temperature" title="Link to this definition"></a></dt>
+<dd><p>The temperature parameter for ContSparseLayers ONLY</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Temperature parameter</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -146,32 +172,6 @@ Valid options include:
 “complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
 <li><p><strong>force_resample</strong> (<em>bool</em><em>, </em><em>optional</em>) – If setting ablation=[“randomly_sampled”, “complement_sampled”], whether to randomly resample the generated mask, defaults to False</p></li>
 </ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py property">
-<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.temperature">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.temperature" title="Link to this definition"></a></dt>
-<dd><p>The temperature parameter for ContSparseLayers ONLY</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Temperature parameter</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.train">
-<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.train" title="Link to this definition"></a></dt>
-<dd><p>Similar to the normal nn.Module train function, except keeps the underlying model weights
-frozen if that is specified by the config argument</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>train_bool</strong> (<em>bool</em>) – Whether to put the model in train mode or eval mode, defaults to True</p>
 </dd>
 </dl>
 </dd></dl>

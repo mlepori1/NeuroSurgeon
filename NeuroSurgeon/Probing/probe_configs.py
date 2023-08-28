@@ -40,7 +40,7 @@ class ResidualUpdateModelConfig(PretrainedConfig):
 
 
 class SubnetworkProbeConfig(PretrainedConfig):
-    """_summary_
+    """A config object defining the behavior of the SubnetworkProbe
 
     :param probe_vectors: The entries in a ResidualUpdateModel's vector_cache that one will train a probe on. Ex. attn_update_1, mlp_stream_5
     :type probe_vectors: str

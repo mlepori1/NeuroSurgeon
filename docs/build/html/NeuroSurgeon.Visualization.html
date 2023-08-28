@@ -50,8 +50,8 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">NeuroSurgeon.Visualization package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#visualizer"><code class="docutils literal notranslate"><span class="pre">Visualizer</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Visualization.visualizer.Visualizer"><code class="docutils literal notranslate"><span class="pre">Visualizer</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Visualization.visualizer.VisualizerConfig"><code class="docutils literal notranslate"><span class="pre">VisualizerConfig</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Visualization.visualizer.Visualizer"><code class="docutils literal notranslate"><span class="pre">Visualizer</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -92,26 +92,6 @@
 <section id="visualizer">
 <h3><code class="docutils literal notranslate"><span class="pre">Visualizer</span></code><a class="headerlink" href="#visualizer" title="Link to this heading"></a></h3>
 <dl class="py class" id="module-NeuroSurgeon.Visualization.visualizer">
-<dt class="sig sig-object py" id="NeuroSurgeon.Visualization.visualizer.Visualizer">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Visualization.visualizer.</span></span><span class="sig-name descname"><span class="pre">Visualizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Visualization.visualizer.Visualizer" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>A Class that produces figures describing the distribution of CircuitModel weights
-throughout a model</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Visualization.visualizer.VisualizerConfig" title="NeuroSurgeon.Visualization.visualizer.VisualizerConfig"><em>VisualizerConfig</em></a>) – A configuration object describing how to plot the figures</p>
-</dd>
-</dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="NeuroSurgeon.Visualization.visualizer.Visualizer.plot">
-<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Visualization.visualizer.Visualizer.plot" title="Link to this definition"></a></dt>
-<dd><p>The main function of this class. Plots the CircuitModels according to
-the VisualizerConfig specification.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt class="sig sig-object py" id="NeuroSurgeon.Visualization.visualizer.VisualizerConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Visualization.visualizer.</span></span><span class="sig-name descname"><span class="pre">VisualizerConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state_dicts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_labels</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['Subnetwork</span> <span class="pre">1',</span> <span class="pre">'Subnetwork</span> <span class="pre">2']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subnetwork_colors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">['red',</span> <span class="pre">'blue']</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersect_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'purple'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unused_color</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'grey'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">visualize_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_full_network</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condense_layers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_method</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'continuous_sparsification'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outfile</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'plot.png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'png'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(10.0,</span> <span class="pre">20.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title_fontsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">24</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_fontsize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">18</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.75</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Layer</span> <span class="pre">By</span> <span class="pre">Layer</span> <span class="pre">Subnetwork</span> <span class="pre">Distribution'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Visualization.visualizer.VisualizerConfig" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
@@ -149,6 +129,26 @@ the VisualizerConfig specification.</p>
 :param title: The title of the figure, defaults to “Layer By Layer Subnetwork Distribution”
 :type title: str, optional
 :raises ValueError: Raises ValueError if more than 2 state dicts are provided</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Visualization.visualizer.Visualizer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Visualization.visualizer.</span></span><span class="sig-name descname"><span class="pre">Visualizer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Visualization.visualizer.Visualizer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A Class that produces figures describing the distribution of CircuitModel weights
+throughout a model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Visualization.visualizer.VisualizerConfig" title="NeuroSurgeon.Visualization.visualizer.VisualizerConfig"><em>VisualizerConfig</em></a>) – A configuration object describing how to plot the figures</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Visualization.visualizer.Visualizer.plot">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Visualization.visualizer.Visualizer.plot" title="Link to this definition"></a></dt>
+<dd><p>The main function of this class. Plots the CircuitModels according to
+the VisualizerConfig specification.</p>
+</dd></dl>
+
 </dd></dl>
 
 </section>

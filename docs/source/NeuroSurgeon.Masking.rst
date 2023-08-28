@@ -4,6 +4,14 @@ NeuroSurgeon.Masking package
 Submodules
 ----------
 
+``Mask Layer``
+*****************************
+
+.. automodule:: NeuroSurgeon.Masking.mask_layer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 ``Continuous Sparsification``
 *****************************
 
@@ -25,14 +33,6 @@ Submodules
 *****************************
 
 .. automodule:: NeuroSurgeon.Masking.magprune_layer
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-``Mask Layer``
-*****************************
-
-.. automodule:: NeuroSurgeon.Masking.mask_layer
    :members:
    :undoc-members:
    :show-inheritance:
