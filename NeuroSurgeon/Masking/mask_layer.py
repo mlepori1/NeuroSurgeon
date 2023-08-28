@@ -8,13 +8,14 @@ class MaskLayer(nn.Module):
     """This is an abstract class that defines the minimum functionality of a mask layer.
     All mask layers inherit from this class.
 
-    :param ablation: A string that determines how masks are produced from the mask layer parameters.
-        Valid options include:
-        "none": Producing a standard binary mask
-        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
-        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
-        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
-        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
+        
+        - none: Producing a standard binary mask
+        - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
+        - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]
     :type mask_unit: str

@@ -6,14 +6,15 @@ from transformers import PretrainedConfig
 class CircuitConfig(PretrainedConfig):
     """A config object to define the behavior of a CircuitModel
 
-    :param mask_method: Which masking technique to use. Options include
+    :param mask_method: Which masking technique to use. Options include:
         ["continuous_sparsification", "hard_concrete", "magnitude_pruning"], defaults to "continuous_sparsification"
     :type mask_method: str, optional
-    :param mask_hparams: A dictionary defining hyperparameters specific to the specified mask method.
-        For "continuous_sparsification": Requires "ablation", "mask_unit", "mask_bias", "mask_init_value"
-        For "hard_concrete": Requires "ablation", "mask_unit", "mask_bias", "mask_init_percentage"
-        For "magnitude_pruning": Requires "ablation", "mask_bias", "prune_percentage"
-        See the documentation for each layer for details about these hyperparameters, defaults to {}
+    :param mask_hparams: A dictionary defining hyperparameters specific to the specified mask method. See the documentation for each layer for details about these hyperparameters, defaults to {}
+
+        - For "continuous_sparsification": Requires "ablation", "mask_unit", "mask_bias", "mask_init_value"
+        - For "hard_concrete": Requires "ablation", "mask_unit", "mask_bias", "mask_init_percentage"
+        - For "magnitude_pruning": Requires "ablation", "mask_bias", "prune_percentage"
+
     :type mask_hparams: dict, optional
     :param target_layers: A list of layers to turn into mask layers. 
         These layer names can be obtained from the wrapped model's state dict. They must correspond to nn.Linear, GPT-style Conv1D, nn.Conv2d, or nn.Conv1d layers. defaults to []

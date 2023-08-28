@@ -163,13 +163,15 @@ frozen if that is specified by the config argument</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>force_resample</strong> (<em>bool</em><em>, </em><em>optional</em>) – If setting ablation=[“randomly_sampled”, “complement_sampled”], whether to randomly resample the generated mask, defaults to False</p></li>
 </ul>
 </dd>
@@ -203,13 +205,15 @@ Valid options include:
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>mask_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Which masking technique to use. Options include
+<li><p><strong>mask_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Which masking technique to use. Options include:
 [“continuous_sparsification”, “hard_concrete”, “magnitude_pruning”], defaults to “continuous_sparsification”</p></li>
-<li><p><strong>mask_hparams</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary defining hyperparameters specific to the specified mask method.
-For “continuous_sparsification”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_value”
-For “hard_concrete”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_percentage”
-For “magnitude_pruning”: Requires “ablation”, “mask_bias”, “prune_percentage”
-See the documentation for each layer for details about these hyperparameters, defaults to {}</p></li>
+<li><p><strong>mask_hparams</strong> (<em>dict</em><em>, </em><em>optional</em>) – <p>A dictionary defining hyperparameters specific to the specified mask method. See the documentation for each layer for details about these hyperparameters, defaults to {}</p>
+<ul>
+<li><p>For “continuous_sparsification”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_value”</p></li>
+<li><p>For “hard_concrete”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_percentage”</p></li>
+<li><p>For “magnitude_pruning”: Requires “ablation”, “mask_bias”, “prune_percentage”</p></li>
+</ul>
+</p></li>
 <li><p><strong>target_layers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A list of layers to turn into mask layers. 
 These layer names can be obtained from the wrapped model’s state dict. They must correspond to nn.Linear, GPT-style Conv1D, nn.Conv2d, or nn.Conv1d layers. defaults to []</p></li>
 <li><p><strong>freeze_base</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to freeze the weights and biases of the wrapped model, defaults to True</p></li>

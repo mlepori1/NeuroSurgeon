@@ -253,13 +253,14 @@ class CircuitModel(nn.Module):
     def set_ablate_mode(self, ablation, force_resample=False):
         """Changes the ablate mode of the MaskLayers from what is specified in the CircuitConfig
 
-        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
-            Valid options include:
-            "none": Producing a standard binary mask
-            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
-            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
-            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
-            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
+            
+            - none: Producing a standard binary mask
+            - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
+            - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+            
         :type ablation: str
         :param force_resample: If setting ablation=["randomly_sampled", "complement_sampled"], whether to randomly resample the generated mask, defaults to False
         :type force_resample: bool, optional

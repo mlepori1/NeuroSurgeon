@@ -124,13 +124,15 @@ All mask layers inherit from this class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
 </ul>
@@ -224,13 +226,15 @@ mapping to 1, and all negative mask parameters mapping to 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
 </ul>
@@ -285,13 +289,15 @@ when calling these functions.</p>
 <li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
 <li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -306,13 +312,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -362,13 +370,15 @@ Valid options include:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
 <li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -383,13 +393,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>Conv1D</em>) – An instance of a Conv1D layer from pytorch_utils</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -440,13 +452,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -461,13 +475,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -501,13 +517,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -522,13 +540,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
@@ -558,13 +578,15 @@ It introduces a stochastic approximation to the L0 penalty.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – Determines approximately how many parameters are left unpruned if one creates a hard mask by sampling from the hard concrete distribution and binarizing</p></li>
@@ -607,13 +629,15 @@ term given in Louizos et al. 2018 during training</p>
 <li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
 <li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -628,13 +652,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -684,13 +710,15 @@ Valid options include:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
 <li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -706,13 +734,15 @@ Valid options include:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
 <li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -763,13 +793,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -784,13 +816,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -824,13 +858,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -845,13 +881,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
@@ -882,13 +920,15 @@ This is a common strategy in model pruning, notably in work analyzing the Lotter
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – Determines the percentage of weights to prune</p></li>
 </ul>
@@ -917,13 +957,15 @@ Valid options include:
 <li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
 <li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -937,13 +979,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -992,13 +1036,15 @@ Valid options include:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
 <li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -1013,13 +1059,15 @@ Valid options include:
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
 <li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -1069,13 +1117,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -1089,14 +1139,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
-<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -1129,13 +1180,15 @@ Valid options include:
 <li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
 <li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
 <li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
@@ -1149,14 +1202,15 @@ Valid options include:
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
-<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
-Valid options include:
-“none”: Producing a standard binary mask
-“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
-“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
-“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
-“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
-<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – <p>A string that determines how masks are produced from the mask layer parameters. Valid options include:</p>
+<ul>
+<li><p>none: Producing a standard binary mask</p></li>
+<li><p>zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.</p></li>
+<li><p>random_ablate: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.</p></li>
+<li><p>randomly_sampled: Sampling a random binary mask of the same size as the standard mask.</p></li>
+<li><p>complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+</ul>
+</p></li>
 <li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
 <li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
 </ul>
