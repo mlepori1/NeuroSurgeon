@@ -12,6 +12,24 @@ from .mask_layer import MaskLayer
 
 
 class MagPruneLayer(MaskLayer):
+    """An abstract class defining the basic functionality of Magnitude Pruning layers.
+    Magnitude pruning is not a differentiable masking strategy - it deterministically prunes the N% lowest magnitude weights.
+    Masking always occurs at the weight-level. This pruning strategy might serve as a baseline to compare against gradient-based masking strategies (i.e. Continuous Sparsification or Hard Concrete Masking).
+    This is a common strategy in model pruning, notably in work analyzing the Lottery Ticket Hypothesis (https://arxiv.org/abs/1803.03635)
+
+    :param ablation: A string that determines how masks are produced from the mask layer parameters.
+        Valid options include:
+        "none": Producing a standard binary mask
+        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :type ablation: str
+    :param mask_bias: Determines whether to mask bias terms in addition to weight terms.
+    :type mask_bias: bool
+    :param prune_percentage: Determines the percentage of weights to prune
+    :type prune_percentage: float
+    """
     def __init__(self, ablation: str, mask_bias: bool, prune_percentage: float):
         super().__init__(ablation, "weight", mask_bias)
         self.prune_percentage = prune_percentage
@@ -35,9 +53,12 @@ class MagPruneLayer(MaskLayer):
 
     def _sample_mask_from_complement(self, param_type):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
-        but where the ablated parameters are drawn from the complement of the magnitude pruning mask.
+        but where the ablated parameters are drawn from the complement of the trained binary mask.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
+        ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Set force_resample=True to resample
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        forces the layer to resample a mask.
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
@@ -96,8 +117,11 @@ class MagPruneLayer(MaskLayer):
     def _sample_mask_randomly(self, param_type):
         """Used to create a binary mask that contains the same number of ones and zeros as a normal ablated mask,
         but where the ablated parameters are randomly drawn.
+        This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
+        ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Set force_resample=True to resample mask
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        forces the layer to resample a mask.
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
@@ -145,6 +169,9 @@ class MagPruneLayer(MaskLayer):
         return sampled_mask
 
     def _compute_mask(self, param_type):
+        """This function maps mask_parameters to masks. The behavior of this function is determined
+        by the ablation parameter.
+        """
         if param_type == "weight_mask_params":
             base_param = self.weight
         elif param_type == "bias_mask_params":
@@ -181,6 +208,8 @@ class MagPruneLayer(MaskLayer):
         pass
 
     def _compute_random_ablation(self, param_type):
+        """Computes the inverse of the standard binary mask and reinitializes zero'd elements. Used for pruning discovered subnetworks.
+        """
         if param_type == "weight":
             params = self.weight
             params_mask = self.weight_mask
@@ -202,6 +231,27 @@ class MagPruneLayer(MaskLayer):
 
 
 class MagPruneLinear(MagPruneLayer):
+    """A Linear Layer that implements Magnitude Pruning.
+
+    :param in_features: Size of each input sample
+    :type in_features: int
+    :param out_features: Size of each output sample
+    :type out_features: int
+    :param bias: If set to False, the layer will not learn an additive bias. Default: True
+    :type bias: bool
+    :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+        Valid options include:
+        "none": Producing a standard binary mask
+        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :type ablation: str
+    :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+    :type mask_bias: bool
+    :param prune_percentage: The percentage of weights to prune. Default: 0.2
+    :type prune_percentage: float
+    """
     def __init__(
         self,
         in_features: int,
@@ -228,7 +278,27 @@ class MagPruneLinear(MagPruneLayer):
         self.reset_parameters()
 
     @classmethod
-    def from_layer(self, layer: nn.Linear, ablation, mask_bias, prune_percentage):
+    def from_layer(self, layer: nn.Linear, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+        """Creates a MagPruneLinear layer from a nn.Linear layer.
+
+        :param layer: An instance of a nn.Linear layer.
+        :type layer: nn.Linear
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+            Valid options include:
+            "none": Producing a standard binary mask
+            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :type ablation: str
+        :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+        :type mask_bias: bool
+        :param prune_percentage: The percentage of weights to prune. Default: 0.2
+        :type prune_percentage: float
+
+        :return: Magnitude Pruning Linear layer with the same weights as the layer argument
+        :rtype: MagPruneLinear
+        """
         if layer.bias is not None:
             bias = True
         else:
@@ -290,15 +360,12 @@ class MagPruneLinear(MagPruneLayer):
             raise ValueError("generate_random_values only supports weights and biases")
 
     def forward(self, data: torch.Tensor, **kwargs) -> torch.Tensor:  # type: ignore
-        """Perform the forward pass.
-        Parameters
-        ----------
-        data : torch.Tensor
-            N-dimensional tensor, with last dimension `in_features`
-        Returns
-        -------
-        torch.Tensor
-            N-dimensional tensor, with last dimension `out_features`
+        """Performs a forward pass
+
+        :param data: Input tensors
+        :type data: torch.Tensor
+        :return: Output tensor
+        :rtype: torch.Tensor
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
 
@@ -325,13 +392,24 @@ class MagPruneLinear(MagPruneLayer):
 
 
 class MagPruneGPTConv1D(MagPruneLayer):
-    """For some reason, GPT uses a custom Conv1D layer instead of a linear layer
+    """A GPT-style Conv1D Layer that implements Magnitude Pruning.
 
-    Basically works like a linear layer but the weights are transposed.
-
-    Args:
-        nf (`int`): The number of output features.
-        nx (`int`): The number of input features.
+    :param nf: Number of output features
+    :type nf: int
+    :param nx: Number of input features
+    :type nx: int
+    :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+        Valid options include:
+        "none": Producing a standard binary mask
+        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :type ablation: str
+    :param mask_bias: Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False
+    :type mask_bias: bool
+    :param prune_percentage: The percentage of weights to prune. Default: 0.2
+    :type prune_percentage: float
     """
 
     def __init__(
@@ -353,7 +431,29 @@ class MagPruneGPTConv1D(MagPruneLayer):
         self._init_mask()
 
     @classmethod
-    def from_layer(self, layer: Conv1D, ablation, mask_bias, prune_percentage):
+    def from_layer(self, layer: Conv1D, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+        """Creates a MagPruneGPTConv1D layer from a Conv1D layer.
+
+        :param nf: Number of output features
+        :type nf: int
+        :param nx: Number of input features
+        :type nx: int
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+            Valid options include:
+            "none": Producing a standard binary mask
+            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :type ablation: str
+        :param mask_bias: Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False
+        :type mask_bias: bool
+        :param prune_percentage: The percentage of weights to prune. Default: 0.2
+        :type prune_percentage: float
+
+        :return: Magnitude Pruning GPTConv1D layer with the same weights as the layer argument
+        :rtype: MagPruneGPTConv1D
+        """
         mag_prune = MagPruneGPTConv1D(
             layer.nf,
             layer.weight.shape[
@@ -390,15 +490,12 @@ class MagPruneGPTConv1D(MagPruneLayer):
             raise ValueError("generate_random_values only supports weights and biases")
 
     def forward(self, x):
-        """Perform the forward pass.
-        Parameters
-        ----------
-        data : torch.Tensor
-            N-dimensional tensor, with last dimension `in_features`
-        Returns
-        -------
-        torch.Tensor
-            N-dimensional tensor, with last dimension `out_features`
+        """Performs a forward pass
+
+        :param data: Input tensors
+        :type data: torch.Tensor
+        :return: Output tensor
+        :rtype: torch.Tensor
         """
         self.weight_mask = self._compute_mask("weight_mask_params")
 
@@ -427,6 +524,8 @@ class MagPruneGPTConv1D(MagPruneLayer):
 
 
 class _MagPruneConv(MagPruneLayer):
+    """Abstract class used for both Conv1d and Conv2d Magnitude Pruning layers
+    """
     def __init__(
         self,
         layer_fn,
@@ -523,6 +622,40 @@ class _MagPruneConv(MagPruneLayer):
 
 
 class MagPruneConv2d(_MagPruneConv):
+    """A Conv2d layer that implements Magnitude Pruning.
+
+    :param in_channels: Number of channels in the input image
+    :type in_channels: int
+    :param out_channels: Number of channels produced by the convolution
+    :type out_channels: int 
+    :param kernel_size: Size of the convolving kernel
+    :type kernel_size: int or tuple
+    :param padding: Padding added to all four sides of the input. Default: 0
+    :type padding: int
+    :param stride:  Stride of the convolution. Default: 1
+    :type stride: int
+    :param dilation: Spacing between kernel elements. Default: 1
+    :type dilation: int or tuple
+    :param groups:  Number of blocked connections from input channels to output channels. Default: 1
+    :type groups: int
+    :param bias: If True, adds a learnable bias to the output. Default: True
+    :type bias: bool
+    :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
+    :type padding_mode:  str
+    :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+        Valid options include:
+        "none": Producing a standard binary mask
+        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :type ablation: str
+    :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+    :type mask_bias: bool
+    :param prune_percentage: The percentage of weights to prune. Default: 0.2
+    :type prune_percentage: float
+    """
+
     def __init__(
         self,
         in_channels,
@@ -556,7 +689,29 @@ class MagPruneConv2d(_MagPruneConv):
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv2d, ablation, mask_bias, prune_percentage):
+    def from_layer(self, layer: nn.Conv2d, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+        """Create a MagPruneConv2d layer from a nn.Conv2d layer
+
+        :param layer: A nn.Conv2d layer
+        :type layer: nn.Conv2d
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+            Valid options include:
+            "none": Producing a standard binary mask
+            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :type ablation: str
+        :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
+        :type mask_unit: str
+        :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+        :type mask_bias: bool
+        :param prune_percentage: The percentage of weights to prune. Default: 0.2
+        :type prune_percentage: float
+
+        :return: Magnitude Pruning Conv2d layer with the same weights as the layer argument
+        :rtype: MagPruneConv2d
+        """
         if layer.bias is not None:
             bias = True
         else:
@@ -590,6 +745,39 @@ class MagPruneConv2d(_MagPruneConv):
 
 
 class MagPruneConv1d(_MagPruneConv):
+    """A Conv1d layer that implements Magnitude Pruning.
+
+    :param in_channels: Number of channels in the input image
+    :type in_channels: int
+    :param out_channels: Number of channels produced by the convolution
+    :type out_channels: int 
+    :param kernel_size: Size of the convolving kernel
+    :type kernel_size: int or tuple
+    :param padding: Padding added to all four sides of the input. Default: 0
+    :type padding: int
+    :param stride:  Stride of the convolution. Default: 1
+    :type stride: int
+    :param dilation: Spacing between kernel elements. Default: 1
+    :type dilation: int or tuple
+    :param groups:  Number of blocked connections from input channels to output channels. Default: 1
+    :type groups: int
+    :param bias: If True, adds a learnable bias to the output. Default: True
+    :type bias: bool
+    :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
+    :type padding_mode:  str
+    :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+        Valid options include:
+        "none": Producing a standard binary mask
+        "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+        "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+        "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+        "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+    :type ablation: str
+    :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+    :type mask_bias: bool
+    :param prune_percentage: The percentage of weights to prune. Default: 0.2
+    :type prune_percentage: float
+    """
     def __init__(
         self,
         in_channels,
@@ -624,6 +812,28 @@ class MagPruneConv1d(_MagPruneConv):
 
     @classmethod
     def from_layer(self, layer: nn.Conv1d, ablation, mask_bias, prune_percentage):
+        """Create a MagPruneConv1d layer from a nn.Conv1d layer
+
+        :param layer: A nn.Conv1d layer
+        :type layer: nn.Conv1d
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+            Valid options include:
+            "none": Producing a standard binary mask
+            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :type ablation: str
+        :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
+        :type mask_unit: str
+        :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
+        :type mask_bias: bool
+        :param prune_percentage: The percentage of weights to prune. Default: 0.2
+        :type prune_percentage: float
+
+        :return: Magnitude Pruning Conv1d layer with the same weights as the layer argument
+        :rtype: MagPruneConv1d
+        """
         if layer.bias is not None:
             bias = True
         else:

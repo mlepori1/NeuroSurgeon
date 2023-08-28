@@ -28,6 +28,15 @@ from .model_configs import CircuitConfig
 
 
 class CircuitModel(nn.Module):
+    """CircuitModel is a wrapper around a Transformers model (or custom nn.Module that also returns an object from a forward pass), which replaces particular layers
+    with MaskLayers. These MaskLayers modify the weight matrices of particular layers according to some strategy, which
+    is defined in the CircuitConfig.
+
+    :param config: A configuration object defining the how the CircuitModel wrapper modifes a model
+    :type config: CircuitConfig
+    :param model: The model to modify
+    :type model: nn.Module
+    """
     def __init__(self, config: CircuitConfig, model: nn.Module):
         super().__init__()
         self.config = config
@@ -141,6 +150,12 @@ class CircuitModel(nn.Module):
             )
 
     def train(self, train_bool=True):
+        """Similar to the normal nn.Module train function, except keeps the underlying model weights
+        frozen if that is specified by the config argument
+
+        :param train_bool: Whether to put the model in train mode or eval mode, defaults to True
+        :type train_bool: bool
+        """
         self.training = train_bool
 
         if self.config.freeze_base:
@@ -159,7 +174,11 @@ class CircuitModel(nn.Module):
                 layer.train(train_bool)
 
     def compute_l0_statistics(self):
-        # Compute overall l0, max masking parameters, per-layer-l0 statistics
+        """Compute overall l0, max masking parameters, per-layer-l0 statistics
+
+        :return: A dictionary containing the computed statistics. Keys are "total_l0", "max_l0", "layer2l0", "layer2maxl0"
+        :rtype: dict
+        """
         train_bool = self.training
         self.eval()
         total_l0 = 0
@@ -196,6 +215,11 @@ class CircuitModel(nn.Module):
 
     @property
     def temperature(self):
+        """The temperature parameter for ContSparseLayers ONLY
+
+        :return: Temperature parameter
+        :rtype: float
+        """
         return self._temperature
 
     @temperature.setter
@@ -216,7 +240,8 @@ class CircuitModel(nn.Module):
         return self.forward(**kwargs)
 
     def forward(self, **kwargs):
-        # Call forward of model, add l0 regularization if appropriate
+        """Forward call of the wrapped model, adds L0 regurization if specified by the config
+        """
         output = self.wrapped_model(**kwargs, return_dict=True)
         if self.config.add_l0:
             if hasattr(output, "loss") and output.loss is not None:
@@ -226,13 +251,32 @@ class CircuitModel(nn.Module):
         return output
 
     def set_ablate_mode(self, ablation, force_resample=False):
-        # change ablate mode for model
+        """Changes the ablate mode of the MaskLayers from what is specified in the CircuitConfig
+
+        :param ablation: A string that determines how masks are produced from the mask layer parameters. Default: "none"
+            Valid options include:
+            "none": Producing a standard binary mask
+            "zero_ablate": Inverting the standard binary mask. Used for pruning discovered subnetworks.
+            "random_ablate": Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
+            "randomly_sampled": Sampling a random binary mask of the same size as the standard mask.
+            "complement_sampled": Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
+        :type ablation: str
+        :param force_resample: If setting ablation=["randomly_sampled", "complement_sampled"], whether to randomly resample the generated mask, defaults to False
+        :type force_resample: bool, optional
+        """
         for module in self.modules():
             if issubclass(type(module), MaskLayer):
                 module.ablation = ablation
                 module.force_resample = force_resample
 
     def use_masks(self, value, name_list=None):
+        """This function can be used to turn off masking behavior for either the entire model, or particular layers (if name_list!=None)
+
+        :param value: Whether to use masks or not
+        :type value: bool
+        :param name_list: If set, it determines which subset of MaskLayers to turn on or off, defaults to None
+        :type name_list: List[str], optional
+        """
         for name, module in self.named_modules():
             if name_list is not None:
                 if issubclass(type(module), MaskLayer) and name in name_list:

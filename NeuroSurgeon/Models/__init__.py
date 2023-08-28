@@ -1,1 +1,2 @@
-__all__ = ["circuit_model", "model_configs", "residual_update_model"]
+from .circuit_model import CircuitModel
+from .model_configs import CircuitConfig

@@ -1,3 +1,7 @@
 __version__ = "0.1.0"
 __author__ = 'Michael Lepori'
-__credits__ = 'Brown University'
+
+from . import Masking
+from . import Models 
+from . import Probing
+from . import Visualization

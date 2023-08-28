@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSurgeon.Masking package &mdash; NeuroSurgeon 0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NeuroSurgeon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">NeuroSurgeon.Masking package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#continuous-sparsification"><code class="docutils literal notranslate"><span class="pre">Continuous</span> <span class="pre">Sparsification</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv1d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseConv1d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d"><code class="docutils literal notranslate"><span class="pre">ContSparseConv2d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseConv2d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseGPTConv1D.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.force_resample</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.mask_init_value"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.mask_init_value</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.temperature"><code class="docutils literal notranslate"><span class="pre">ContSparseLayer.temperature</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.forward"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.from_layer()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">ContSparseLinear.reset_parameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#hard-concrete-masking"><code class="docutils literal notranslate"><span class="pre">Hard</span> <span class="pre">Concrete</span> <span class="pre">Masking</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv1d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv1d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv2d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteConv2d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteGPTConv1D.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.calculate_l0"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.calculate_l0()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.force_resample</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.mask_init_percentage"><code class="docutils literal notranslate"><span class="pre">HardConcreteLayer.mask_init_percentage</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.forward"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.from_layer()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">HardConcreteLinear.reset_parameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#magnitude-pruning"><code class="docutils literal notranslate"><span class="pre">Magnitude</span> <span class="pre">Pruning</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv1d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneConv1d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d"><code class="docutils literal notranslate"><span class="pre">MagPruneConv2d</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneConv2d.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.forward"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneGPTConv1D.from_layer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.force_resample"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer.force_resample</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.prune_percentage"><code class="docutils literal notranslate"><span class="pre">MagPruneLayer.prune_percentage</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.forward"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.from_layer"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.from_layer()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.reset_parameters"><code class="docutils literal notranslate"><span class="pre">MagPruneLinear.reset_parameters()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#mask-layer"><code class="docutils literal notranslate"><span class="pre">Mask</span> <span class="pre">Layer</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="docutils literal notranslate"><span class="pre">MaskLayer</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.ablation"><code class="docutils literal notranslate"><span class="pre">MaskLayer.ablation</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_l0"><code class="docutils literal notranslate"><span class="pre">MaskLayer.calculate_l0()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_max_l0"><code class="docutils literal notranslate"><span class="pre">MaskLayer.calculate_max_l0()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.forward"><code class="docutils literal notranslate"><span class="pre">MaskLayer.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.from_layer"><code class="docutils literal notranslate"><span class="pre">MaskLayer.from_layer()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_bias"><code class="docutils literal notranslate"><span class="pre">MaskLayer.mask_bias</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_unit"><code class="docutils literal notranslate"><span class="pre">MaskLayer.mask_unit</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.reset_parameters"><code class="docutils literal notranslate"><span class="pre">MaskLayer.reset_parameters()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.train"><code class="docutils literal notranslate"><span class="pre">MaskLayer.train()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.use_masks"><code class="docutils literal notranslate"><span class="pre">MaskLayer.use_masks</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuroSurgeon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NeuroSurgeon.Masking package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NeuroSurgeon.Masking.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="neurosurgeon-masking-package">
+<h1>NeuroSurgeon.Masking package<a class="headerlink" href="#neurosurgeon-masking-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<section id="continuous-sparsification">
+<h3><code class="docutils literal notranslate"><span class="pre">Continuous</span> <span class="pre">Sparsification</span></code><a class="headerlink" href="#continuous-sparsification" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Masking.contsparse_layer">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.contsparse_layer.</span></span><span class="sig-name descname"><span class="pre">ContSparseConv1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ContSparseConv</span></code></p>
+<p>A Conv1d layer that implements continuous sparsification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a ContSparseConv1d layer from a nn.Conv1d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Continuous Sparsification Conv1d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv1d">ContSparseConv1d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.contsparse_layer.</span></span><span class="sig-name descname"><span class="pre">ContSparseConv2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_ContSparseConv</span></code></p>
+<p>A Conv2d layer that implements continuous sparsification</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a ContSparseConv2d layer from a nn.Conv2d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Continuous Sparsification Conv2d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseConv2d">ContSparseConv2d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.contsparse_layer.</span></span><span class="sig-name descname"><span class="pre">ContSparseGPTConv1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContSparseLayer</span></code></a></p>
+<p>A GPT-style Conv1D Layer that implements Continuous Sparsification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Input tensor</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">transformers.pytorch_utils.Conv1D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a ContSparseGPTConv1D layer from a Conv1D layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>Conv1D</em>) – An instance of a Conv1D layer from pytorch_utils</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Continuous Sparsification GPTConv1D layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseGPTConv1D">ContSparseGPTConv1D</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.contsparse_layer.</span></span><span class="sig-name descname"><span class="pre">ContSparseLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer" title="NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaskLayer</span></code></a></p>
+<p>An abstract class defining the basic functionality of Continuous Sparsification layers.
+Continuous Sparsification was introduced in Savarese et al. 2021 (<a class="reference external" href="https://arxiv.org/abs/1912.04427">https://arxiv.org/abs/1912.04427</a>).
+It introduces a deterministic approximation to the L0 penalty (in contrast to the stochastic approach
+implemented by the Hard Concrete Layer). Continuous sparsification introduces mask parameters, which
+get mulitplied by a temperature parameter and then passed through a sigmoid to create a soft mask.
+To train a continuous sparsification layer, one must anneal the temperature parameter, increasing 
+it after every epoch. This eventually turns a soft mask into a hard mask, by the end of training.
+At eval time, the mask is explicitly turned into a binary mask, with all positive mask parameters
+mapping to 1, and all negative mask parameters mapping to 0.</p>
+<p>The easiest way to anneal the temperature parameter is with a callback. Here is an example!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">TemperatureCallback</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">total_epochs</span><span class="p">,</span> <span class="n">final_temp</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_increase</span> <span class="o">=</span> <span class="n">final_temp</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">total_epochs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="n">temp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">temperature</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_increase</span>  
+</pre></div>
+</div>
+<p>…</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">force_resample</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample" title="Link to this definition"></a></dt>
+<dd><p>A boolean value that determines whether a mask is resampled when creating a mask using 
+ablation = “randomly_sampled” or ablation = “complement_sampled”. Otherwise a mask is sampled once and returned
+when calling these functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A boolean determining whether masks are resampled when using ablation = “randomly_sampled” or “complement_sampled”</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.mask_init_value">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_init_value</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.mask_init_value" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.temperature">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.temperature" title="Link to this definition"></a></dt>
+<dd><p>A float that is multiplied by the mask parameters before they are passed into a sigmoid function
+for creating a soft mask.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The temperature parameter</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.contsparse_layer.</span></span><span class="sig-name descname"><span class="pre">ContSparseLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContSparseLayer</span></code></a></p>
+<p>A Linear Layer that implements Continuous Sparsification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
+<li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>torch.Tensor</em>) – Input tensors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Linear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a ContSparseLinear layer from a nn.Linear layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_value</strong> (<em>float</em>) – The value that the mask parameters are initialized with. Default: 0.0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Continuous Sparsification  Linear layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear" title="NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear">ContSparseLinear</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLinear.reset_parameters" title="Link to this definition"></a></dt>
+<dd><p>Reset network parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="hard-concrete-masking">
+<h3><code class="docutils literal notranslate"><span class="pre">Hard</span> <span class="pre">Concrete</span> <span class="pre">Masking</span></code><a class="headerlink" href="#hard-concrete-masking" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Masking.hardconcrete_layer">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.hardconcrete_layer.</span></span><span class="sig-name descname"><span class="pre">HardConcreteConv1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_HardConcreteConv</span></code></p>
+<p>A Conv1d layer that implements Hard Concrete Masking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a HardConcreteConv1d layer from a nn.Conv1d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hard Concrete Conv1d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv1d">HardConcreteConv1d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.hardconcrete_layer.</span></span><span class="sig-name descname"><span class="pre">HardConcreteConv2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_HardConcreteConv</span></code></p>
+<p>A Conv2d layer that implements Hard Concrete Masking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a HardConcreteConv2d layer from a nn.Conv2d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hard Concrete Conv2d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteConv2d">HardConcreteConv2d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.hardconcrete_layer.</span></span><span class="sig-name descname"><span class="pre">HardConcreteGPTConv1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">HardConcreteLayer</span></code></a></p>
+<p>A GPT-style Conv1D Layer that implements Hard Concrete Masking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>torch.Tensor</em>) – Input tensors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">transformers.pytorch_utils.Conv1D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a HardConcreteGPTConv1D layer from a Conv1D layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hard Concrete GPTConv1D layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteGPTConv1D">HardConcreteGPTConv1D</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.hardconcrete_layer.</span></span><span class="sig-name descname"><span class="pre">HardConcreteLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer" title="NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaskLayer</span></code></a></p>
+<p>An abstract class defining the basic functionality of Hard Concrete layers.
+Hard Concrete Masking was introduced in Louizos et al. 2018 (<a class="reference external" href="https://arxiv.org/abs/1712.01312">https://arxiv.org/abs/1712.01312</a>).
+It introduces a stochastic approximation to the L0 penalty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – Determines approximately how many parameters are left unpruned if one creates a hard mask by sampling from the hard concrete distribution and binarizing</p></li>
+<li><p><strong>left_stretch</strong> (<em>float</em>) – Determines how much the binary concrete distribution is stretched to give more mass to 0.0</p></li>
+<li><p><strong>right_stretch</strong> (<em>float</em>) – Determines how much the binary concrete distribution is stretched to give more mass to 1.0</p></li>
+<li><p><strong>temperature</strong> (<em>float</em>) – Determines the sampling temperature of the binary concrete distribution</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.calculate_l0">
+<span class="sig-name descname"><span class="pre">calculate_l0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.calculate_l0" title="Link to this definition"></a></dt>
+<dd><p>Returns the L0 norm of the mask. This is used for L0 regularization and for reporting on mask size.
+This function overrides the default behavior (defined in MaskLayer) in order to provide the regularization
+term given in Louizos et al. 2018 during training</p>
+<p>:return The L0 norm of the mask
+:rtype float</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.force_resample">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">force_resample</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.force_resample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.mask_init_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_init_percentage</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer.mask_init_percentage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.hardconcrete_layer.</span></span><span class="sig-name descname"><span class="pre">HardConcreteLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">HardConcreteLayer</span></code></a></p>
+<p>A Linear Layer that implements Hard Concrete Masking.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
+<li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>torch.Tensor</em>) – Input tensors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Linear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'weight'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_init_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a HardConcreteLinear layer from a nn.Linear layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>mask_init_percentage</strong> (<em>float</em>) – The approximate number of parameters left unpruned by a sampled mask. Default: 0.5</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Hard Concrete Linear layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear" title="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear">HardConcreteLinear</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.hardconcrete_layer.HardConcreteLinear.reset_parameters" title="Link to this definition"></a></dt>
+<dd><p>Reset network parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="magnitude-pruning">
+<h3><code class="docutils literal notranslate"><span class="pre">Magnitude</span> <span class="pre">Pruning</span></code><a class="headerlink" href="#magnitude-pruning" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Masking.magprune_layer">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.magprune_layer.</span></span><span class="sig-name descname"><span class="pre">MagPruneConv1d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_MagPruneConv</span></code></p>
+<p>A Conv1d layer that implements Magnitude Pruning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv1d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_percentage</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a MagPruneConv1d layer from a nn.Conv1d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv1d</em>) – A nn.Conv1d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Magnitude Pruning Conv1d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d" title="NeuroSurgeon.Masking.magprune_layer.MagPruneConv1d">MagPruneConv1d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.magprune_layer.</span></span><span class="sig-name descname"><span class="pre">MagPruneConv2d</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">_MagPruneConv</span></code></p>
+<p>A Conv2d layer that implements Magnitude Pruning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_channels</strong> (<em>int</em>) – Number of channels in the input image</p></li>
+<li><p><strong>out_channels</strong> (<em>int</em>) – Number of channels produced by the convolution</p></li>
+<li><p><strong>kernel_size</strong> (<em>int</em><em> or </em><em>tuple</em>) – Size of the convolving kernel</p></li>
+<li><p><strong>padding</strong> (<em>int</em>) – Padding added to all four sides of the input. Default: 0</p></li>
+<li><p><strong>stride</strong> (<em>int</em>) – Stride of the convolution. Default: 1</p></li>
+<li><p><strong>dilation</strong> (<em>int</em><em> or </em><em>tuple</em>) – Spacing between kernel elements. Default: 1</p></li>
+<li><p><strong>groups</strong> (<em>int</em>) – Number of blocked connections from input channels to output channels. Default: 1</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If True, adds a learnable bias to the output. Default: True</p></li>
+<li><p><strong>padding_mode</strong> (<em>str</em>) – ‘zeros’, ‘reflect’, ‘replicate’ or ‘circular’. Default: ‘zeros’</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Conv2d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Create a MagPruneConv2d layer from a nn.Conv2d layer</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Conv2d</em>) – A nn.Conv2d layer</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]. Default: “weight”</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Magnitude Pruning Conv2d layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d" title="NeuroSurgeon.Masking.magprune_layer.MagPruneConv2d">MagPruneConv2d</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.magprune_layer.</span></span><span class="sig-name descname"><span class="pre">MagPruneGPTConv1D</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer" title="NeuroSurgeon.Masking.magprune_layer.MagPruneLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagPruneLayer</span></code></a></p>
+<p>A GPT-style Conv1D Layer that implements Magnitude Pruning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>torch.Tensor</em>) – Input tensors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">transformers.pytorch_utils.Conv1D</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a MagPruneGPTConv1D layer from a Conv1D layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nf</strong> (<em>int</em>) – Number of output features</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Number of input features</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Magnitude Pruning GPTConv1D layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D" title="NeuroSurgeon.Masking.magprune_layer.MagPruneGPTConv1D">MagPruneGPTConv1D</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.magprune_layer.</span></span><span class="sig-name descname"><span class="pre">MagPruneLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer" title="NeuroSurgeon.Masking.mask_layer.MaskLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaskLayer</span></code></a></p>
+<p>An abstract class defining the basic functionality of Magnitude Pruning layers.
+Magnitude pruning is not a differentiable masking strategy - it deterministically prunes the N% lowest magnitude weights.
+Masking always occurs at the weight-level. This pruning strategy might serve as a baseline to compare against gradient-based masking strategies (i.e. Continuous Sparsification or Hard Concrete Masking).
+This is a common strategy in model pruning, notably in work analyzing the Lottery Ticket Hypothesis (<a class="reference external" href="https://arxiv.org/abs/1803.03635">https://arxiv.org/abs/1803.03635</a>)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – Determines the percentage of weights to prune</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.force_resample">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">force_resample</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.force_resample" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.prune_percentage">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">prune_percentage</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer.prune_percentage" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLinear">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.magprune_layer.</span></span><span class="sig-name descname"><span class="pre">MagPruneLinear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLayer" title="NeuroSurgeon.Masking.magprune_layer.MagPruneLayer"><code class="xref py py-class docutils literal notranslate"><span class="pre">MagPruneLayer</span></code></a></p>
+<p>A Linear Layer that implements Magnitude Pruning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_features</strong> (<em>int</em>) – Size of each input sample</p></li>
+<li><p><strong>out_features</strong> (<em>int</em>) – Size of each output sample</p></li>
+<li><p><strong>bias</strong> (<em>bool</em>) – If set to False, the layer will not learn an additive bias. Default: True</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.Tensor</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">torch.Tensor</span></span></span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.forward" title="Link to this definition"></a></dt>
+<dd><p>Performs a forward pass</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<em>torch.Tensor</em>) – Input tensors</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Output tensor</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>torch.Tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.from_layer">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">torch.nn.Linear</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ablation</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'none'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask_bias</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prune_percentage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.from_layer" title="Link to this definition"></a></dt>
+<dd><p>Creates a MagPruneLinear layer from a nn.Linear layer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>layer</strong> (<em>nn.Linear</em>) – An instance of a nn.Linear layer.</p></li>
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms. Default: False</p></li>
+<li><p><strong>prune_percentage</strong> (<em>float</em>) – The percentage of weights to prune. Default: 0.2</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Magnitude Pruning Linear layer with the same weights as the layer argument</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear" title="NeuroSurgeon.Masking.magprune_layer.MagPruneLinear">MagPruneLinear</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.reset_parameters">
+<span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.magprune_layer.MagPruneLinear.reset_parameters" title="Link to this definition"></a></dt>
+<dd><p>Reset network parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="mask-layer">
+<h3><code class="docutils literal notranslate"><span class="pre">Mask</span> <span class="pre">Layer</span></code><a class="headerlink" href="#mask-layer" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Masking.mask_layer">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Masking.mask_layer.</span></span><span class="sig-name descname"><span class="pre">MaskLayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>This is an abstract class that defines the minimum functionality of a mask layer.
+All mask layers inherit from this class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters.
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>mask_unit</strong> (<em>str</em>) – A string that determines whether masks are produced at the weight or neuron level. Valid options include [“neuron”, “weight”]</p></li>
+<li><p><strong>mask_bias</strong> (<em>bool</em>) – Determines whether to mask bias terms in addition to weight terms.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.ablation">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ablation</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.ablation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_l0">
+<span class="sig-name descname"><span class="pre">calculate_l0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_l0" title="Link to this definition"></a></dt>
+<dd><p>Returns the L0 norm of the mask. This is used for L0 regularization and for reporting on mask size</p>
+<p>:return The total L0 norm of the mask
+:rtype float</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_max_l0">
+<span class="sig-name descname"><span class="pre">calculate_max_l0</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.calculate_max_l0" title="Link to this definition"></a></dt>
+<dd><p>Returns the maximum L0 norm of the mask (i.e. the number of prunable weights/neurons in the layer).</p>
+<p>:return The maximum L0 norm of the mask
+:rtype float</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.forward">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.from_layer">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_layer</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.from_layer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_bias">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_bias</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_bias" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_unit">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mask_unit</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.mask_unit" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.reset_parameters">
+<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">reset_parameters</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.reset_parameters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Masking.mask_layer.MaskLayer.use_masks">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">use_masks</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.mask_layer.MaskLayer.use_masks" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span class="target" id="module-NeuroSurgeon.Masking"></span></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Michael Lepori.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

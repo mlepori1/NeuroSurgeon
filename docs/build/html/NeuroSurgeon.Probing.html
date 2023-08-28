@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSurgeon.Probing package &mdash; NeuroSurgeon 0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NeuroSurgeon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">NeuroSurgeon.Probing package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#probe-configs">Probe Configs</a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModelConfig</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbeConfig</span></code></a></li>
+<li><a class="reference internal" href="#residualupdatemodel"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.forward"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.train"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel.train()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#subnetworkprobe"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.forward"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.train"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe.train()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuroSurgeon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NeuroSurgeon.Probing package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NeuroSurgeon.Probing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="neurosurgeon-probing-package">
+<h1>NeuroSurgeon.Probing package<a class="headerlink" href="#neurosurgeon-probing-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="probe-configs">
+<h2>Probe Configs<a class="headerlink" href="#probe-configs" title="Link to this heading"></a></h2>
+<dl class="py class" id="module-NeuroSurgeon.Probing.probe_configs">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.probe_configs.</span></span><span class="sig-name descname"><span class="pre">ResidualUpdateModelConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedConfig</span></code></p>
+<p>A config object defining the behavior of the ResidualUpdateModel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model_type</strong> (<em>str</em>) – The type of model that you are hooking. One of [“bert”, “gpt”, “gptneox”, “vit”]</p></li>
+<li><p><strong>target_layers</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – A list of layers to hook</p></li>
+<li><p><strong>mlp</strong> (<em>bool</em>) – Whether to hook the mlp layers</p></li>
+<li><p><strong>attn</strong> (<em>bool</em>) – Whether to hook the attention layers</p></li>
+<li><p><strong>updates</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to store updates to the residual stream, defaults to True</p></li>
+<li><p><strong>stream</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to store the intermediate residual stream values, defaults to False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.probe_configs.</span></span><span class="sig-name descname"><span class="pre">SubnetworkProbeConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedConfig</span></code></p>
+<p>_summary_</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>probe_vectors</strong> (<em>str</em>) – The entries in a ResidualUpdateModel’s vector_cache that one will train a probe on. Ex. attn_update_1, mlp_stream_5</p></li>
+<li><p><strong>n_classes</strong> (<em>int</em>) – The number of classes in the probe task</p></li>
+<li><p><strong>circuit_config</strong> (<a class="reference internal" href="NeuroSurgeon.Models.html#NeuroSurgeon.Models.model_configs.CircuitConfig" title="NeuroSurgeon.Models.model_configs.CircuitConfig"><em>CircuitConfig</em></a>) – A CircuitConfig object defining the masking behavior of the model</p></li>
+<li><p><strong>resid_config</strong> (<a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig" title="NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig"><em>ResidualUpdateModelConfig</em></a>) – A ResidualUpdateModelConfig defining the behavior of the residual update model. Make sure that the probe_vectors argument aligns with this config!</p></li>
+<li><p><strong>intermediate_size</strong> (<em>int</em><em>, </em><em>optional</em>) – If an MLP probe is required, the dimensionality of the hidden layer, defaults to -1</p></li>
+<li><p><strong>labeling</strong> (<em>str</em><em>, </em><em>optional</em>) – Either “sequence” or “token” - whether to expect one label per input or many, defaults to “sequence”</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="residualupdatemodel">
+<h3><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel</span></code><a class="headerlink" href="#residualupdatemodel" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Probing.residual_update_model">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.residual_update_model.</span></span><span class="sig-name descname"><span class="pre">ResidualUpdateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>A simple wrapped that adds hooks into a model to return intermediate hidden states
+or updates from particular MLP or Attention layers. This is loosely modeled off of the 
+Transformer Lens library from Neel Nanda (<a class="reference external" href="https://github.com/neelnanda-io/TransformerLens">https://github.com/neelnanda-io/TransformerLens</a>).
+This is a minimal implementation that is built to subnetwork based pruning efforts. Currently,
+it supports ViT, GPT2, GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.
+On every forward pass, the specied updates/activations are placed in a vector_cache dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig" title="NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig"><em>ResidualUpdateModelConfig</em></a>) – A configuration object defining which updates/activations to store</p></li>
+<li><p><strong>model</strong> (<em>nn.Module</em><em> (</em><em>should be one</em><em> of </em><em>the model architectures stated above</em><em>)</em>) – A transformer model to wrap</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.forward" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="subnetworkprobe">
+<h3><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe</span></code><a class="headerlink" href="#subnetworkprobe" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Probing.subnetwork_probe">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.subnetwork_probe.</span></span><span class="sig-name descname"><span class="pre">SubnetworkProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>This reimplements the technique introduced in Cao et al. 2021 (<a class="reference external" href="https://arxiv.org/abs/2104.03514">https://arxiv.org/abs/2104.03514</a>).
+Probing introduces a linear layer or MLP to extract information from intermediate representations in a model.
+One can train the probe to classify inputs at the token or sequence level, using either intermediate
+updates or intermediate activations. Cao et al. introduced subnetwork probing, which optimizes a binary mask
+and a linear probe at the same time, resulting in low-complexity probes. This class implements this technique
+by introducing probing layers into a CircuitModel. One can also use this class to perform regular probing by
+specifying that no layers get masked in the CircuitModel config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig" title="NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig"><em>SubnetworkProbeConfig</em></a>) – A config file determining the behavior of the subnetwork probe</p></li>
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The model to probe. Currently, it supports ViT, GPT2,
+GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward pass of the model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_ids</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – input tensors, defaults to None</p></li>
+<li><p><strong>labels</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – probing labels, defaults to None</p></li>
+<li><p><strong>token_mask</strong> (<em>torch.Tensor</em><em>, </em><em>optional</em>) – A mask defining which updates/residual stream entries should be mapped to labels, defaults to None</p></li>
+<li><p><strong>return_dict</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to return an output dictionary or a tuple, defaults to True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>An object that contains output predictions, loss, etc. (dictionary)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SequenceClassifierOutput or Tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe.train" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span class="target" id="module-NeuroSurgeon.Probing"></span></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Michael Lepori.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

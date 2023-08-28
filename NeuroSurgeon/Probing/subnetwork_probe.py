@@ -8,6 +8,20 @@ from .residual_update_model import ResidualUpdateModel
 
 
 class SubnetworkProbe(nn.Module):
+    """This reimplements the technique introduced in Cao et al. 2021 (https://arxiv.org/abs/2104.03514).
+    Probing introduces a linear layer or MLP to extract information from intermediate representations in a model.
+    One can train the probe to classify inputs at the token or sequence level, using either intermediate
+    updates or intermediate activations. Cao et al. introduced subnetwork probing, which optimizes a binary mask
+    and a linear probe at the same time, resulting in low-complexity probes. This class implements this technique
+    by introducing probing layers into a CircuitModel. One can also use this class to perform regular probing by
+    specifying that no layers get masked in the CircuitModel config.
+
+    :param config: A config file determining the behavior of the subnetwork probe
+    :type config: SubnetworkProbeConfig
+    :param model: The model to probe. Currently, it supports ViT, GPT2,
+        GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.
+    :type model: nn.Module
+    """
     def __init__(
         self,
         config: SubnetworkProbeConfig,
@@ -25,7 +39,7 @@ class SubnetworkProbe(nn.Module):
             self.config.resid_config, self.wrapped_model
         )
 
-        self.probe = self.create_probe()
+        self.probe = self._create_probe()
         self.loss = nn.CrossEntropyLoss()
 
     def _validate_configs(self):
@@ -47,7 +61,7 @@ class SubnetworkProbe(nn.Module):
         # Labeling must be either "sequence" or "token", corresponding to the probing task
         assert self.config.labeling in ["sequence", "token"]
 
-    def create_probe(self):
+    def _create_probe(self):
         input_size = self.hidden_size
         if self.config.intermediate_size != -1:
             return nn.Sequential(
@@ -66,6 +80,20 @@ class SubnetworkProbe(nn.Module):
     def forward(
         self, input_ids=None, labels=None, token_mask=None, return_dict=True, **kwargs
     ):
+        """Forward pass of the model
+
+        :param input_ids: input tensors, defaults to None
+        :type input_ids: torch.Tensor, optional
+        :param labels: probing labels, defaults to None
+        :type labels: torch.Tensor, optional
+        :param token_mask: A mask defining which updates/residual stream entries should be mapped to labels, defaults to None
+        :type token_mask: torch.Tensor, optional
+        :param return_dict: Whether to return an output dictionary or a tuple, defaults to True
+        :type return_dict: bool, optional
+        :return: An object that contains output predictions, loss, etc. (dictionary)
+        :rtype: SequenceClassifierOutput or Tuple
+        """
+
         # Must provide a token mask, which is a boolean mask for each input denoting which
         # residual streams to compute loss over
 

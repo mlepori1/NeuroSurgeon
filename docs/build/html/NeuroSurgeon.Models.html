@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NeuroSurgeon.Models package &mdash; NeuroSurgeon 0.1.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=01f34227"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            NeuroSurgeon
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">NeuroSurgeon.Models package</a><ul>
+<li><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li><a class="reference internal" href="#circuitmodel"><code class="docutils literal notranslate"><span class="pre">CircuitModel</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel"><code class="docutils literal notranslate"><span class="pre">CircuitModel</span></code></a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.compute_l0_statistics"><code class="docutils literal notranslate"><span class="pre">CircuitModel.compute_l0_statistics()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.forward"><code class="docutils literal notranslate"><span class="pre">CircuitModel.forward()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.set_ablate_mode"><code class="docutils literal notranslate"><span class="pre">CircuitModel.set_ablate_mode()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.temperature"><code class="docutils literal notranslate"><span class="pre">CircuitModel.temperature</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.train"><code class="docutils literal notranslate"><span class="pre">CircuitModel.train()</span></code></a></li>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.use_masks"><code class="docutils literal notranslate"><span class="pre">CircuitModel.use_masks()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#model-configs">Model Configs</a><ul>
+<li><a class="reference internal" href="#NeuroSurgeon.Models.model_configs.CircuitConfig"><code class="docutils literal notranslate"><span class="pre">CircuitConfig</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-contents">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">NeuroSurgeon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NeuroSurgeon.Models package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NeuroSurgeon.Models.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="neurosurgeon-models-package">
+<h1>NeuroSurgeon.Models package<a class="headerlink" href="#neurosurgeon-models-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<section id="circuitmodel">
+<h3><code class="docutils literal notranslate"><span class="pre">CircuitModel</span></code><a class="headerlink" href="#circuitmodel" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Models.circuit_model">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Models.circuit_model.</span></span><span class="sig-name descname"><span class="pre">CircuitModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>CircuitModel is a wrapper around a Transformers model (or custom nn.Module that also returns an object from a forward pass), which replaces particular layers
+with MaskLayers. These MaskLayers modify the weight matrices of particular layers according to some strategy, which
+is defined in the CircuitConfig.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Models.model_configs.CircuitConfig" title="NeuroSurgeon.Models.model_configs.CircuitConfig"><em>CircuitConfig</em></a>) – A configuration object defining the how the CircuitModel wrapper modifes a model</p></li>
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The model to modify</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.compute_l0_statistics">
+<span class="sig-name descname"><span class="pre">compute_l0_statistics</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.compute_l0_statistics" title="Link to this definition"></a></dt>
+<dd><p>Compute overall l0, max masking parameters, per-layer-l0 statistics</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dictionary containing the computed statistics. Keys are “total_l0”, “max_l0”, “layer2l0”, “layer2maxl0”</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.forward" title="Link to this definition"></a></dt>
+<dd><p>Forward call of the wrapped model, adds L0 regurization if specified by the config</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.set_ablate_mode">
+<span class="sig-name descname"><span class="pre">set_ablate_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ablation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_resample</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.set_ablate_mode" title="Link to this definition"></a></dt>
+<dd><p>Changes the ablate mode of the MaskLayers from what is specified in the CircuitConfig</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ablation</strong> (<em>str</em>) – A string that determines how masks are produced from the mask layer parameters. Default: “none”
+Valid options include:
+“none”: Producing a standard binary mask
+“zero_ablate”: Inverting the standard binary mask. Used for pruning discovered subnetworks.
+“random_ablate”: Inverting the standard binary mask and reinitializing zero’d elements. Used for pruning discovered subnetworks.
+“randomly_sampled”: Sampling a random binary mask of the same size as the standard mask.
+“complement_sampled”: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.</p></li>
+<li><p><strong>force_resample</strong> (<em>bool</em><em>, </em><em>optional</em>) – If setting ablation=[“randomly_sampled”, “complement_sampled”], whether to randomly resample the generated mask, defaults to False</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.temperature">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">temperature</span></span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.temperature" title="Link to this definition"></a></dt>
+<dd><p>The temperature parameter for ContSparseLayers ONLY</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Temperature parameter</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.train" title="Link to this definition"></a></dt>
+<dd><p>Similar to the normal nn.Module train function, except keeps the underlying model weights
+frozen if that is specified by the config argument</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>train_bool</strong> (<em>bool</em>) – Whether to put the model in train mode or eval mode, defaults to True</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.circuit_model.CircuitModel.use_masks">
+<span class="sig-name descname"><span class="pre">use_masks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.circuit_model.CircuitModel.use_masks" title="Link to this definition"></a></dt>
+<dd><p>This function can be used to turn off masking behavior for either the entire model, or particular layers (if name_list!=None)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<em>bool</em>) – Whether to use masks or not</p></li>
+<li><p><strong>name_list</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – If set, it determines which subset of MaskLayers to turn on or off, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="model-configs">
+<h3>Model Configs<a class="headerlink" href="#model-configs" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Models.model_configs">
+<dt class="sig sig-object py" id="NeuroSurgeon.Models.model_configs.CircuitConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Models.model_configs.</span></span><span class="sig-name descname"><span class="pre">CircuitConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Models.model_configs.CircuitConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedConfig</span></code></p>
+<p>A config object to define the behavior of a CircuitModel</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask_method</strong> (<em>str</em><em>, </em><em>optional</em>) – Which masking technique to use. Options include
+[“continuous_sparsification”, “hard_concrete”, “magnitude_pruning”], defaults to “continuous_sparsification”</p></li>
+<li><p><strong>mask_hparams</strong> (<em>dict</em><em>, </em><em>optional</em>) – A dictionary defining hyperparameters specific to the specified mask method.
+For “continuous_sparsification”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_value”
+For “hard_concrete”: Requires “ablation”, “mask_unit”, “mask_bias”, “mask_init_percentage”
+For “magnitude_pruning”: Requires “ablation”, “mask_bias”, “prune_percentage”
+See the documentation for each layer for details about these hyperparameters, defaults to {}</p></li>
+<li><p><strong>target_layers</strong> (<em>List</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – A list of layers to turn into mask layers. 
+These layer names can be obtained from the wrapped model’s state dict. They must correspond to nn.Linear, GPT-style Conv1D, nn.Conv2d, or nn.Conv1d layers. defaults to []</p></li>
+<li><p><strong>freeze_base</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to freeze the weights and biases of the wrapped model, defaults to True</p></li>
+<li><p><strong>add_l0</strong> (<em>bool</em><em>, </em><em>optional</em>) – Whether to add L0 regularization to the loss computed during a transformer model’s forward pass, defaults to True</p></li>
+<li><p><strong>l0_lambda</strong> (<em>float</em><em>, </em><em>optional</em>) – The weighting of the L0 regularization, should usually be scaled with parameter count, defaults to 1e-8</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="module-contents">
+<h2>Module contents<a class="headerlink" href="#module-contents" title="Link to this heading"></a></h2>
+<span class="target" id="module-NeuroSurgeon.Models"></span></section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, Michael Lepori.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

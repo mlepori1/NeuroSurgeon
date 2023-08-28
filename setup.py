@@ -1,22 +1,26 @@
-from setuptools import setup
+from setuptools import setup, find_packages
+
+with open("README.md", encoding="utf-8") as fh:
+    README = fh.read()
 
 setup(
     name='NeuroSurgeon',
-    version='0.1.0',    
+    version='0.1.24',    
     description='A toolkit for subnetwork analysis',
+    long_description=README,
+    long_description_content_type="text/markdown",
     url='https://github.com/mlepori1/NeuroSurgeon',
     author='Michael Lepori',
     author_email='michael_lepori@brown.edu',
     license='MIT',
-    packages=['NeuroSurgeon'],
+    packages=find_packages(),
     install_requires=['torch>=2.0.1',
-                      'torchvision>=0.15.2',
-                      'torchaudio>=2.0.2',
                       'transformers',
-                      'datasets',
                       'matplotlib',
                       ],
-
+    extras_require={
+        "tests": ["pytest", "datasets"],
+    },
     classifiers=[
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT License',  

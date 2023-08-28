@@ -1,5 +1,3 @@
-__all__ = [
-    "probe_configs",
-    "subnetwork_probe",
-    "residual_update_model",
-]
+from .subnetwork_probe import SubnetworkProbe
+from .residual_update_model import ResidualUpdateModel
+from .probe_configs import ResidualUpdateModelConfig, SubnetworkProbeConfig

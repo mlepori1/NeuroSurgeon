@@ -7,8 +7,41 @@ from matplotlib.patches import Rectangle
 
 
 class VisualizerConfig:
-    """This config defines the output plots of the Visualizer"""
-
+    """Config object that determines the behavior of the Visualizer
+        :param state_dicts: A list of one or two CircuitModel state dicts. Provide 1 to plot subnetwork distribution throughout model. Provide 2 to also include the overlap between subnetworks.
+        :type state_dicts: List
+        :param model_labels: String labels associated with each CircuitModel state dict, defaults to ["Subnetwork 1", "Subnetwork 2"]
+        :type model_labels: List[str], optional
+        :param subnetwork_colors: Colors representing each CircuitModel in the diagram, defaults to ["red", "blue"]
+        :type subnetwork_colors: List[str], optional
+        :param intersect_color: Color representing the intersection of two CircuitModels, defaults to "purple"
+        :type intersect_color: str, optional
+        :param unused_color: Color representing weights/neurons that are unused in both CircuitModels, defaults to "grey"
+        :type unused_color: str, optional
+        :param visualize_bias: Whether to also include the bias terms when computing subnetwork distributions throughout the model, defaults to False
+        :type visualize_bias: bool, optional
+        :param plot_full_network: Whether to only plot layers where at least one model is masked, or whether to plot all layers, defaults to True
+        :type plot_full_network: bool, optional
+        :param condense_layers: Whether to plot every layer (True), or each parameter tensor seperately (False), defaults to False
+        :type condense_layers: bool, optional
+        :param mask_method: The mask method used by the CircuitModels, defaults to "continuous_sparsification"
+        :type mask_method: str, optional
+        :param outfile: The name of the output image file, defaults to "plot.png"
+        :type outfile: str, optional
+        :param format: The format of the output image file, defaults to "png"
+        :type format: str, optional
+        :param figsize: The size of the output figure, defaults to (10.0, 20.0)
+        :type figsize: Tuple[float], optional
+        :param title_fontsize: The fontsize of the title, defaults to 24
+        :type title_fontsize: int, optional
+        :param label_fontsize: The fontsize of the labels, defaults to 18
+        :type label_fontsize: int, optional
+        :param alpha: The opacity of the colors, defaults to 0.75
+        :type alpha: float, optional
+        :param title: The title of the figure, defaults to "Layer By Layer Subnetwork Distribution"
+        :type title: str, optional
+        :raises ValueError: Raises ValueError if more than 2 state dicts are provided
+        """
     def __init__(
         self,
         state_dicts: List,
@@ -57,7 +90,12 @@ class VisualizerConfig:
 
 
 class Visualizer:
-    """Class that produces plots of subnetwork distribution through a model"""
+    """A Class that produces figures describing the distribution of CircuitModel weights
+    throughout a model
+
+    :param config: A configuration object describing how to plot the figures
+    :type config: VisualizerConfig
+    """
 
     def __init__(self, config):
         self.config = config
@@ -586,6 +624,9 @@ class Visualizer:
         plt.savefig(config.outfile, format=config.format)
 
     def plot(self):
+        """The main function of this class. Plots the CircuitModels according to
+        the VisualizerConfig specification.
+        """
         # First filter state dicts to figure out what to plot
         plot_nodes = self._filter_state_dicts(self.config)
         # Next, organized filtered nodes into layer : node_name dictionary
