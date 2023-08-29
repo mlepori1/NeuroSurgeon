@@ -18,19 +18,20 @@ class MagPruneLayer(MaskLayer):
     This is a common strategy in model pruning, notably in work analyzing the Lottery Ticket Hypothesis (https://arxiv.org/abs/1803.03635)
 
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms.
     :type mask_bias: bool
     :param prune_percentage: Determines the percentage of weights to prune
     :type prune_percentage: float
     """
+
     def __init__(self, ablation: str, mask_bias: bool, prune_percentage: float):
         super().__init__(ablation, "weight", mask_bias)
         self.prune_percentage = prune_percentage
@@ -58,7 +59,7 @@ class MagPruneLayer(MaskLayer):
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
         ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True
         forces the layer to resample a mask.
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
@@ -121,7 +122,7 @@ class MagPruneLayer(MaskLayer):
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
         ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True
         forces the layer to resample a mask.
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
@@ -209,8 +210,7 @@ class MagPruneLayer(MaskLayer):
         pass
 
     def _compute_random_ablation(self, param_type):
-        """Computes the inverse of the standard binary mask and reinitializes zero'd elements. Used for pruning discovered subnetworks.
-        """
+        """Computes the inverse of the standard binary mask and reinitializes zero'd elements. Used for pruning discovered subnetworks."""
         if param_type == "weight":
             params = self.weight
             params_mask = self.weight_mask
@@ -241,19 +241,20 @@ class MagPruneLinear(MagPruneLayer):
     :param bias: If set to False, the layer will not learn an additive bias. Default: True
     :type bias: bool
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
     :type mask_bias: bool
     :param prune_percentage: The percentage of weights to prune. Default: 0.2
     :type prune_percentage: float
     """
+
     def __init__(
         self,
         in_features: int,
@@ -280,19 +281,25 @@ class MagPruneLinear(MagPruneLayer):
         self.reset_parameters()
 
     @classmethod
-    def from_layer(self, layer: nn.Linear, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+    def from_layer(
+        self,
+        layer: nn.Linear,
+        ablation: str = "none",
+        mask_bias: bool = False,
+        prune_percentage: float = 0.2,
+    ):
         """Creates a MagPruneLinear layer from a nn.Linear layer.
 
         :param layer: An instance of a nn.Linear layer.
         :type layer: nn.Linear
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
         :type mask_bias: bool
@@ -402,13 +409,13 @@ class MagPruneGPTConv1D(MagPruneLayer):
     :param nx: Number of input features
     :type nx: int
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False
     :type mask_bias: bool
@@ -435,7 +442,13 @@ class MagPruneGPTConv1D(MagPruneLayer):
         self._init_mask()
 
     @classmethod
-    def from_layer(self, layer: Conv1D, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+    def from_layer(
+        self,
+        layer: Conv1D,
+        ablation: str = "none",
+        mask_bias: bool = False,
+        prune_percentage: float = 0.2,
+    ):
         """Creates a MagPruneGPTConv1D layer from a Conv1D layer.
 
         :param nf: Number of output features
@@ -443,13 +456,13 @@ class MagPruneGPTConv1D(MagPruneLayer):
         :param nx: Number of input features
         :type nx: int
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_bias: Determines whether to mask bias terms in addition to weight terms. This has no effect on this layer, as there are no bias terms. Default: False
         :type mask_bias: bool
@@ -529,8 +542,8 @@ class MagPruneGPTConv1D(MagPruneLayer):
 
 
 class _MagPruneConv(MagPruneLayer):
-    """Abstract class used for both Conv1d and Conv2d Magnitude Pruning layers
-    """
+    """Abstract class used for both Conv1d and Conv2d Magnitude Pruning layers"""
+
     def __init__(
         self,
         layer_fn,
@@ -632,7 +645,7 @@ class MagPruneConv2d(_MagPruneConv):
     :param in_channels: Number of channels in the input image
     :type in_channels: int
     :param out_channels: Number of channels produced by the convolution
-    :type out_channels: int 
+    :type out_channels: int
     :param kernel_size: Size of the convolving kernel
     :type kernel_size: int or tuple
     :param padding: Padding added to all four sides of the input. Default: 0
@@ -648,13 +661,13 @@ class MagPruneConv2d(_MagPruneConv):
     :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
     :type padding_mode:  str
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
     :type mask_bias: bool
@@ -695,19 +708,25 @@ class MagPruneConv2d(_MagPruneConv):
         )
 
     @classmethod
-    def from_layer(self, layer: nn.Conv2d, ablation:str="none", mask_bias:bool=False, prune_percentage:float=0.2):
+    def from_layer(
+        self,
+        layer: nn.Conv2d,
+        ablation: str = "none",
+        mask_bias: bool = False,
+        prune_percentage: float = 0.2,
+    ):
         """Create a MagPruneConv2d layer from a nn.Conv2d layer
 
         :param layer: A nn.Conv2d layer
         :type layer: nn.Conv2d
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
         :type mask_bias: bool
@@ -755,7 +774,7 @@ class MagPruneConv1d(_MagPruneConv):
     :param in_channels: Number of channels in the input image
     :type in_channels: int
     :param out_channels: Number of channels produced by the convolution
-    :type out_channels: int 
+    :type out_channels: int
     :param kernel_size: Size of the convolving kernel
     :type kernel_size: int or tuple
     :param padding: Padding added to all four sides of the input. Default: 0
@@ -771,19 +790,20 @@ class MagPruneConv1d(_MagPruneConv):
     :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
     :type padding_mode:  str
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
     :type mask_bias: bool
     :param prune_percentage: The percentage of weights to prune. Default: 0.2
     :type prune_percentage: float
     """
+
     def __init__(
         self,
         in_channels,
@@ -823,13 +843,13 @@ class MagPruneConv1d(_MagPruneConv):
         :param layer: A nn.Conv1d layer
         :type layer: nn.Conv1d
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_bias: Determines whether to mask bias terms in addition to weight terms. Default: False
         :type mask_bias: bool

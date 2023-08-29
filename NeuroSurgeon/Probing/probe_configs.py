@@ -21,6 +21,7 @@ class ResidualUpdateModelConfig(PretrainedConfig):
     :param stream: Whether to store the intermediate residual stream values, defaults to False
     :type stream: bool, optional
     """
+
     def __init__(
         self,
         model_type: str,
@@ -48,13 +49,14 @@ class SubnetworkProbeConfig(PretrainedConfig):
     :type n_classes: int
     :param circuit_config: A CircuitConfig object defining the masking behavior of the model
     :type circuit_config: CircuitConfig
-    :param resid_config: A ResidualUpdateModelConfig defining the behavior of the residual update model. Make sure that the probe_vectors argument aligns with this config! 
+    :param resid_config: A ResidualUpdateModelConfig defining the behavior of the residual update model. Make sure that the probe_vectors argument aligns with this config!
     :type resid_config: ResidualUpdateModelConfig
     :param intermediate_size: If an MLP probe is required, the dimensionality of the hidden layer, defaults to -1
     :type intermediate_size: int, optional
     :param labeling: Either "sequence" or "token" - whether to expect one label per input or many, defaults to "sequence"
     :type labeling: str, optional
     """
+
     def __init__(
         self,
         probe_vectors: str,

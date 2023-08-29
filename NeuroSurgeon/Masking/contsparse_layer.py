@@ -17,7 +17,7 @@ class ContSparseLayer(MaskLayer):
     It introduces a deterministic approximation to the L0 penalty (in contrast to the stochastic approach
     implemented by the Hard Concrete Layer). Continuous sparsification introduces mask parameters, which
     get mulitplied by a temperature parameter and then passed through a sigmoid to create a soft mask.
-    To train a continuous sparsification layer, one must anneal the temperature parameter, increasing 
+    To train a continuous sparsification layer, one must anneal the temperature parameter, increasing
     it after every epoch. This eventually turns a soft mask into a hard mask, by the end of training.
     At eval time, the mask is explicitly turned into a binary mask, with all positive mask parameters
     mapping to 1, and all negative mask parameters mapping to 0.
@@ -33,24 +33,25 @@ class ContSparseLayer(MaskLayer):
 
             def update(self, model):
                 temp = model.temperature
-                model.temperature = temp * self.temp_increase  
-      
+                model.temperature = temp * self.temp_increase
+
     ...
 
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]
     :type mask_unit: str
     :param mask_bias: Determines whether to mask bias terms in addition to weight terms.
     :type mask_bias: bool
     """
+
     def __init__(
         self, ablation: str, mask_unit: str, mask_bias: bool, mask_init_value: float
     ):
@@ -85,10 +86,10 @@ class ContSparseLayer(MaskLayer):
 
     @property
     def force_resample(self):
-        """A boolean value that determines whether a mask is resampled when creating a mask using 
+        """A boolean value that determines whether a mask is resampled when creating a mask using
         ablation = "randomly_sampled" or ablation = "complement_sampled". Otherwise a mask is sampled once and returned
         when calling these functions.
-        
+
 
         :return: A boolean determining whether masks are resampled when using ablation = "randomly_sampled" or "complement_sampled"
         :rtype: bool
@@ -105,10 +106,10 @@ class ContSparseLayer(MaskLayer):
         This is useful in assessing whether ablating a trained subnetwork yields more performance degredation than
         ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True
         forces the layer to resample a mask.
         """
-        
+
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
             return getattr(self, "sampled_" + param_type)
         # Setting force_resample=True makes mask get resampled once
@@ -166,7 +167,7 @@ class ContSparseLayer(MaskLayer):
         This is done to assess whether ablating a trained subnetwork yields greater performance degredation than
         ablating a random subnetwork.
 
-        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True 
+        Sample a random mask once and then use it to evaluate a whole dataset. Setting layer.force_resample = True
         forces the layer to resample a mask.
         """
         if hasattr(self, "sampled_" + param_type) and not self.force_resample:
@@ -267,8 +268,7 @@ class ContSparseLayer(MaskLayer):
         pass
 
     def _compute_random_ablation(self, param_type):
-        """Computes the inverse of the standard binary mask and reinitializes zero'd elements. Used for pruning discovered subnetworks.
-        """
+        """Computes the inverse of the standard binary mask and reinitializes zero'd elements. Used for pruning discovered subnetworks."""
         if param_type == "weight":
             params = self.weight
             params_mask = self.weight_mask
@@ -299,13 +299,13 @@ class ContSparseLinear(ContSparseLayer):
     :param bias: If set to False, the layer will not learn an additive bias. Default: True
     :type bias: bool
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
     :type mask_unit: str
@@ -314,6 +314,7 @@ class ContSparseLinear(ContSparseLayer):
     :param mask_init_value: The value that the mask parameters are initialized with. Default: 0.0
     :type mask_init_value: float
     """
+
     def __init__(
         self,
         in_features: int,
@@ -342,20 +343,25 @@ class ContSparseLinear(ContSparseLayer):
 
     @classmethod
     def from_layer(
-        self, layer: nn.Linear, ablation: str = "none", mask_unit: str = "weight", mask_bias: bool = False, mask_init_value: float = 0.0
+        self,
+        layer: nn.Linear,
+        ablation: str = "none",
+        mask_unit: str = "weight",
+        mask_bias: bool = False,
+        mask_init_value: float = 0.0,
     ):
         """Creates a ContSparseLinear layer from a nn.Linear layer.
 
         :param layer: An instance of a nn.Linear layer.
         :type layer: nn.Linear
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
         :type ablation: str
         :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
         :type mask_unit: str
@@ -478,13 +484,13 @@ class ContSparseGPTConv1D(ContSparseLayer):
     :param nx: Number of input features
     :type nx: int
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
     :type mask_unit: str
@@ -515,20 +521,25 @@ class ContSparseGPTConv1D(ContSparseLayer):
 
     @classmethod
     def from_layer(
-        self, layer: Conv1D, ablation:str = "none", mask_unit:str = "weight", mask_bias: bool = False, mask_init_value: float = 0.0
+        self,
+        layer: Conv1D,
+        ablation: str = "none",
+        mask_unit: str = "weight",
+        mask_bias: bool = False,
+        mask_init_value: float = 0.0,
     ):
         """Creates a ContSparseGPTConv1D layer from a Conv1D layer.
 
         :param layer: An instance of a Conv1D layer from pytorch_utils
         :type layer: Conv1D
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
         :type mask_unit: str
@@ -620,8 +631,8 @@ class ContSparseGPTConv1D(ContSparseLayer):
 
 
 class _ContSparseConv(ContSparseLayer):
-    """Abstract class used for both Conv1d and Conv2d continuous sparsification layers
-    """
+    """Abstract class used for both Conv1d and Conv2d continuous sparsification layers"""
+
     def __init__(
         self,
         layer_fn,
@@ -736,7 +747,7 @@ class ContSparseConv2d(_ContSparseConv):
     :param in_channels: Number of channels in the input image
     :type in_channels: int
     :param out_channels: Number of channels produced by the convolution
-    :type out_channels: int 
+    :type out_channels: int
     :param kernel_size: Size of the convolving kernel
     :type kernel_size: int or tuple
     :param padding: Padding added to all four sides of the input. Default: 0
@@ -752,13 +763,13 @@ class ContSparseConv2d(_ContSparseConv):
     :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
     :type padding_mode:  str
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
     :type mask_unit: str
@@ -767,6 +778,7 @@ class ContSparseConv2d(_ContSparseConv):
     :param mask_init_value: The value that the mask parameters are initialized with. Default: 0.0
     :type mask_init_value: float
     """
+
     def __init__(
         self,
         in_channels,
@@ -803,20 +815,25 @@ class ContSparseConv2d(_ContSparseConv):
 
     @classmethod
     def from_layer(
-        self, layer: nn.Conv2d, ablation: str="none", mask_unit:str = "none", mask_bias: bool = False, mask_init_value: float = 0.0
+        self,
+        layer: nn.Conv2d,
+        ablation: str = "none",
+        mask_unit: str = "none",
+        mask_bias: bool = False,
+        mask_init_value: float = 0.0,
     ):
         """Create a ContSparseConv2d layer from a nn.Conv2d layer
 
         :param layer: A nn.Conv2d layer
         :type layer: nn.Conv2d
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
         :type mask_unit: str
@@ -867,7 +884,7 @@ class ContSparseConv1d(_ContSparseConv):
     :param in_channels: Number of channels in the input image
     :type in_channels: int
     :param out_channels: Number of channels produced by the convolution
-    :type out_channels: int 
+    :type out_channels: int
     :param kernel_size: Size of the convolving kernel
     :type kernel_size: int or tuple
     :param padding: Padding added to all four sides of the input. Default: 0
@@ -883,13 +900,13 @@ class ContSparseConv1d(_ContSparseConv):
     :param padding_mode:  'zeros', 'reflect', 'replicate' or 'circular'. Default: 'zeros'
     :type padding_mode:  str
     :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-        
+
         - none: Producing a standard binary mask
         - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
         - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
         - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
         - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-        
+
     :type ablation: str
     :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
     :type mask_unit: str
@@ -898,6 +915,7 @@ class ContSparseConv1d(_ContSparseConv):
     :param mask_init_value: The value that the mask parameters are initialized with. Default: 0.0
     :type mask_init_value: float
     """
+
     def __init__(
         self,
         in_channels,
@@ -934,20 +952,25 @@ class ContSparseConv1d(_ContSparseConv):
 
     @classmethod
     def from_layer(
-        self, layer: nn.Conv1d, ablation:str = "none", mask_unit:str = "weight", mask_bias:bool = False, mask_init_value:float=0.0
+        self,
+        layer: nn.Conv1d,
+        ablation: str = "none",
+        mask_unit: str = "weight",
+        mask_bias: bool = False,
+        mask_init_value: float = 0.0,
     ):
         """Create a ContSparseConv1d layer from a nn.Conv1d layer
 
         :param layer: A nn.Conv1d layer
         :type layer: nn.Conv1d
         :param ablation: A string that determines how masks are produced from the mask layer parameters. Valid options include:
-            
+
             - none: Producing a standard binary mask
             - zero_ablate: Inverting the standard binary mask. Used for pruning discovered subnetworks.
             - random_ablate: Inverting the standard binary mask and reinitializing zero'd elements. Used for pruning discovered subnetworks.
             - randomly_sampled: Sampling a random binary mask of the same size as the standard mask.
             - complement_sampled: Sampling a random binary mask of the same size as the standard mask from the complement set of entries as the standard mask.
-            
+
         :type ablation: str
         :param mask_unit: A string that determines whether masks are produced at the weight or neuron level. Valid options include ["neuron", "weight"]. Default: "weight"
         :type mask_unit: str

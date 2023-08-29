@@ -9,7 +9,7 @@ from .probe_configs import ResidualUpdateModelConfig
 
 class ResidualUpdateModel(nn.Module):
     """A simple wrapped that adds hooks into a model to return intermediate hidden states
-    or updates from particular MLP or Attention layers. This is loosely modeled off of the 
+    or updates from particular MLP or Attention layers. This is loosely modeled off of the
     Transformer Lens library from Neel Nanda (https://github.com/neelnanda-io/TransformerLens).
     This is a minimal implementation that is built to subnetwork based pruning efforts. Currently,
     it supports ViT, GPT2, GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.
@@ -21,6 +21,7 @@ class ResidualUpdateModel(nn.Module):
     :param model: A transformer model to wrap
     :type model: nn.Module (should be one of the model architectures stated above)
     """
+
     def __init__(
         self,
         config: ResidualUpdateModelConfig,

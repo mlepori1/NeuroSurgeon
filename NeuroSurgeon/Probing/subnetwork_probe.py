@@ -22,6 +22,7 @@ class SubnetworkProbe(nn.Module):
         GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.
     :type model: nn.Module
     """
+
     def __init__(
         self,
         config: SubnetworkProbeConfig,

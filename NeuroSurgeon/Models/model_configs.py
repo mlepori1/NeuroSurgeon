@@ -16,7 +16,7 @@ class CircuitConfig(PretrainedConfig):
         - For "magnitude_pruning": Requires "ablation", "mask_bias", "prune_percentage"
 
     :type mask_hparams: dict, optional
-    :param target_layers: A list of layers to turn into mask layers. 
+    :param target_layers: A list of layers to turn into mask layers.
         These layer names can be obtained from the wrapped model's state dict. They must correspond to nn.Linear, GPT-style Conv1D, nn.Conv2d, or nn.Conv1d layers. defaults to []
     :type target_layers: List[str], optional
     :param freeze_base: Whether to freeze the weights and biases of the wrapped model, defaults to True
@@ -26,6 +26,7 @@ class CircuitConfig(PretrainedConfig):
     :param l0_lambda: The weighting of the L0 regularization, should usually be scaled with parameter count, defaults to 1e-8
     :type l0_lambda: float, optional
     """
+
     def __init__(
         self,
         mask_method: str = "continuous_sparsification",
