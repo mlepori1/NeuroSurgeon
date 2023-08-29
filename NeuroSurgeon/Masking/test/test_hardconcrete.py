@@ -3,12 +3,8 @@ import torch
 import torch.nn as nn
 from transformers.pytorch_utils import Conv1D
 
-from ..hardconcrete_layer import (
-    HardConcreteConv1d,
-    HardConcreteConv2d,
-    HardConcreteGPTConv1D,
-    HardConcreteLinear,
-)
+from ..hardconcrete_layer import (HardConcreteConv1d, HardConcreteConv2d,
+                                  HardConcreteGPTConv1D, HardConcreteLinear)
 
 ### Test HardConcreteLinear Layer
 

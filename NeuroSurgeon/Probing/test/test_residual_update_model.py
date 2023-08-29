@@ -1,17 +1,9 @@
 import pytest
 import torch
 from datasets import load_dataset
-from transformers import (
-    AutoImageProcessor,
-    BertForMaskedLM,
-    BertModel,
-    BertTokenizer,
-    GPT2LMHeadModel,
-    GPT2Model,
-    GPT2Tokenizer,
-    ViTForMaskedImageModeling,
-    ViTModel,
-)
+from transformers import (AutoImageProcessor, BertForMaskedLM, BertModel,
+                          BertTokenizer, GPT2LMHeadModel, GPT2Model,
+                          GPT2Tokenizer, ViTForMaskedImageModeling, ViTModel)
 
 from ..probe_configs import ResidualUpdateModelConfig
 from ..residual_update_model import ResidualUpdateModel

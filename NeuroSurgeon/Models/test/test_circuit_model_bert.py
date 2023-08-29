@@ -5,7 +5,8 @@ from datasets import load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
-from transformers import BertForSequenceClassification, BertModel, BertTokenizer
+from transformers import (BertForSequenceClassification, BertModel,
+                          BertTokenizer)
 
 from ...Masking.mask_layer import MaskLayer
 from ..circuit_model import CircuitModel

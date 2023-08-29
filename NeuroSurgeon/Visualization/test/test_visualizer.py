@@ -1,15 +1,11 @@
-import torch
 import pytest
+import torch
 from datasets import load_dataset
 from torch.optim import AdamW
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
-from transformers import (
-    BertForSequenceClassification,
-    BertTokenizer,
-    GPT2ForSequenceClassification,
-    GPT2Tokenizer,
-)
+from transformers import (BertForSequenceClassification, BertTokenizer,
+                          GPT2ForSequenceClassification, GPT2Tokenizer)
 
 from ...Models.circuit_model import CircuitConfig, CircuitModel
 from ..visualizer import Visualizer, VisualizerConfig
