@@ -13,11 +13,13 @@ NeuroSurgeon is a python toolkit built to enable deep learning researchers to ea
 - Subnetwork Probing
     - Relevant Papers:
         - [Cao et al. 2021](https://arxiv.org/abs/2104.03514)
+        - [Conmy et al. 2023](https://arxiv.org/abs/2304.14997)
 - Training with L0 Regularization
     - Relevant Papers:
         - [Louizos et al. 2018](https://arxiv.org/abs/1712.01312)
         - [Savarese et al. 2020](https://arxiv.org/abs/1912.04427)
      
+### Documentation     
 [Read the NeuroSurgeon Documentation](https://neurosurgeon.readthedocs.io/en/latest/)
 
 ## Install
