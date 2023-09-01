@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8") as fh:
 
 setup(
     name='NeuroSurgeon',
-    version='0.1.26',    
+    version='0.1.0',    
     description='A toolkit for subnetwork analysis',
     long_description=README,
     long_description_content_type="text/markdown",
