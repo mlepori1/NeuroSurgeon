@@ -4,15 +4,25 @@ import torch
 import torch.nn as nn
 from transformers.pytorch_utils import Conv1D as GPTConv1D
 
-from ..Masking.contsparse_layer import (ContSparseConv1d, ContSparseConv2d,
-                                        ContSparseGPTConv1D, ContSparseLayer,
-                                        ContSparseLinear)
-from ..Masking.hardconcrete_layer import (HardConcreteConv1d,
-                                          HardConcreteConv2d,
-                                          HardConcreteGPTConv1D,
-                                          HardConcreteLinear)
-from ..Masking.magprune_layer import (MagPruneConv1d, MagPruneConv2d,
-                                      MagPruneGPTConv1D, MagPruneLinear)
+from ..Masking.contsparse_layer import (
+    ContSparseConv1d,
+    ContSparseConv2d,
+    ContSparseGPTConv1D,
+    ContSparseLayer,
+    ContSparseLinear,
+)
+from ..Masking.hardconcrete_layer import (
+    HardConcreteConv1d,
+    HardConcreteConv2d,
+    HardConcreteGPTConv1D,
+    HardConcreteLinear,
+)
+from ..Masking.magprune_layer import (
+    MagPruneConv1d,
+    MagPruneConv2d,
+    MagPruneGPTConv1D,
+    MagPruneLinear,
+)
 from ..Masking.mask_layer import MaskLayer
 from .model_configs import CircuitConfig
 

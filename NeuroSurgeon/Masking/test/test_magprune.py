@@ -3,8 +3,12 @@ import torch
 import torch.nn as nn
 from transformers.pytorch_utils import Conv1D
 
-from ..magprune_layer import (MagPruneConv1d, MagPruneConv2d,
-                              MagPruneGPTConv1D, MagPruneLinear)
+from ..magprune_layer import (
+    MagPruneConv1d,
+    MagPruneConv2d,
+    MagPruneGPTConv1D,
+    MagPruneLinear,
+)
 
 ### Test MagPruneLinear Layer
 

@@ -3,8 +3,12 @@ import torch
 import torch.nn as nn
 from transformers.pytorch_utils import Conv1D
 
-from ..contsparse_layer import (ContSparseConv1d, ContSparseConv2d,
-                                ContSparseGPTConv1D, ContSparseLinear)
+from ..contsparse_layer import (
+    ContSparseConv1d,
+    ContSparseConv2d,
+    ContSparseGPTConv1D,
+    ContSparseLinear,
+)
 
 ### Test ContSparseLinear Layer
 

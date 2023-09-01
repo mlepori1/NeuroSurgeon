@@ -723,22 +723,25 @@ class Visualizer:
             )
             ax.add_patch(
                 Rectangle(
-                    (base_x + subnetwork_1_width, current_node_height),
-                    subnetwork_2_width,
+                    (
+                        base_x + subnetwork_1_width,
+                        current_node_height,
+                    ),
+                    intersection_width,
                     node_height,
-                    color=config.subnetwork_colors[1],
+                    color=config.intersect_color,
                     alpha=config.alpha,
                 )
             )
             ax.add_patch(
                 Rectangle(
                     (
-                        base_x + subnetwork_1_width + subnetwork_2_width,
+                        base_x + subnetwork_1_width + intersection_width,
                         current_node_height,
                     ),
-                    intersection_width,
+                    subnetwork_2_width,
                     node_height,
-                    color=config.intersect_color,
+                    color=config.subnetwork_colors[1],
                     alpha=config.alpha,
                 )
             )
@@ -834,22 +837,25 @@ class Visualizer:
                 )
                 ax.add_patch(
                     Rectangle(
-                        (base_x + subnetwork_1_width, current_layer_height),
-                        subnetwork_2_width,
+                        (
+                            base_x + subnetwork_1_width,
+                            current_layer_height,
+                        ),
+                        intersection_width,
                         layer_height,
-                        color=config.subnetwork_colors[1],
+                        color=config.intersect_color,
                         alpha=config.alpha,
                     )
                 )
                 ax.add_patch(
                     Rectangle(
                         (
-                            base_x + subnetwork_1_width + subnetwork_2_width,
+                            base_x + subnetwork_1_width + intersection_width,
                             current_layer_height,
                         ),
-                        intersection_width,
+                        subnetwork_2_width,
                         layer_height,
-                        color=config.intersect_color,
+                        color=config.subnetwork_colors[1],
                         alpha=config.alpha,
                     )
                 )
