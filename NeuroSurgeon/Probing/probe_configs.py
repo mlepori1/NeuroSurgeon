@@ -40,6 +40,19 @@ class ResidualUpdateModelConfig(PretrainedConfig):
         self.stream = stream
 
 
+class CircuitProbeConfig(PretrainedConfig):
+    def __init__(
+        self,
+        probe_activations: str,
+        circuit_config: CircuitConfig,
+        resid_config: ResidualUpdateModelConfig,
+    ):
+        super().__init__()
+        self.probe_activations = probe_activations
+        self.circuit_config = circuit_config
+        self.resid_config = resid_config
+
+
 class SubnetworkProbeConfig(PretrainedConfig):
     """A config object defining the behavior of the SubnetworkProbe
 
