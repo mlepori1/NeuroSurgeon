@@ -16,6 +16,7 @@ class CircuitProbe(nn.Module):
     ):
         super().__init__()
         self.config = config
+        self.label_pad_idx = -100
 
         self._validate_configs()
 
@@ -101,6 +102,7 @@ class CircuitProbe(nn.Module):
         updates = updates[token_mask]
 
         if labels is not None:
+            labels = labels[labels != self.label_pad_idx] # Gets rid of label padding before computing representation matching loss
             labels = labels.reshape(-1)
             assert len(updates) == len(
                 labels
