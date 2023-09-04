@@ -73,7 +73,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=True, attn=False,
+        "bert",
+        target_layers=[1],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
@@ -100,7 +103,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1, 2], mlp=True, attn=False,
+        "bert",
+        target_layers=[1, 2],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
@@ -127,7 +133,10 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=False, attn=False,
+        "bert",
+        target_layers=[1],
+        mlp=False,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(

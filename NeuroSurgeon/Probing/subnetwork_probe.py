@@ -40,6 +40,7 @@ class SubnetworkProbe(nn.Module):
             self.config.resid_config, self.wrapped_model
         )
 
+        self.label_pad_idx = -100
         self.probe = self._create_probe()
         self.loss = nn.CrossEntropyLoss()
 
@@ -115,7 +116,7 @@ class SubnetworkProbe(nn.Module):
 
         if labels is not None and self.config.labeling == "token":
             # Get rid of padding on labels (which is only used for batching)
-            labels = labels[labels != -1]
+            labels = labels[labels != self.label_pad_idx]
 
         labels = labels.reshape(-1)
         assert len(updates) == len(

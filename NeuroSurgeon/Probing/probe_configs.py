@@ -43,12 +43,12 @@ class ResidualUpdateModelConfig(PretrainedConfig):
 class CircuitProbeConfig(PretrainedConfig):
     def __init__(
         self,
-        probe_activations: str,
+        probe_vectors: str,
         circuit_config: CircuitConfig,
         resid_config: ResidualUpdateModelConfig,
     ):
         super().__init__()
-        self.probe_activations = probe_activations
+        self.probe_vectors = probe_vectors
         self.circuit_config = circuit_config
         self.resid_config = resid_config
 
