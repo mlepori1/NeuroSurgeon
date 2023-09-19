@@ -16,7 +16,7 @@ class CircuitProbe(nn.Module):
     ):
         super().__init__()
         self.config = config
-        self.label_pad_idx = -100
+        self.label_pad_idx = -1000
 
         self._validate_configs()
 
