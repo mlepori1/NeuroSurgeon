@@ -613,7 +613,7 @@ class Visualizer:
                         intersection = torch.sum(
                             torch.logical_and(model_0_node, model_1_node)
                         )
-                        subnetwork_2 = torch.sum(model_0_node) - intersection
+                        subnetwork_2 = torch.sum(model_1_node) - intersection
                         subnetwork_1 = subnetwork_1 - intersection
                         unused = total - (subnetwork_1 + subnetwork_2 + intersection)
 
