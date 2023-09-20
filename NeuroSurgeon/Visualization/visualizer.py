@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import matplotlib.pyplot as plt
 import torch
-from matplotlib.patches import Rectangle
+from matplotlib.patches import Rectangle, Patch
 
 Architecture2Blocks = {
     "bert": {
@@ -98,6 +98,7 @@ class VisualizerConfig:
         label_fontsize: int = 18,
         alpha: float = 0.75,
         title: str = "Layer By Layer Subnetwork Distribution",
+        legend: bool = False,
     ):
         if len(model_list) > 2:
             raise ValueError(
@@ -130,6 +131,7 @@ class VisualizerConfig:
         self.label_fontsize = label_fontsize
         self.alpha = alpha
         self.title = title
+        self.legend = legend
 
         if plot_granularity == "block" and visualize_bias == True:
             raise ValueError(
@@ -965,6 +967,18 @@ class Visualizer:
                     (0.5, layer_heights[idx - 1]),
                     arrowprops=dict(arrowstyle="->"),
                 )
+
+        if config.legend:
+            if len(config.model_list) == 2:
+                sn1 = Patch(color=config.subnetwork_colors[0], label=config.model_labels[0])
+                sn2 = Patch(color=config.subnetwork_colors[1], label=config.model_labels[1])
+                inter = Patch(color=config.intersect_color, label="Intersection")
+                un = Patch(color=config.unused_color, label="Unused")
+                ax.legend(handles=[sn1, sn2, inter, un], loc="lower center", ncols=4, fontsize=config.label_fontsize, borderaxespad=5.)
+            else:
+                sn1 = Patch(color=config.subnetwork_colors[0], label=config.model_labels[0])
+                un = Patch(color=config.unused_color, label="Unused")
+                ax.legend(handles=[sn1, un], loc="lower center", ncols=2, fontsize=config.label_fontsize, borderaxespad=5.)
         plt.savefig(config.outfile, format=config.format)
 
     def plot(self):
