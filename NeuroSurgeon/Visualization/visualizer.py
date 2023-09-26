@@ -675,8 +675,11 @@ class Visualizer:
     def _create_blank_diagram(self, config):
         fig = plt.figure(figsize=(config.figsize))
         ax = fig.add_axes((0, 0, 1, 1))
-        # ax.set_xlim(0, config.figsize[0])
-        # ax.set_ylim(0, config.figsize[1])
+        # Ensure no weird border on figure
+        ax.spines['bottom'].set_color('white')
+        ax.spines['top'].set_color('white')
+        ax.spines['right'].set_color('white')
+        ax.spines['left'].set_color('white')
         ax.tick_params(bottom=False, top=False, left=False, right=False)
         ax.tick_params(
             labelbottom=False, labeltop=False, labelleft=False, labelright=False
