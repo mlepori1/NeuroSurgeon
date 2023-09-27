@@ -43,7 +43,7 @@ class CircuitProbe(nn.Module):
             resid_config.attn and not resid_config.mlp
         )
 
-    def _compute_representation_matching_loss(self, updates, labels):
+    def _compute_contrastive_loss(self, updates, labels):
         loss = None
 
         # 1. Create representational similarity matrix between update vectors using cosine sim
@@ -113,8 +113,8 @@ class CircuitProbe(nn.Module):
         loss = None
 
         if labels is not None:
-            # Compute Representation Matching Loss
-            loss = self._compute_representation_matching_loss(updates, labels)
+            # Compute soft NN Loss
+            loss = self._compute_contrastive_loss(updates, labels)
 
         # Add in L0 Regularization to keep mask small
         if self.config.circuit_config.add_l0:
