@@ -994,5 +994,6 @@ class Visualizer:
         layer2nodes = self._create_layer2nodes(plot_nodes, self.config)
         # Then compute the overlap at the desired level of granularity
         node_overlaps = self._compute_overlap(layer2nodes, self.config)
+        print(node_overlaps)
         # Then plot nodes
         self._create_graph(node_overlaps, self.config)
