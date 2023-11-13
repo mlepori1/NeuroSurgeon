@@ -84,13 +84,13 @@ class CircuitProbe(nn.Module):
         self.wrapped_model.train(train_bool)
 
     def forward(
-        self, input_ids=None, labels=None, token_mask=None, return_dict=True, **kwargs
+        self, labels=None, token_mask=None, return_dict=True, **kwargs
     ):
         # Must provide a token mask, which is a boolean mask for each input denoting which
         # residual streams to compute loss over
 
         # Call model forward pass, get out the correct activations
-        _ = self.wrapped_model(input_ids=input_ids, **kwargs)
+        _ = self.wrapped_model(**kwargs)
         updates = self.wrapped_model.vector_cache[self.config.probe_vectors]
 
         # Get one residual stream update per label using mask indexing,
