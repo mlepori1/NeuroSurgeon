@@ -46,11 +46,13 @@ class CircuitProbeConfig(PretrainedConfig):
         probe_vectors: str,
         circuit_config: CircuitConfig,
         resid_config: ResidualUpdateModelConfig,
+        loss: str = "contrastive",
     ):
         super().__init__()
         self.probe_vectors = probe_vectors
         self.circuit_config = circuit_config
         self.resid_config = resid_config
+        self.loss = loss
 
 
 class SubnetworkProbeConfig(PretrainedConfig):
