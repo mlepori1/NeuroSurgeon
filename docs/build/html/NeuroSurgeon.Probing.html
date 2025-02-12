@@ -61,6 +61,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Probing.subnetwork_probe.SubnetworkProbe"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbe</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#circuitprobe"><code class="docutils literal notranslate"><span class="pre">CircuitProbe</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Probing.circuit_probe.CircuitProbe"><code class="docutils literal notranslate"><span class="pre">CircuitProbe</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-contents">Module contents</a></li>
@@ -239,6 +243,65 @@ GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.</p></li>
 </dd>
 </dl>
 </dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="circuitprobe">
+<h3><code class="docutils literal notranslate"><span class="pre">CircuitProbe</span></code><a class="headerlink" href="#circuitprobe" title="Link to this heading"></a></h3>
+<dl class="py class" id="module-NeuroSurgeon.Probing.circuit_probe">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.circuit_probe.CircuitProbe">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.circuit_probe.</span></span><span class="sig-name descname"><span class="pre">CircuitProbe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig" title="NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig"><span class="pre">CircuitProbeConfig</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Module</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.circuit_probe.CircuitProbe" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
+<p>This implements the circuit probing technique introduced in Lepori et al. 2024 (<a class="reference external" href="https://openreview.net/pdf?id=gUNeyiLNxr">https://openreview.net/pdf?id=gUNeyiLNxr</a>)
+This method learns a binary mask over parameters using a contrastive loss funciton, as described in the main paper.
+We also implement an experimental version of this method that links circuit probing and linear probing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig" title="NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig"><em>CircuitProbeConfig</em></a>) – A config file determining the behavior of the circuit probe</p></li>
+<li><p><strong>model</strong> (<em>nn.Module</em>) – The model to probe. Currently, it supports ViT, GPT2,
+GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.circuit_probe.CircuitProbe.train">
+<span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">train_bool</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.circuit_probe.CircuitProbe.train" title="Link to this definition"></a></dt>
+<dd><p>Set the module in training mode.</p>
+<p>This has any effect only on certain modules. See documentations of
+particular modules for details of their behaviors in training/evaluation
+mode, if they are affected, e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">BatchNorm</span></code>,
+etc.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><dl class="simple">
+<dt>mode (bool): whether to set training mode (<code class="docutils literal notranslate"><span class="pre">True</span></code>) or evaluation</dt><dd><p>mode (<code class="docutils literal notranslate"><span class="pre">False</span></code>). Default: <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+</dd>
+</dl>
+</dd>
+<dt>Returns:</dt><dd><p>Module: self</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.circuit_probe.CircuitProbe.forward">
+<span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_ids</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token_mask</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.circuit_probe.CircuitProbe.forward" title="Link to this definition"></a></dt>
+<dd><p>Define the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.circuit_probe.CircuitProbe.training">
+<span class="sig-name descname"><span class="pre">training</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#NeuroSurgeon.Probing.circuit_probe.CircuitProbe.training" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

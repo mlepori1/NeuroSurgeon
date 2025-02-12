@@ -28,6 +28,14 @@ Probe Configs
    :undoc-members:
    :show-inheritance:
 
+``CircuitProbe``
+*****************************
+
+.. automodule:: NeuroSurgeon.Probing.circuit_probe
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
