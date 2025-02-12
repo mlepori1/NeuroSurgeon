@@ -47,6 +47,7 @@ class CircuitProbe(nn.Module):
         loss = None
 
         # 1. Create representational similarity matrix between update vectors using cosine sim
+        # If hidden_states is None, this is just pairwise within updates
         rsm = torchmetrics.functional.pairwise_cosine_similarity(updates, hidden_states)
 
         # 2. Create ideal representational similarity matrix using labels
@@ -84,7 +85,7 @@ class CircuitProbe(nn.Module):
         self.wrapped_model.train(train_bool)
 
     def forward(
-        self, labels=None, token_mask=None, return_dict=True, **kwargs
+        self, input_ids=None, labels=None, token_mask=None, return_dict=True, **kwargs
     ):
         # Must provide a token mask, which is a boolean mask for each input denoting which
         # residual streams to compute loss over
