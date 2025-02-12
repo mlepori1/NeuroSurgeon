@@ -60,6 +60,10 @@ class CircuitModel(nn.Module):
                     layer.weight.requires_grad = False
                 if hasattr(layer, "bias") and layer.bias != None:
                     layer.bias.requires_grad = False
+                if hasattr(layer, "position_embeddings") and layer.position_embeddings != None:
+                    layer.position_embeddings.requires_grad = False
+                if hasattr(layer, "cls_token") and layer.cls_token != None:
+                    layer.cls_token.requires_grad = False
             for layer in self.wrapped_model.modules():
                 if issubclass(type(layer), MaskLayer):
                     layer.train(True)
