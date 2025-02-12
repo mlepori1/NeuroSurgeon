@@ -51,6 +51,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#probe-configs">Probe Configs</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModelConfig</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig"><code class="docutils literal notranslate"><span class="pre">CircuitProbeConfig</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig"><code class="docutils literal notranslate"><span class="pre">SubnetworkProbeConfig</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#residualupdatemodel"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel"><code class="docutils literal notranslate"><span class="pre">ResidualUpdateModel</span></code></a></li>
@@ -119,6 +120,26 @@
 </dd></dl>
 
 <dl class="py class">
+<dt class="sig sig-object py" id="NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.probe_configs.</span></span><span class="sig-name descname"><span class="pre">CircuitProbeConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.probe_configs.CircuitProbeConfig" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedConfig</span></code></p>
+<p>A config object defining the behavior of the CircuitProbe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>probe_vectors</strong> (<em>str</em>) – The entries in a ResidualUpdateModel’s vector_cache that one will train a probe on. Ex. attn_update_1, mlp_stream_5</p></li>
+<li><p><strong>circuit_config</strong> (<a class="reference internal" href="NeuroSurgeon.Models.html#NeuroSurgeon.Models.model_configs.CircuitConfig" title="NeuroSurgeon.Models.model_configs.CircuitConfig"><em>CircuitConfig</em></a>) – A CircuitConfig object defining the masking behavior of the model</p></li>
+<li><p><strong>resid_config</strong> (<a class="reference internal" href="#NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig" title="NeuroSurgeon.Probing.probe_configs.ResidualUpdateModelConfig"><em>ResidualUpdateModelConfig</em></a>) – A ResidualUpdateModelConfig defining the behavior of the residual update model. Make sure that the probe_vectors argument aligns with this config!</p></li>
+<li><p><strong>loss</strong> – Either “contrastive” or “linear”.</p></li>
+</ul>
+</dd>
+</dl>
+<p>“Contrastive” refers to the standard contrastive loss as described in Lepori et al. 2024. 
+“Linear refers to an experimental loss function that links circuit probing and linear probing.
+:type loss: str, optional</p>
+</dd></dl>
+
+<dl class="py class">
 <dt class="sig sig-object py" id="NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.probe_configs.</span></span><span class="sig-name descname"><span class="pre">SubnetworkProbeConfig</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.probe_configs.SubnetworkProbeConfig" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">PretrainedConfig</span></code></p>
@@ -144,7 +165,7 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">NeuroSurgeon.Probing.residual_update_model.</span></span><span class="sig-name descname"><span class="pre">ResidualUpdateModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#NeuroSurgeon.Probing.residual_update_model.ResidualUpdateModel" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></p>
 <p>A simple wrapped that adds hooks into a model to return intermediate hidden states
-or updates from particular MLP or Attention layers. This is loosely modeled off of the 
+or updates from particular MLP or Attention layers. This is loosely modeled off of the
 Transformer Lens library from Neel Nanda (<a class="reference external" href="https://github.com/neelnanda-io/TransformerLens">https://github.com/neelnanda-io/TransformerLens</a>).
 This is a minimal implementation that is built to subnetwork based pruning efforts. Currently,
 it supports ViT, GPT2, GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.

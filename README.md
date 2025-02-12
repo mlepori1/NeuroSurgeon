@@ -10,6 +10,7 @@ NeuroSurgeon is a python toolkit built to enable deep learning researchers to ea
         - [Csordás et al. 2021](https://arxiv.org/abs/2010.02066)
         - [Lepori et al. 2023](https://arxiv.org/abs/2301.10884)
         - [Panigrahi et al. 2023](https://arxiv.org/abs/2302.06600)
+        - [Lepori et al. 2024](https://openreview.net/pdf?id=gUNeyiLNxr)
 - Subnetwork Probing
     - Relevant Papers:
         - [Cao et al. 2021](https://arxiv.org/abs/2104.03514)
@@ -25,13 +26,11 @@ NeuroSurgeon is a python toolkit built to enable deep learning researchers to ea
 ## Tutorial
 To get started with NeuroSurgeon, check out the tutorial [here](https://colab.research.google.com/drive/190_zGHEI8BjPgdxWaRrogFmbgruP6y4l?usp=sharing). This covers the basic workflow for using NeuroSurgeon to uncover functional subnetworks within a trained model.
 
-## Install
+## Using This Repo
 
-NeuroSurgeon requires python 3.9 or higher and several libraries, including Transformers and PyTorch. Installation can be done using PyPi:
+We recommend cloning this repository into your project directory in order to use all of the most up-to-date features
 
 `pip install NeuroSurgeon`
 
 ### Logo Prompt
 NeuroSurgeon's logo was created with the help of DALL-E 2, using the prompt "A cute cartoon robot doctor smiling with a stethoscope". 
-
-

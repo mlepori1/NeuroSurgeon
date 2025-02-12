@@ -208,7 +208,7 @@ Continuous Sparsification was introduced in Savarese et al. 2021 (<a class="refe
 It introduces a deterministic approximation to the L0 penalty (in contrast to the stochastic approach
 implemented by the Hard Concrete Layer). Continuous sparsification introduces mask parameters, which
 get mulitplied by a temperature parameter and then passed through a sigmoid to create a soft mask.
-To train a continuous sparsification layer, one must anneal the temperature parameter, increasing 
+To train a continuous sparsification layer, one must anneal the temperature parameter, increasing
 it after every epoch. This eventually turns a soft mask into a hard mask, by the end of training.
 At eval time, the mask is explicitly turned into a binary mask, with all positive mask parameters
 mapping to 1, and all negative mask parameters mapping to 0.</p>
@@ -219,7 +219,7 @@ mapping to 1, and all negative mask parameters mapping to 0.</p>
 
     <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
         <span class="n">temp</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">temperature</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_increase</span>  
+        <span class="n">model</span><span class="o">.</span><span class="n">temperature</span> <span class="o">=</span> <span class="n">temp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_increase</span>
 </pre></div>
 </div>
 <p>…</p>
@@ -263,7 +263,7 @@ for creating a soft mask.</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">force_resample</span></span><a class="headerlink" href="#NeuroSurgeon.Masking.contsparse_layer.ContSparseLayer.force_resample" title="Link to this definition"></a></dt>
-<dd><p>A boolean value that determines whether a mask is resampled when creating a mask using 
+<dd><p>A boolean value that determines whether a mask is resampled when creating a mask using
 ablation = “randomly_sampled” or ablation = “complement_sampled”. Otherwise a mask is sampled once and returned
 when calling these functions.</p>
 <dl class="field-list simple">

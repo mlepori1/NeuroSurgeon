@@ -41,6 +41,19 @@ class ResidualUpdateModelConfig(PretrainedConfig):
 
 
 class CircuitProbeConfig(PretrainedConfig):
+    """A config object defining the behavior of the CircuitProbe
+
+    :param probe_vectors: The entries in a ResidualUpdateModel's vector_cache that one will train a probe on. Ex. attn_update_1, mlp_stream_5
+    :type probe_vectors: str
+    :param circuit_config: A CircuitConfig object defining the masking behavior of the model
+    :type circuit_config: CircuitConfig
+    :param resid_config: A ResidualUpdateModelConfig defining the behavior of the residual update model. Make sure that the probe_vectors argument aligns with this config!
+    :type resid_config: ResidualUpdateModelConfig
+    :param loss: Either "contrastive" or "linear".
+    "Contrastive" refers to the standard contrastive loss as described in Lepori et al. 2024. 
+    "Linear refers to an experimental loss function that links circuit probing and linear probing.
+    :type loss: str, optional
+    """
     def __init__(
         self,
         probe_vectors: str,

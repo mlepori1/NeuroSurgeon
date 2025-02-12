@@ -9,6 +9,16 @@ from .residual_update_model import ResidualUpdateModel
 
 
 class CircuitProbe(nn.Module):
+    """This implements the circuit probing technique introduced in Lepori et al. 2024 (https://openreview.net/pdf?id=gUNeyiLNxr)
+    This method learns a binary mask over parameters using a contrastive loss funciton, as described in the main paper.
+    We also implement an experimental version of this method that links circuit probing and linear probing
+
+    :param config: A config file determining the behavior of the circuit probe
+    :type config: CircuitProbeConfig
+    :param model: The model to probe. Currently, it supports ViT, GPT2,
+        GPTNeoX, BERT, RoBERTa, MPNet, ConvBERT, Ernie, and Electra models.
+    :type model: nn.Module
+    """
     def __init__(
         self,
         config: CircuitProbeConfig,
