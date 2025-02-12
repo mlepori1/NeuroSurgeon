@@ -16,6 +16,7 @@ class CircuitProbe(nn.Module):
     ):
         super().__init__()
         self.config = config
+        self.label_pad_idx = -1000
 
         self._validate_configs()
 
@@ -42,11 +43,12 @@ class CircuitProbe(nn.Module):
             resid_config.attn and not resid_config.mlp
         )
 
-    def _compute_representation_matching_loss(self, updates, labels):
+    def _compute_contrastive_loss(self, updates, labels, hidden_states=None):
         loss = None
 
         # 1. Create representational similarity matrix between update vectors using cosine sim
-        rsm = torchmetrics.functional.pairwise_cosine_similarity(updates)
+        # If hidden_states is None, this is just pairwise within updates
+        rsm = torchmetrics.functional.pairwise_cosine_similarity(updates, hidden_states)
 
         # 2. Create ideal representational similarity matrix using labels
         labels_row = torch.repeat_interleave(labels, len(labels), dim=0)
@@ -88,9 +90,37 @@ class CircuitProbe(nn.Module):
         # Must provide a token mask, which is a boolean mask for each input denoting which
         # residual streams to compute loss over
 
+        # If using the linear_probe loss, get raw model hidden states
+        if self.config.loss == "linear_probe":
+
+            # First get model state variables
+            train_bool = self.training
+            use_masks_bool = self.wrapped_model.wrapped_model.use_masks_bool
+            self.train(False)
+            self.wrapped_model.wrapped_model.use_masks(False)
+
+            # Call model forward pass, get out the raw activations
+            _ = self.wrapped_model(input_ids=input_ids, **kwargs)
+            unmasked_updates = self.wrapped_model.vector_cache[
+                self.config.probe_vectors
+            ]
+
+            # Get one residual stream update per label using mask indexing,
+            # collapsing a batch of strings into a list of labels and residual stream updates
+            token_mask = token_mask.reshape(-1)
+            unmasked_updates = unmasked_updates.reshape(
+                -1, self.wrapped_model.wrapped_model.wrapped_model.config.hidden_size
+            )
+            unmasked_updates = unmasked_updates[token_mask]
+            unmasked_updates = unmasked_updates.detach()
+
+            # Reset state of model
+            self.wrapped_model.wrapped_model.use_masks(use_masks_bool)
+            self.train(train_bool)
+
         # Call model forward pass, get out the correct activations
-        _ = self.wrapped_model(input_ids=input_ids, **kwargs)
-        updates = self.wrapped_model.vector_cache[self.config.probe_activations]
+        _ = self.wrapped_model(**kwargs)
+        updates = self.wrapped_model.vector_cache[self.config.probe_vectors]
 
         # Get one residual stream update per label using mask indexing,
         # collapsing a batch of strings into a list of labels and residual stream updates
@@ -101,6 +131,9 @@ class CircuitProbe(nn.Module):
         updates = updates[token_mask]
 
         if labels is not None:
+            labels = labels[
+                labels != self.label_pad_idx
+            ]  # Gets rid of label padding before computing representation matching loss
             labels = labels.reshape(-1)
             assert len(updates) == len(
                 labels
@@ -109,8 +142,14 @@ class CircuitProbe(nn.Module):
         loss = None
 
         if labels is not None:
-            # Compute Representation Matching Loss
-            loss = self._compute_representation_matching_loss(updates, labels)
+            if self.config.loss == "contrastive":
+                # Compute soft NN Loss
+                loss = self._compute_contrastive_loss(updates, labels)
+            elif self.config.loss == "linear_probe":
+                # Compute linear probe loss, which is a variation of contrastive
+                loss = self._compute_contrastive_loss(
+                    updates, labels, hidden_states=unmasked_updates
+                )
 
         # Add in L0 Regularization to keep mask small
         if self.config.circuit_config.add_l0:

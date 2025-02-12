@@ -38,7 +38,7 @@ def create_test_probe():
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_update_1",
+        probe_vectors="mlp_update_1",
         circuit_config=circuit_config,
         resid_config=resid_config,
     )
@@ -73,11 +73,14 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=True, attn=False,
+        "bert",
+        target_layers=[1],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1",
+        probe_vectors="mlp_1",
         circuit_config=circuit_config,
         resid_config=resid_config,
     )
@@ -100,11 +103,14 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1, 2], mlp=True, attn=False,
+        "bert",
+        target_layers=[1, 2],
+        mlp=True,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1",
+        probe_vectors="mlp_1",
         circuit_config=circuit_config,
         resid_config=resid_config,
     )
@@ -127,11 +133,14 @@ def test_incompatible_configuration_exceptions():
     )
 
     resid_config = ResidualUpdateModelConfig(
-        "bert", target_layers=[1], mlp=False, attn=False,
+        "bert",
+        target_layers=[1],
+        mlp=False,
+        attn=False,
     )
 
     probe_config = CircuitProbeConfig(
-        probe_activations="mlp_1",
+        probe_vectors="mlp_1",
         circuit_config=circuit_config,
         resid_config=resid_config,
     )
@@ -164,8 +173,8 @@ def test_circuit_probe_training():
         assert m.training == False
 
 
-def test_representation_matching_loss():
-    # Assert that representation matching loss is correct
+def test_contrastive_loss():
+    # Assert that contrastive loss is correct
     probe = create_test_probe()
 
     labels = torch.Tensor([0, 1, 0, 1])
@@ -176,8 +185,8 @@ def test_representation_matching_loss():
         [[0.5, 0.1, 0.9], [0.6, 0.09, 0.85], [0.05, 0.8, 0.6], [0.1, 0.8, 0.55]]
     )
 
-    low_loss = probe._compute_representation_matching_loss(good_updates, labels)
-    high_loss = probe._compute_representation_matching_loss(bad_updates, labels)
+    low_loss = probe._compute_contrastive_loss(good_updates, labels)
+    high_loss = probe._compute_contrastive_loss(bad_updates, labels)
     assert low_loss < high_loss
 
 
@@ -198,7 +207,7 @@ def test_forward_pass():
     out = probe(**encs, labels=labels, token_mask=token_mask)
 
     # Assert that residual stream updates are created in the right layer
-    assert probe.config.probe_activations in probe.wrapped_model.vector_cache
+    assert probe.config.probe_vectors in probe.wrapped_model.vector_cache
 
     low_loss = out.loss
 

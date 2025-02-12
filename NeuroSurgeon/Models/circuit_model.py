@@ -43,6 +43,7 @@ class CircuitModel(nn.Module):
         self.config = config
         self.wrapped_model = model
         self.temperature = 1.0
+        self.use_masks_bool = True
 
         self._replace_target_layers()
         self._handle_model_freezing()
@@ -287,5 +288,6 @@ class CircuitModel(nn.Module):
                 if issubclass(type(module), MaskLayer) and name in name_list:
                     module.use_masks = value
             else:
+                self.use_masks_bool = value
                 if issubclass(type(module), MaskLayer):
                     module.use_masks = value
